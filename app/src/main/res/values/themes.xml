@@ -1,0 +1,39 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.QuizMe" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:fontFamily">@font/nunitomedium</item>
+    </style>
+
+    <style name="CornerShapableImageView">
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="CornerShapableImageView2">
+        <item name="cornerSize">18dp</item>
+    </style>
+
+    <style name="CornerShapableImageView3">
+        <item name="cornerSize">21dp</item>
+    </style>
+
+    <style name="CornerShapableImageView4">
+        <item name="cornerSize">9dp</item>
+    </style>
+
+    <style name="CornerShapableImageView5">
+        <item name="cornerSize">40dp</item>
+    </style>
+
+    <style name="CustomTabText" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">@font/nunitomedium</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Theme.QuizMe" parent="Base.Theme.QuizMe" />
+</resources>

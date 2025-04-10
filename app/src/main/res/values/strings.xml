@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">QuizMe</string>
+
+    <!-- MainActivity -->
+    <string name="home">Home</string>
+    <string name="library">Library</string>
+    <string name="join">Join</string>
+    <string name="create">Create</string>
+    <string name="profile">Profile</string>
+
+    <string name="quiz_results">Quiz Results</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
