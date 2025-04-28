@@ -1,4 +1,4 @@
-package com.huy.QuizMe.fragments;
+package com.huy.QuizMe.ui.profile;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

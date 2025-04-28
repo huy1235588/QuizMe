@@ -6,9 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.huy.QuizMe.databinding.ActivityMainBinding;
-import com.huy.QuizMe.fragments.HomeFragment;
-import com.huy.QuizMe.fragments.LibraryFragment;
-import com.huy.QuizMe.fragments.ProfileFragment;
+import com.huy.QuizMe.ui.home.HomeFragment;
+import com.huy.QuizMe.ui.library.LibraryFragment;
+import com.huy.QuizMe.ui.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
