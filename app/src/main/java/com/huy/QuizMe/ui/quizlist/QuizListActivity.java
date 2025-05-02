@@ -1,7 +1,6 @@
-package com.huy.QuizMe.ui.discover;
+package com.huy.QuizMe.ui.quizlist;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -9,27 +8,19 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.huy.QuizMe.R;
-import com.huy.QuizMe.data.model.PagedResponse;
-import com.huy.QuizMe.data.model.Quiz;
 import com.huy.QuizMe.data.repository.QuizRepository;
-import com.huy.QuizMe.ui.home.HomeViewModels;
-import com.huy.QuizMe.utils.ApiUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class QuizListActivity extends AppCompatActivity {
-    private HomeViewModels.QuizViewModel quizViewModel;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView rvQuizzes;
     private TextView tvTitle;
     private ImageView ivBack;
     private ImageView ivSearch;
 
-    private QuizAdapter quizAdapter;
+    private QuizListAdapter quizListAdapter;
     private QuizRepository quizRepository;
     private String quizType;
     private int currentPage = 1;
@@ -73,10 +64,10 @@ public class QuizListActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        quizAdapter = new QuizAdapter(this, new ArrayList<>());
+        quizListAdapter = new QuizListAdapter(this, new ArrayList<>());
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         rvQuizzes.setLayoutManager(layoutManager);
-        rvQuizzes.setAdapter(quizAdapter);
+        rvQuizzes.setAdapter(quizListAdapter);
 
         // Setup pagination
         rvQuizzes.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -103,7 +94,7 @@ public class QuizListActivity extends AppCompatActivity {
         });
 
         // Set click listener for quiz items
-        quizAdapter.setOnQuizClickListener(quiz -> {
+        quizListAdapter.setOnQuizClickListener(quiz -> {
             // Handle quiz click
             Toast.makeText(QuizListActivity.this, "Quiz: " + quiz.getTitle(), Toast.LENGTH_SHORT).show();
         });

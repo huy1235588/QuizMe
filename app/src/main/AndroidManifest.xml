@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity 
-            android:name=".ui.discover.QuizListActivity"
+            android:name=".ui.quizlist.QuizListActivity"
             android:exported="false" />
     </application>
 

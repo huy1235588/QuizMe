@@ -18,7 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.PagedResponse;
 import com.huy.QuizMe.data.model.Quiz;
-import com.huy.QuizMe.ui.discover.QuizListActivity;
+import com.huy.QuizMe.ui.quizlist.QuizListActivity;
 import com.huy.QuizMe.utils.ApiUtils;
 
 /**

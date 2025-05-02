@@ -1,4 +1,4 @@
-package com.huy.QuizMe.ui.discover;
+package com.huy.QuizMe.ui.quizlist;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Quiz;
-import com.huy.QuizMe.utils.ImageLoader;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.QuizViewHolder> {
+public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.QuizViewHolder> {
 
     private Context context;
     private List<Quiz> quizzes;
@@ -33,7 +32,7 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.QuizViewHolder
         void onQuizClick(Quiz quiz);
     }
 
-    public QuizAdapter(Context context, List<Quiz> quizzes) {
+    public QuizListAdapter(Context context, List<Quiz> quizzes) {
         this.context = context;
         this.quizzes = quizzes;
     }
