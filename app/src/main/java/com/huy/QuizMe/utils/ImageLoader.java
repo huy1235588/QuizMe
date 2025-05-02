@@ -1,7 +1,6 @@
 package com.huy.QuizMe.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
@@ -23,7 +22,6 @@ import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
@@ -39,10 +37,7 @@ import java.io.File;
  */
 public class ImageLoader {
     private static final String TAG = "ImageLoader";
-    
-    // Thời gian chuyển đổi hiệu ứng mặc định (ms)
-    private static final int DEFAULT_TRANSITION_DURATION = 300;
-    
+
     // Các phương thức tải ảnh cơ bản
     
     /**
@@ -64,19 +59,19 @@ public class ImageLoader {
             RequestOptions options = new RequestOptions()
                 .placeholder(placeholder)
                 .error(errorImage)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .skipMemoryCache(false);
+                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                .skipMemoryCache(true);
             
             Glide.with(context)
                 .load(imageUrl)
                 .apply(options)
-                .listener(new RequestListener<Drawable>() {
+                .listener(new RequestListener<>() {
                     @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, 
-                                             Target<Drawable> target, boolean isFirstResource) {
-                        Log.e(TAG, "Image load failed: " + imageUrl + 
-                              (e != null ? " - " + e.getMessage() : ""));
-                        
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                @NonNull Target<Drawable> target, boolean isFirstResource) {
+                        Log.e(TAG, "Image load failed: " + imageUrl +
+                                (e != null ? " - " + e.getMessage() : ""));
+
                         // Kiểm tra trạng thái mạng nếu load thất bại
                         if (NetworkUtils.isNetworkAvailable(context)) {
                             // Thử tải lại ảnh sau một khoảng thời gian nếu có mạng
@@ -88,17 +83,16 @@ public class ImageLoader {
                         }
                         return false;
                     }
-                    
+
                     @Override
-                    public boolean onResourceReady(Drawable resource, Object model, 
-                                                Target<Drawable> target, DataSource dataSource, 
-                                                boolean isFirstResource) {
-                        Log.d(TAG, "Image loaded successfully: " + imageUrl + 
-                              " (source: " + dataSource.name() + ")");
+                    public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model,
+                                                   Target<Drawable> target, @NonNull DataSource dataSource,
+                                                   boolean isFirstResource) {
+                        Log.d(TAG, "Image loaded successfully: " + imageUrl +
+                                " (source: " + dataSource.name() + ")");
                         return false;
                     }
                 })
-                .transition(DrawableTransitionOptions.withCrossFade(DEFAULT_TRANSITION_DURATION))
                 .into(imageView);
         } else {
             imageView.setImageResource(placeholder);
@@ -123,7 +117,6 @@ public class ImageLoader {
                 .load(imageUrl)
                 .placeholder(placeholder)
                 .error(errorImage)
-                .transition(DrawableTransitionOptions.withCrossFade(DEFAULT_TRANSITION_DURATION))
                 .into(imageView);
         } else {
             imageView.setImageResource(placeholder);
@@ -257,7 +250,6 @@ public class ImageLoader {
             Glide.with(context)
                 .load(imageUrl)
                 .apply(requestOptions)
-                .transition(DrawableTransitionOptions.withCrossFade(DEFAULT_TRANSITION_DURATION))
                 .into(imageView);
         } else {
             imageView.setImageResource(placeholder);
@@ -318,7 +310,6 @@ public class ImageLoader {
         Glide.with(context)
             .load(resourceId)
             .placeholder(placeholder)
-            .transition(DrawableTransitionOptions.withCrossFade(DEFAULT_TRANSITION_DURATION))
             .into(imageView);
     }
     
@@ -341,7 +332,6 @@ public class ImageLoader {
         Glide.with(context)
             .load(file)
             .placeholder(placeholder)
-            .transition(DrawableTransitionOptions.withCrossFade(DEFAULT_TRANSITION_DURATION))
             .into(imageView);
     }
     
@@ -362,27 +352,26 @@ public class ImageLoader {
             Glide.with(context)
                 .load(imageUrl)
                 .placeholder(placeholder)
-                .listener(new RequestListener<Drawable>() {
+                .listener(new RequestListener<>() {
                     @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, 
-                                              Target<Drawable> target, boolean isFirstResource) {
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model,
+                                                @NonNull Target<Drawable> target, boolean isFirstResource) {
                         if (listener != null) {
                             listener.onLoadFailed(e != null ? e.getMessage() : "Unknown error");
                         }
                         return false;
                     }
-                    
+
                     @Override
-                    public boolean onResourceReady(Drawable resource, Object model, 
-                                                Target<Drawable> target, DataSource dataSource, 
-                                                boolean isFirstResource) {
+                    public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model,
+                                                   Target<Drawable> target, @NonNull DataSource dataSource,
+                                                   boolean isFirstResource) {
                         if (listener != null) {
                             listener.onLoadSuccessful();
                         }
                         return false;
                     }
                 })
-                .transition(DrawableTransitionOptions.withCrossFade(DEFAULT_TRANSITION_DURATION))
                 .into(imageView);
         } else {
             imageView.setImageResource(placeholder);
@@ -526,7 +515,7 @@ public class ImageLoader {
      * @param imageUrls Mảng các URL ảnh cần tải sẵn
      */
     public static void preloadImages(Context context, String[] imageUrls) {
-        if (context == null || imageUrls == null || imageUrls.length == 0) return;
+        if (context == null || imageUrls == null) return;
         
         for (String url : imageUrls) {
             if (url != null && !url.isEmpty()) {
