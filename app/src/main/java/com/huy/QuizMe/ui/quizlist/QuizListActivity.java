@@ -5,14 +5,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.huy.QuizMe.R;
+import com.huy.QuizMe.data.model.PagedResponse;
+import com.huy.QuizMe.data.model.Quiz;
 import com.huy.QuizMe.data.repository.QuizRepository;
+import com.huy.QuizMe.data.repository.Resource;
+import com.huy.QuizMe.utils.ApiUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class QuizListActivity extends AppCompatActivity {
     private RecyclerView rvQuizzes;
@@ -65,14 +73,14 @@ public class QuizListActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         quizListAdapter = new QuizListAdapter(this, new ArrayList<>());
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         rvQuizzes.setLayoutManager(layoutManager);
         rvQuizzes.setAdapter(quizListAdapter);
 
         // Setup pagination
         rvQuizzes.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
                 if (dy > 0) { // Scroll down
@@ -120,11 +128,50 @@ public class QuizListActivity extends AppCompatActivity {
     }
 
     private void loadDiscoverQuizzes() {
-        // Tải quiz khám phá với sắp xếp theo mới nhất
-
+        quizRepository.getPagedQuizzes(currentPage - 1, PAGE_SIZE, null, null, null, "newest", true, "newest")
+                .observe(this, new Observer<Resource<PagedResponse<Quiz>>>() {
+                    @Override
+                    public void onChanged(Resource<PagedResponse<Quiz>> resource) {
+                        isLoading = false;
+                        if (ApiUtils.isSuccess(resource) && resource.getData() != null) {
+                            PagedResponse<Quiz> response = resource.getData();
+                            List<Quiz> quizzes = response.getContent();
+                            if (currentPage == 1) {
+                                quizListAdapter.updateQuizzes(quizzes);
+                            } else {
+                                int start = quizListAdapter.getQuizzes().size();
+                                quizListAdapter.getQuizzes().addAll(quizzes);
+                                quizListAdapter.notifyItemRangeInserted(start, quizzes.size());
+                            }
+                            lastPage = response.isLast();
+                        } else if (ApiUtils.isError(resource)) {
+                            Toast.makeText(QuizListActivity.this, resource.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private void loadTrendingQuizzes() {
-
+        quizRepository.getPagedQuizzes(currentPage - 1, PAGE_SIZE, null, null, null, "popular", true, "popular")
+                .observe(this, new Observer<Resource<PagedResponse<Quiz>>>() {
+                    @Override
+                    public void onChanged(Resource<PagedResponse<Quiz>> resource) {
+                        isLoading = false;
+                        if (ApiUtils.isSuccess(resource) && resource.getData() != null) {
+                            PagedResponse<Quiz> response = resource.getData();
+                            List<Quiz> quizzes = response.getContent();
+                            if (currentPage == 1) {
+                                quizListAdapter.updateQuizzes(quizzes);
+                            } else {
+                                int start = quizListAdapter.getQuizzes().size();
+                                quizListAdapter.getQuizzes().addAll(quizzes);
+                                quizListAdapter.notifyItemRangeInserted(start, quizzes.size());
+                            }
+                            lastPage = response.isLast();
+                        } else if (ApiUtils.isError(resource)) {
+                            Toast.makeText(QuizListActivity.this, resource.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

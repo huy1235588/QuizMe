@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Quiz;
+import com.huy.QuizMe.utils.ImageLoader;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -46,7 +47,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.QuizVi
         this.quizzes.addAll(newQuizzes);
         notifyDataSetChanged();
     }
-    
+
     public List<Quiz> getQuizzes() {
         return quizzes;
     }
@@ -78,8 +79,8 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.QuizVi
 
         QuizViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivQuizBg = itemView.findViewById(R.id.iv_quiz_bg);
-            tvQuizCount = itemView.findViewById(R.id.tv_quiz_count);
+            ivQuizBg = itemView.findViewById(R.id.iv_quiz_thumbnail);
+            tvQuizCount = itemView.findViewById(R.id.tv_question_count);
             tvQuizTitle = itemView.findViewById(R.id.tv_quiz_title);
             ivAuthor = itemView.findViewById(R.id.iv_author);
             tvAuthorName = itemView.findViewById(R.id.tv_author_name);
@@ -95,21 +96,23 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.QuizVi
         void bind(Quiz quiz) {
             tvQuizTitle.setText(quiz.getTitle());
             tvAuthorName.setText(quiz.getCreatorName());
-            tvQuizCount.setText(quiz.getQuestionCount() + " Qs");
+            tvQuizCount.setText(quiz.getQuestionCount() + " Questions");
 
-//            // Load quiz thumbnail
-//            if (quiz.getQuizThumbnails() != null && !quiz.getQuizThumbnails().isEmpty()) {
-//                ImageLoader.loadImage(ivQuizBg, quiz.getQuizThumbnails(), ivQuizBg);
-//            } else {
-//                ivQuizBg.setImageResource(R.drawable.bg_quiz);
-//            }
-//
-//            // Load author avatar
-//            if (quiz.getCreatorAvatar() != null && !quiz.getCreatorAvatar().isEmpty()) {
-//                ImageLoader.loadImage(context, quiz.getCreatorAvatar(), ivAuthor);
-//            } else {
-//                ivAuthor.setImageResource(R.drawable.avatar_1);
-//            }
+            // Load quiz thumbnail
+            if (quiz.getQuizThumbnails() != null && !quiz.getQuizThumbnails().isEmpty()) {
+                ImageLoader.loadImageWithTransformations(
+                        context, ivQuizBg, quiz.getQuizThumbnails(), R.drawable.placeholder_quiz, R.drawable.placeholder_quiz);
+            } else {
+                ivQuizBg.setImageResource(R.drawable.bg_quiz);
+            }
+
+            // Load author avatar
+            if (quiz.getCreatorAvatar() != null && !quiz.getCreatorAvatar().isEmpty()) {
+                ImageLoader.loadImage(
+                        context, ivAuthor, quiz.getCreatorAvatar(), R.drawable.placeholder_quiz, R.drawable.placeholder_quiz);
+            } else {
+                ivAuthor.setImageResource(R.drawable.avatar_1);
+            }
         }
     }
 
