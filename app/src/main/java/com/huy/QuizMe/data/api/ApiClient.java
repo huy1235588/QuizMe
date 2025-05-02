@@ -61,4 +61,13 @@ public class ApiClient {
     public QuizService getQuizService() {
         return retrofit.create(QuizService.class);
     }
+
+    /**
+     * Lấy instance của UserService
+     *
+     * @return UserService
+     */
+    public UserService getUserService() {
+        return retrofit.create(UserService.class);
+    }
 }

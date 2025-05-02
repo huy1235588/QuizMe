@@ -17,10 +17,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.PagedResponse;
 import com.huy.QuizMe.data.model.Quiz;
+import com.huy.QuizMe.ui.adapters.AuthorAdapter;
 import com.huy.QuizMe.ui.adapters.CategoryAdapter;
 import com.huy.QuizMe.ui.adapters.QuizAdapter;
 import com.huy.QuizMe.ui.viewmodels.CategoryViewModel;
 import com.huy.QuizMe.ui.viewmodels.QuizViewModel;
+import com.huy.QuizMe.ui.viewmodels.UserViewModel;
 import com.huy.QuizMe.utils.ApiUtils;
 
 /**
@@ -32,17 +34,20 @@ public class HomeFragment extends Fragment {
     // ViewModel để lấy dữ liệu
     private CategoryViewModel categoryViewModel;
     private QuizViewModel quizViewModel;
+    private UserViewModel userViewModel;
 
     // UI components
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView rvDiscoverCategories;
     private RecyclerView rvCategory;
     private RecyclerView rvTrendingQuiz;
+    private RecyclerView rvAuthors;
 
     // Adapters
     private QuizAdapter discoverAdapter;
     private CategoryAdapter categoryAdapter;
     private QuizAdapter trendingQuizAdapter;
+    private AuthorAdapter authorAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +55,7 @@ public class HomeFragment extends Fragment {
         // Khởi tạo ViewModel
         categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
         quizViewModel = new ViewModelProvider(this).get(QuizViewModel.class);
+        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
     }
 
     @Nullable
@@ -64,6 +70,7 @@ public class HomeFragment extends Fragment {
         setupDiscoverSection(view);
         setupCategorySection(view);
         setupTrendingQuizSection(view);
+        setupAuthorsSection(view);
 
         // Tải dữ liệu từ API
         loadData();
@@ -154,12 +161,39 @@ public class HomeFragment extends Fragment {
     }
 
     /**
+     * Thiết lập phần hiển thị tác giả hàng đầu
+     */
+    private void setupAuthorsSection(View view) {
+        // Khởi tạo RecyclerView cho tác giả
+        rvAuthors = view.findViewById(R.id.rv_authors);
+        rvAuthors.setLayoutManager(
+                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        // Tạo adapter và thiết lập xử lý sự kiện click
+        authorAdapter = new AuthorAdapter(getContext());
+        authorAdapter.setOnAuthorClickListener(author -> {
+            // Xử lý khi người dùng chọn một tác giả
+            Toast.makeText(getContext(), "Đã chọn tác giả: " + author.getUsername(), Toast.LENGTH_SHORT).show();
+        });
+
+        // Gán adapter cho RecyclerView
+        rvAuthors.setAdapter(authorAdapter);
+
+        // Thiết lập nút "Xem tất cả"
+        view.findViewById(R.id.tv_authors_view_all).setOnClickListener(v -> {
+            // Chuyển đến màn hình hiển thị tất cả tác giả
+            Toast.makeText(getContext(), "Xem tất cả tác giả", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    /**
      * Tải dữ liệu cho tất cả các sections
      */
     private void loadData() {
         loadCategories();
         loadTrendingQuizzes();
         loadDiscoverQuizzes();
+        loadTopAuthors();
     }
 
     /**
@@ -233,5 +267,28 @@ public class HomeFragment extends Fragment {
                         Toast.makeText(getContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+    
+    /**
+     * Tải dữ liệu về top tác giả từ API
+     */
+    private void loadTopAuthors() {
+        // Tải danh sách top tác giả
+        userViewModel.getTopUsers().observe(getViewLifecycleOwner(), resource -> {
+            if (ApiUtils.isLoading(resource)) {
+                // Hiển thị trạng thái đang tải
+                swipeRefreshLayout.setRefreshing(true);
+            } else if (ApiUtils.isSuccess(resource)) {
+                // Cập nhật giao diện với danh sách tác giả
+                swipeRefreshLayout.setRefreshing(false);
+                if (resource.getData() != null) {
+                    authorAdapter.updateAuthors(resource.getData());
+                }
+            } else {
+                // Hiển thị thông báo lỗi
+                swipeRefreshLayout.setRefreshing(false);
+                Toast.makeText(getContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
