@@ -75,7 +75,7 @@ public class HomeViewModels {
          * @return LiveData với Resource danh sách danh mục
          */
         public LiveData<Resource<List<Category>>> loadAllCategories() {
-            if (!isNetworkConnected()) {
+            if (isNetworkConnected()) {
                 categories.setValue(createNetworkError());
                 return categories;
             }
@@ -90,7 +90,7 @@ public class HomeViewModels {
          * @return LiveData với Resource danh sách danh mục đang hoạt động
          */
         public LiveData<Resource<List<Category>>> loadActiveCategories() {
-            if (!isNetworkConnected()) {
+            if (isNetworkConnected()) {
                 activeCategories.setValue(createNetworkError());
                 return activeCategories;
             }
@@ -106,7 +106,7 @@ public class HomeViewModels {
          * @return LiveData với Resource của danh mục
          */
         public LiveData<Resource<Category>> loadCategoryById(int categoryId) {
-            if (!isNetworkConnected()) {
+            if (isNetworkConnected()) {
                 category.setValue(createNetworkError());
                 return category;
             }
@@ -150,7 +150,7 @@ public class HomeViewModels {
                 String search,
                 Boolean isPublic) {
 
-            if (!isNetworkConnected()) {
+            if (isNetworkConnected()) {
                 trendingQuizzes.setValue(createNetworkError());
                 return trendingQuizzes;
             }
@@ -181,7 +181,7 @@ public class HomeViewModels {
                 String search,
                 Boolean isPublic) {
 
-            if (!isNetworkConnected()) {
+            if (isNetworkConnected()) {
                 discoverQuizzes.setValue(createNetworkError());
                 return discoverQuizzes;
             }
@@ -228,7 +228,7 @@ public class HomeViewModels {
             // Nếu là trường hợp đặc biệt, tạo LiveData mới
             MediatorLiveData<Resource<PagedResponse<Quiz>>> customQuizzes = new MediatorLiveData<>();
             
-            if (!isNetworkConnected()) {
+            if (isNetworkConnected()) {
                 customQuizzes.setValue(createNetworkError());
                 return customQuizzes;
             }
@@ -246,7 +246,7 @@ public class HomeViewModels {
          * @return LiveData với Resource của quiz
          */
         public LiveData<Resource<Quiz>> loadQuizById(int quizId) {
-            if (!isNetworkConnected()) {
+            if (isNetworkConnected()) {
                 quiz.setValue(createNetworkError());
                 return quiz;
             }
@@ -275,7 +275,7 @@ public class HomeViewModels {
          * @return Danh sách người dùng
          */
         public LiveData<Resource<List<User>>> getTopUsers() {
-            if (!isNetworkConnected()) {
+            if (isNetworkConnected()) {
                 topUsers.setValue(createNetworkError());
                 return topUsers;
             }

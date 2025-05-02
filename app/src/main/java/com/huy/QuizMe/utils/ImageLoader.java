@@ -28,6 +28,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYouListener;
 
 import java.io.File;
 
@@ -58,10 +59,45 @@ public class ImageLoader {
         if (context == null || imageView == null) return;
         
         if (imageUrl != null && !imageUrl.isEmpty()) {
-            Glide.with(context)
-                .load(imageUrl)
+            // Cải thiện: sử dụng DiskCacheStrategy.ALL để đảm bảo lưu đúng trong cache
+            // Thêm skipMemoryCache(false) để đảm bảo sử dụng bộ nhớ đệm hiệu quả
+            RequestOptions options = new RequestOptions()
                 .placeholder(placeholder)
                 .error(errorImage)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(false);
+            
+            Glide.with(context)
+                .load(imageUrl)
+                .apply(options)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@Nullable GlideException e, Object model, 
+                                             Target<Drawable> target, boolean isFirstResource) {
+                        Log.e(TAG, "Image load failed: " + imageUrl + 
+                              (e != null ? " - " + e.getMessage() : ""));
+                        
+                        // Kiểm tra trạng thái mạng nếu load thất bại
+                        if (NetworkUtils.isNetworkAvailable(context)) {
+                            // Thử tải lại ảnh sau một khoảng thời gian nếu có mạng
+                            imageView.postDelayed(() -> {
+                                // Xóa cache cho URL này và thử lại
+                                clearCacheForUrl(context, imageUrl);
+                                loadImage(context, imageView, imageUrl, placeholder, errorImage);
+                            }, 2000); // Thử lại sau 2 giây
+                        }
+                        return false;
+                    }
+                    
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, 
+                                                Target<Drawable> target, DataSource dataSource, 
+                                                boolean isFirstResource) {
+                        Log.d(TAG, "Image loaded successfully: " + imageUrl + 
+                              " (source: " + dataSource.name() + ")");
+                        return false;
+                    }
+                })
                 .transition(DrawableTransitionOptions.withCrossFade(DEFAULT_TRANSITION_DURATION))
                 .into(imageView);
         } else {
@@ -138,12 +174,49 @@ public class ImageLoader {
             int paddingPx = (int) (30 * context.getResources().getDisplayMetrics().density);
             imageView.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
 
-            imageView.post(() -> {
-                if (context instanceof android.app.Activity && !((android.app.Activity) context).isDestroyed()) {
+            // Kiểm tra xem imageView đã được gắn vào window chưa
+            if (!imageView.isAttachedToWindow()) {
+                Log.w(TAG, "ImageView not attached to window, using post() to load SVG");
+            }
+            
+            // Sửa lỗi: thêm kiểm tra trạng thái của View và cài đặt listener
+            imageView.post(new Runnable() {
+                @Override
+                public void run() {
+                    // Kiểm tra context có hợp lệ không
+                    if (context instanceof android.app.Activity) {
+                        android.app.Activity activity = (android.app.Activity) context;
+                        if (activity.isFinishing() || activity.isDestroyed()) {
+                            Log.w(TAG, "Activity is finishing or destroyed, skipping SVG load");
+                            return;
+                        }
+                    }
+                    
+                    // Kiểm tra imageView có hợp lệ không
+                    if (imageView.getVisibility() != View.VISIBLE || !imageView.isShown()) {
+                        Log.w(TAG, "ImageView not visible or not shown, retrying SVG load");
+                        // Thử lại sau 100ms
+                        imageView.postDelayed(this, 100);
+                        return;
+                    }
+                    
+                    // Tải SVG với listener
                     GlideToVectorYou
                         .init()
                         .with(context)
                         .setPlaceHolder(placeholder, errorImage)
+                        .withListener(new GlideToVectorYouListener() {
+                            @Override
+                            public void onLoadFailed() {
+                                Log.e(TAG, "SVG load failed: " + url);
+                                imageView.setImageResource(errorImage);
+                            }
+                            
+                            @Override
+                            public void onResourceReady() {
+                                Log.d(TAG, "SVG loaded successfully: " + url);
+                            }
+                        })
                         .load(uri, imageView);
                 }
             });

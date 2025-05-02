@@ -15,14 +15,17 @@ public class NetworkUtils {
      * @return true nếu thiết bị có kết nối internet, false nếu không
      */
     public static boolean isNetworkAvailable(Context context) {
-        if (context == null) return true;
+        if (context == null) return false;
         
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager == null) return true;
+        if (connectivityManager == null) return false;
 
         NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.getActiveNetwork());
-        return capabilities == null || (!capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) &&
-                !capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) &&
-                !capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+        if (capabilities == null) return false;
+        
+        // Thiết bị có kết nối nếu có ít nhất một trong các loại kết nối sau
+        return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+               capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+               capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET);
     }
 }
