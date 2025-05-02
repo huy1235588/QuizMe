@@ -86,6 +86,10 @@ dependencies {
     // Glide for image loading
     implementation(libs.glide)
     annotationProcessor(libs.glide.compiler)
+    
+    // SVG support for Glide
+    implementation(libs.glidetovectoryou)
+    implementation (libs.okhttp3.integration)
 
     // SwipeRefreshLayout
     implementation(libs.swiperefreshlayout)

@@ -23,4 +23,9 @@
     <color name="defaultTextColor">#757575</color>
     <color name="defaultDividerColor">#BDBDBD</color>
     <color name="defaultIconColor">#9E9E9E</color>
+
+    <!-- Difficulty Colors -->
+    <color name="difficulty_easy">#4CAF50</color>
+    <color name="difficulty_medium">#FF9800</color>
+    <color name="difficulty_hard">#F44336</color>
 </resources>

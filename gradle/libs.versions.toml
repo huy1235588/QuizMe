@@ -1,6 +1,7 @@
 [versions]
 agp = "8.9.2"
 circleimageview = "3.1.0"
+glidetovectoryou = "v2.0.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -12,15 +13,17 @@ constraintlayout = "2.2.1"
 fragment = "1.8.6"
 navigation = "2.8.9"
 lifecycle = "2.8.7"
+okhttp3Integration = "4.4.0"
 recyclerview = "1.4.0"
 room = "2.7.1"
 retrofit = "2.11.0"
 gson = "2.11.0"
-glide = "4.15.0"
+glide = "4.16.0"
 swiperefreshlayout = "1.1.0"
 
 [libraries]
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
+glidetovectoryou = { module = "com.github.2coffees1team:GlideToVectorYou", version.ref = "glidetovectoryou" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -42,6 +45,7 @@ lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmode
 lifecycle-livedata = { group = "androidx.lifecycle", name = "lifecycle-livedata", version.ref = "lifecycle" }
 
 # RecyclerView
+okhttp3-integration = { module = "com.github.bumptech.glide:okhttp3-integration", version.ref = "okhttp3Integration" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 
 # Room Database

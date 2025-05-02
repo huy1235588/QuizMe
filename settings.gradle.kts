@@ -16,6 +16,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+         // Add JitPack repository for GlideToVectorYou
+        maven { url = uri("https://jitpack.io") }
     }
 }
 
