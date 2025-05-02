@@ -17,12 +17,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.PagedResponse;
 import com.huy.QuizMe.data.model.Quiz;
-import com.huy.QuizMe.ui.adapters.AuthorAdapter;
-import com.huy.QuizMe.ui.adapters.CategoryAdapter;
-import com.huy.QuizMe.ui.adapters.QuizAdapter;
-import com.huy.QuizMe.ui.viewmodels.CategoryViewModel;
-import com.huy.QuizMe.ui.viewmodels.QuizViewModel;
-import com.huy.QuizMe.ui.viewmodels.UserViewModel;
 import com.huy.QuizMe.utils.ApiUtils;
 
 /**
@@ -32,9 +26,9 @@ import com.huy.QuizMe.utils.ApiUtils;
 public class HomeFragment extends Fragment {
 
     // ViewModel để lấy dữ liệu
-    private CategoryViewModel categoryViewModel;
-    private QuizViewModel quizViewModel;
-    private UserViewModel userViewModel;
+    private HomeViewModels.CategoryViewModel categoryViewModel;
+    private HomeViewModels.QuizViewModel quizViewModel;
+    private HomeViewModels.UserViewModel userViewModel;
 
     // UI components
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -44,18 +38,18 @@ public class HomeFragment extends Fragment {
     private RecyclerView rvAuthors;
 
     // Adapters
-    private QuizAdapter discoverAdapter;
-    private CategoryAdapter categoryAdapter;
-    private QuizAdapter trendingQuizAdapter;
-    private AuthorAdapter authorAdapter;
+    private HomeAdapters.QuizAdapter discoverAdapter;
+    private HomeAdapters.CategoryAdapter categoryAdapter;
+    private HomeAdapters.QuizAdapter trendingQuizAdapter;
+    private HomeAdapters.AuthorAdapter authorAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Khởi tạo ViewModel
-        categoryViewModel = new ViewModelProvider(this).get(CategoryViewModel.class);
-        quizViewModel = new ViewModelProvider(this).get(QuizViewModel.class);
-        userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
+        categoryViewModel = new ViewModelProvider(this).get(HomeViewModels.CategoryViewModel.class);
+        quizViewModel = new ViewModelProvider(this).get(HomeViewModels.QuizViewModel.class);
+        userViewModel = new ViewModelProvider(this).get(HomeViewModels.UserViewModel.class);
     }
 
     @Nullable
@@ -97,7 +91,7 @@ public class HomeFragment extends Fragment {
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         // Tạo adapter và thiết lập xử lý sự kiện click
-        discoverAdapter = new QuizAdapter(getContext());
+        discoverAdapter = new HomeAdapters.QuizAdapter(getContext());
 
         // Gán adapter cho RecyclerView
         rvDiscoverCategories.setAdapter(discoverAdapter);
@@ -118,7 +112,7 @@ public class HomeFragment extends Fragment {
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         // Tạo adapter và thiết lập xử lý sự kiện click
-        categoryAdapter = new CategoryAdapter(getContext());
+        categoryAdapter = new HomeAdapters.CategoryAdapter(getContext());
         categoryAdapter.setOnCategoryClickListener(category -> {
             // Xử lý khi người dùng chọn một danh mục
             Toast.makeText(getContext(), "Đã chọn danh mục: " + category.getName(), Toast.LENGTH_SHORT).show();
@@ -144,7 +138,7 @@ public class HomeFragment extends Fragment {
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         // Tạo adapter và thiết lập xử lý sự kiện click
-        trendingQuizAdapter = new QuizAdapter(getContext());
+        trendingQuizAdapter = new HomeAdapters.QuizAdapter(getContext());
         trendingQuizAdapter.setOnQuizClickListener(quiz -> {
             // Xử lý khi người dùng chọn một quiz - chuyển đến trang chi tiết
             Toast.makeText(getContext(), "Đã chọn quiz: " + quiz.getTitle(), Toast.LENGTH_SHORT).show();
@@ -170,7 +164,7 @@ public class HomeFragment extends Fragment {
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         // Tạo adapter và thiết lập xử lý sự kiện click
-        authorAdapter = new AuthorAdapter(getContext());
+        authorAdapter = new HomeAdapters.AuthorAdapter(getContext());
         authorAdapter.setOnAuthorClickListener(author -> {
             // Xử lý khi người dùng chọn một tác giả
             Toast.makeText(getContext(), "Đã chọn tác giả: " + author.getUsername(), Toast.LENGTH_SHORT).show();
