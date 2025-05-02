@@ -30,6 +30,9 @@ public class Quiz {
     @SerializedName("creatorName")
     private String creatorName;
 
+    @SerializedName("creatorAvatar")
+    private String creatorAvatar;
+
     @SerializedName("difficulty")
     private String difficulty;
 
@@ -79,6 +82,10 @@ public class Quiz {
 
     public String getCreatorName() {
         return creatorName;
+    }
+
+    public String getCreatorAvatar() {
+        return creatorAvatar;
     }
 
     public String getDifficulty() {

@@ -1,6 +1,5 @@
 package com.huy.QuizMe.ui.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +16,8 @@ import com.huy.QuizMe.data.model.Quiz;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Adapter quản lý và hiển thị danh sách các quiz trong RecyclerView
@@ -70,14 +71,14 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.QuizViewHolder
 
         // Thiết lập thông tin cơ bản của quiz
         holder.tvQuizTitle.setText(quiz.getTitle());
-        holder.tvQuizCategory.setText(quiz.getCategoryName());
-        holder.tvQuestionCount.setText(String.format("%d câu hỏi", quiz.getQuestionCount()));
-
-        // Thiết lập độ khó và màu sắc tương ứng
-        setDifficultyWithColor(holder, quiz.getDifficulty());
+        holder.tvQuestionCount.setText(String.format("%d Questions", quiz.getQuestionCount()));
+        holder.tvCreatorName.setText(quiz.getCreatorName());
 
         // Tải ảnh thumbnail của quiz
         loadQuizThumbnail(holder.ivQuizImage, quiz.getQuizThumbnails());
+
+        // Tải ảnh avatar của người tạo quiz
+        loadCreatorAvatar(holder.ivCreatorAvatar, quiz.getCreatorAvatar());
 
         // Xử lý sự kiện click vào item quiz
         holder.itemView.setOnClickListener(v -> {
@@ -88,32 +89,20 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.QuizViewHolder
     }
 
     /**
-     * Thiết lập độ khó và màu sắc tương ứng
+     * Thiết lập ảnh avatar của người tạo quiz
      *
-     * @param holder     ViewHolder chứa view hiển thị độ khó
-     * @param difficulty Chuỗi thể hiện độ khó (EASY, MEDIUM, HARD)
+     * @param imageView View để hiển thị ảnh
+     * @param imageUrl  Đường dẫn ảnh cần tải
      */
-    private void setDifficultyWithColor(@NonNull QuizViewHolder holder, String difficulty) {
-        if (difficulty != null) {
-            holder.tvDifficulty.setText(difficulty);
-
-            // Áp dụng màu sắc dựa trên độ khó
-            int colorResId;
-            switch (difficulty.toUpperCase()) {
-                case "EASY":
-                    colorResId = R.color.difficulty_easy;
-                    break;
-                case "MEDIUM":
-                    colorResId = R.color.difficulty_medium;
-                    break;
-                case "HARD":
-                    colorResId = R.color.difficulty_hard;
-                    break;
-                default:
-                    colorResId = R.color.difficulty_medium;
-                    break;
-            }
-            holder.tvDifficulty.setBackgroundResource(colorResId);
+    private void loadCreatorAvatar(ImageView imageView, String imageUrl) {
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(context)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.placeholder_avatar)
+                    .error(R.drawable.placeholder_avatar)
+                    .into(imageView);
+        } else {
+            imageView.setImageResource(R.drawable.placeholder_avatar);
         }
     }
 
@@ -171,18 +160,16 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.QuizViewHolder
      */
     public static class QuizViewHolder extends RecyclerView.ViewHolder {
         ImageView ivQuizImage;
-        TextView tvQuizTitle;
-        TextView tvQuizCategory;
-        TextView tvQuestionCount;
-        TextView tvDifficulty;
+        TextView tvQuizTitle, tvQuestionCount, tvCreatorName;
+        CircleImageView ivCreatorAvatar;
 
         public QuizViewHolder(@NonNull View itemView) {
             super(itemView);
             ivQuizImage = itemView.findViewById(R.id.iv_quiz_image);
             tvQuizTitle = itemView.findViewById(R.id.tv_quiz_title);
-            tvQuizCategory = itemView.findViewById(R.id.tv_quiz_category);
             tvQuestionCount = itemView.findViewById(R.id.tv_question_count);
-            tvDifficulty = itemView.findViewById(R.id.tv_difficulty);
+            tvCreatorName = itemView.findViewById(R.id.tv_author_name);
+            ivCreatorAvatar = itemView.findViewById(R.id.iv_author_avatar);
         }
     }
 }

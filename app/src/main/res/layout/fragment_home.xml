@@ -294,9 +294,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
+                    android:orientation="horizontal"
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
-                    android:paddingBottom="16dp" />
+                    android:paddingBottom="16dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
             </LinearLayout>
 
             <!-- For additional padding at the bottom -->

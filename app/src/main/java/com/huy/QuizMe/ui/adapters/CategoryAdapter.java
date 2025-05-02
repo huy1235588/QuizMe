@@ -132,6 +132,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
             // Hiển thị ảnh placeholder trong khi tải
             imageView.setImageResource(R.drawable.placeholder_category);
 
+
+            // Thiết lập padding cho ImageView
+            int paddingPx = (int) (30 * context.getResources().getDisplayMetrics().density);
+            imageView.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
+
             // Sử dụng GlideToVectorYou để tải ảnh SVG
             imageView.post(() -> {
                 if (context instanceof android.app.Activity && !((android.app.Activity) context).isDestroyed()) {
@@ -143,7 +148,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                 }
             });
         } catch (Exception e) {
-            Log.e("CategoryAdapter", "Lỗi khi tải ảnh SVG: " + e.getMessage(), e);
+            Log.e("CategoryAdapter", "Error loading SVG image: " + e.getMessage());
             // Sử dụng ảnh mặc định khi không thể tải SVG
             imageView.setImageResource(R.drawable.placeholder_category);
         }

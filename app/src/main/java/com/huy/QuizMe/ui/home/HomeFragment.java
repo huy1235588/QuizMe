@@ -40,7 +40,7 @@ public class HomeFragment extends Fragment {
     private RecyclerView rvTrendingQuiz;
 
     // Adapters
-    private CategoryAdapter discoverAdapter;
+    private QuizAdapter discoverAdapter;
     private CategoryAdapter categoryAdapter;
     private QuizAdapter trendingQuizAdapter;
 
@@ -90,11 +90,7 @@ public class HomeFragment extends Fragment {
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         // Tạo adapter và thiết lập xử lý sự kiện click
-        discoverAdapter = new CategoryAdapter(getContext());
-        discoverAdapter.setOnCategoryClickListener(category -> {
-            // Xử lý khi người dùng chọn một danh mục - chuyển đến trang chi tiết
-            Toast.makeText(getContext(), "Đã chọn danh mục: " + category.getName(), Toast.LENGTH_SHORT).show();
-        });
+        discoverAdapter = new QuizAdapter(getContext());
 
         // Gán adapter cho RecyclerView
         rvDiscoverCategories.setAdapter(discoverAdapter);
@@ -102,7 +98,6 @@ public class HomeFragment extends Fragment {
         // Thiết lập nút "Xem tất cả"
         view.findViewById(R.id.tv_discover_view_all).setOnClickListener(v -> {
             // Chuyển đến màn hình hiển thị tất cả danh mục
-            Toast.makeText(getContext(), "Xem tất cả danh mục khám phá", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -138,7 +133,8 @@ public class HomeFragment extends Fragment {
     private void setupTrendingQuizSection(View view) {
         // Khởi tạo RecyclerView cho quiz thịnh hành
         rvTrendingQuiz = view.findViewById(R.id.rv_trending_quiz);
-        rvTrendingQuiz.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvTrendingQuiz.setLayoutManager(
+                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         // Tạo adapter và thiết lập xử lý sự kiện click
         trendingQuizAdapter = new QuizAdapter(getContext());
@@ -163,6 +159,7 @@ public class HomeFragment extends Fragment {
     private void loadData() {
         loadCategories();
         loadTrendingQuizzes();
+        loadDiscoverQuizzes();
     }
 
     /**
@@ -177,9 +174,8 @@ public class HomeFragment extends Fragment {
             } else if (ApiUtils.isSuccess(resource)) {
                 // Cập nhật giao diện với danh sách danh mục
                 swipeRefreshLayout.setRefreshing(false);
-                
+
                 // Cập nhật dữ liệu cho RecyclerView danh mục
-                discoverAdapter.updateCategories(resource.getData());
                 categoryAdapter.updateCategories(resource.getData());
             } else {
                 // Hiển thị thông báo lỗi
@@ -205,6 +201,31 @@ public class HomeFragment extends Fragment {
                         PagedResponse<Quiz> pagedResponse = resource.getData();
                         if (pagedResponse != null && pagedResponse.getContent() != null) {
                             trendingQuizAdapter.updateQuizzes(pagedResponse.getContent());
+                        }
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        swipeRefreshLayout.setRefreshing(false);
+                        Toast.makeText(getContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
+     * Tải dữ liệu quiz discover từ API
+     */
+    private void loadDiscoverQuizzes() {
+        // Tải quiz khám phá với sắp xếp theo độ phổ biến
+        quizViewModel.loadPagedQuizzes(0, 10, null, null, null, "popular", true, "newest")
+                .observe(getViewLifecycleOwner(), resource -> {
+                    if (ApiUtils.isLoading(resource)) {
+                        // Hiển thị trạng thái đang tải
+                        swipeRefreshLayout.setRefreshing(true);
+                    } else if (ApiUtils.isSuccess(resource)) {
+                        // Cập nhật giao diện với danh sách quiz
+                        swipeRefreshLayout.setRefreshing(false);
+                        PagedResponse<Quiz> pagedResponse = resource.getData();
+                        if (pagedResponse != null && pagedResponse.getContent() != null) {
+                            discoverAdapter.updateQuizzes(pagedResponse.getContent());
                         }
                     } else {
                         // Hiển thị thông báo lỗi
