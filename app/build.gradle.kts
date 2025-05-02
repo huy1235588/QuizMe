@@ -71,6 +71,7 @@ dependencies {
 
     // RecyclerView
     implementation(libs.recyclerview)
+    implementation(libs.circleimageview)
 
     // Room Database
     implementation(libs.room.runtime)
