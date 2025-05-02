@@ -15,12 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Category;
 import com.huy.QuizMe.data.model.Quiz;
 import com.huy.QuizMe.data.model.User;
+import com.huy.QuizMe.utils.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,26 +59,6 @@ public class HomeAdapters {
                 items.clear();
                 items.addAll(newItems);
                 notifyDataSetChanged();
-            }
-        }
-
-        /**
-         * Tải ảnh từ URL sử dụng Glide
-         * 
-         * @param imageView View để hiển thị ảnh
-         * @param imageUrl URL ảnh cần tải
-         * @param placeholder Resource ID của ảnh mặc định
-         * @param errorImage Resource ID của ảnh hiển thị khi lỗi
-         */
-        protected void loadImage(ImageView imageView, String imageUrl, @DrawableRes int placeholder, @DrawableRes int errorImage) {
-            if (imageUrl != null && !imageUrl.isEmpty()) {
-                Glide.with(context)
-                    .load(imageUrl)
-                    .placeholder(placeholder)
-                    .error(errorImage)
-                    .into(imageView);
-            } else {
-                imageView.setImageResource(placeholder);
             }
         }
     }
@@ -130,11 +109,13 @@ public class HomeAdapters {
             holder.tvQuestionCount.setText(String.format("%d Questions", quiz.getQuestionCount()));
             holder.tvCreatorName.setText(quiz.getCreatorName());
 
-            // Tải ảnh thumbnail và avatar
-            loadImage(holder.ivQuizImage, quiz.getQuizThumbnails(), 
+            // Tải ảnh thumbnail và avatar sử dụng ImageLoader
+            ImageLoader.loadImageWithTransformations(context, holder.ivQuizImage, quiz.getQuizThumbnails(), 
                     R.drawable.placeholder_quiz, R.drawable.placeholder_quiz);
-            loadImage(holder.ivCreatorAvatar, quiz.getCreatorAvatar(), 
-                    R.drawable.placeholder_avatar, R.drawable.placeholder_avatar);
+            
+            // Tải ảnh avatar với hiệu ứng tròn
+            ImageLoader.loadProfileImage(context, holder.ivCreatorAvatar, quiz.getCreatorAvatar(), 
+                    R.drawable.placeholder_avatar);
 
             // Xử lý sự kiện click
             holder.itemView.setOnClickListener(v -> {
@@ -219,8 +200,9 @@ public class HomeAdapters {
             Category category = items.get(position);
             holder.tvCategoryName.setText(category.getName());
 
-            // Tải hình ảnh cho danh mục
-            loadCategoryImage(category.getIconUrl(), holder.ivCategoryImage);
+            // Tải hình ảnh cho danh mục sử dụng ImageLoader với hỗ trợ SVG
+            ImageLoader.loadImageWithSvgSupport(context, holder.ivCategoryImage, 
+                    category.getIconUrl(), R.drawable.placeholder_category, R.drawable.placeholder_category);
 
             // Xử lý sự kiện click
             holder.itemView.setOnClickListener(v -> {
@@ -228,55 +210,6 @@ public class HomeAdapters {
                     listener.onCategoryClick(category);
                 }
             });
-        }
-
-        /**
-         * Tải hình ảnh cho danh mục, xử lý cả định dạng SVG và bitmap thông thường
-         *
-         * @param imageUrl  URL của hình ảnh cần tải
-         * @param imageView ImageView để hiển thị hình ảnh
-         */
-        private void loadCategoryImage(String imageUrl, ImageView imageView) {
-            if (imageUrl == null || imageUrl.isEmpty()) {
-                imageView.setImageResource(R.drawable.placeholder_category);
-                return;
-            }
-            
-            if (imageUrl.toLowerCase().endsWith(".svg")) {
-                loadSvgImage(imageUrl, imageView);
-            } else {
-                loadImage(imageView, imageUrl, 
-                        R.drawable.placeholder_category, R.drawable.placeholder_category);
-            }
-        }
-
-        /**
-         * Tải ảnh SVG sử dụng thư viện GlideToVectorYou
-         *
-         * @param url       URL của ảnh SVG
-         * @param imageView ImageView để hiển thị ảnh
-         */
-        private void loadSvgImage(String url, ImageView imageView) {
-            try {
-                Uri uri = Uri.parse(url);
-                imageView.setImageResource(R.drawable.placeholder_category);
-
-                int paddingPx = (int) (30 * context.getResources().getDisplayMetrics().density);
-                imageView.setPadding(paddingPx, paddingPx, paddingPx, paddingPx);
-
-                imageView.post(() -> {
-                    if (context instanceof android.app.Activity && !((android.app.Activity) context).isDestroyed()) {
-                        GlideToVectorYou
-                            .init()
-                            .with(context)
-                            .setPlaceHolder(R.drawable.placeholder_category, R.drawable.placeholder_category)
-                            .load(uri, imageView);
-                    }
-                });
-            } catch (Exception e) {
-                Log.e("CategoryAdapter", "Error loading SVG image: " + e.getMessage());
-                imageView.setImageResource(R.drawable.placeholder_category);
-            }
         }
 
         /**
@@ -326,9 +259,8 @@ public class HomeAdapters {
             int colorPosition = position % BACKGROUND_COLORS.length;
             holder.ivAuthor.setCircleBackgroundColor(BACKGROUND_COLORS[colorPosition]);
             
-            // Load author avatar
-            loadImage(holder.ivAuthor, author.getProfileImage(), 
-                    R.drawable.avatar_1, R.drawable.avatar_1);
+            // Load author avatar với hiệu ứng tròn
+            ImageLoader.loadProfileImage(context, holder.ivAuthor, author.getProfileImage(), R.drawable.avatar_1);
 
             // Set click listener
             holder.itemView.setOnClickListener(v -> {
@@ -365,6 +297,43 @@ public class HomeAdapters {
                 super(itemView);
                 ivAuthor = itemView.findViewById(R.id.iv_author);
                 tvAuthorName = itemView.findViewById(R.id.tv_author_name);
+            }
+        }
+    }
+    
+    /**
+     * Phương thức này sẽ tải trước hình ảnh cho danh sách các quiz
+     * Giúp cải thiện trải nghiệm người dùng khi cuộn danh sách
+     *
+     * @param context Context để tải ảnh
+     * @param quizzes Danh sách quiz cần tải trước ảnh
+     */
+    public static void preloadQuizImages(Context context, List<Quiz> quizzes) {
+        if (context == null || quizzes == null || quizzes.isEmpty()) return;
+        
+        for (Quiz quiz : quizzes) {
+            if (quiz.getQuizThumbnails() != null && !quiz.getQuizThumbnails().isEmpty()) {
+                ImageLoader.preloadImage(context, quiz.getQuizThumbnails(), 0, 0);
+            }
+            if (quiz.getCreatorAvatar() != null && !quiz.getCreatorAvatar().isEmpty()) {
+                ImageLoader.preloadImage(context, quiz.getCreatorAvatar(), 0, 0);
+            }
+        }
+    }
+    
+    /**
+     * Phương thức này sẽ tải trước hình ảnh cho danh sách các category
+     * Giúp cải thiện trải nghiệm người dùng khi cuộn danh sách
+     *
+     * @param context Context để tải ảnh
+     * @param categories Danh sách category cần tải trước ảnh
+     */
+    public static void preloadCategoryImages(Context context, List<Category> categories) {
+        if (context == null || categories == null || categories.isEmpty()) return;
+        
+        for (Category category : categories) {
+            if (category.getIconUrl() != null && !category.getIconUrl().isEmpty()) {
+                ImageLoader.preloadImage(context, category.getIconUrl(), 0, 0);
             }
         }
     }

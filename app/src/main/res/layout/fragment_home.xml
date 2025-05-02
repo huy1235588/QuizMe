@@ -304,7 +304,7 @@
             <!-- For additional padding at the bottom -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="80dp" />
+                android:layout_height="20dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

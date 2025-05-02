@@ -122,7 +122,8 @@ public class HomeViewModels {
      */
     public static class QuizViewModel extends BaseViewModel {
         private final QuizRepository quizRepository;
-        private final MediatorLiveData<Resource<PagedResponse<Quiz>>> quizzes = new MediatorLiveData<>();
+        private final MediatorLiveData<Resource<PagedResponse<Quiz>>> trendingQuizzes = new MediatorLiveData<>();
+        private final MediatorLiveData<Resource<PagedResponse<Quiz>>> discoverQuizzes = new MediatorLiveData<>();
         private final MediatorLiveData<Resource<Quiz>> quiz = new MediatorLiveData<>();
 
         public QuizViewModel(@NonNull Application application) {
@@ -131,7 +132,71 @@ public class HomeViewModels {
         }
 
         /**
+         * Tải quiz thịnh hành với các tùy chọn lọc
+         *
+         * @param page       Số trang (dựa trên 0)
+         * @param pageSize   Số lượng item trên mỗi trang
+         * @param categoryId Lọc theo ID danh mục (tùy chọn)
+         * @param difficulty Lọc theo độ khó (tùy chọn)
+         * @param search     Từ khóa tìm kiếm (tùy chọn)
+         * @param isPublic   Lọc theo trạng thái công khai (tùy chọn)
+         * @return LiveData với Resource phản hồi phân trang của quiz thịnh hành
+         */
+        public LiveData<Resource<PagedResponse<Quiz>>> loadTrendingQuizzes(
+                Integer page,
+                Integer pageSize,
+                Integer categoryId,
+                String difficulty,
+                String search,
+                Boolean isPublic) {
+
+            if (!isNetworkConnected()) {
+                trendingQuizzes.setValue(createNetworkError());
+                return trendingQuizzes;
+            }
+
+            // Luôn sử dụng "popular" cho sắp xếp và tab đối với quiz thịnh hành
+            LiveData<Resource<PagedResponse<Quiz>>> source = quizRepository.getPagedQuizzes(
+                    page, pageSize, categoryId, difficulty, search, "popular", isPublic, "popular");
+            trendingQuizzes.addSource(source, trendingQuizzes::setValue);
+            return trendingQuizzes;
+        }
+
+        /**
+         * Tải quiz khám phá (mới nhất) với các tùy chọn lọc
+         *
+         * @param page       Số trang (dựa trên 0)
+         * @param pageSize   Số lượng item trên mỗi trang
+         * @param categoryId Lọc theo ID danh mục (tùy chọn)
+         * @param difficulty Lọc theo độ khó (tùy chọn)
+         * @param search     Từ khóa tìm kiếm (tùy chọn)
+         * @param isPublic   Lọc theo trạng thái công khai (tùy chọn)
+         * @return LiveData với Resource phản hồi phân trang của quiz mới nhất
+         */
+        public LiveData<Resource<PagedResponse<Quiz>>> loadDiscoverQuizzes(
+                Integer page,
+                Integer pageSize,
+                Integer categoryId,
+                String difficulty,
+                String search,
+                Boolean isPublic) {
+
+            if (!isNetworkConnected()) {
+                discoverQuizzes.setValue(createNetworkError());
+                return discoverQuizzes;
+            }
+
+            // Luôn sử dụng "newest" cho sắp xếp và tab đối với quiz khám phá
+            LiveData<Resource<PagedResponse<Quiz>>> source = quizRepository.getPagedQuizzes(
+                    page, pageSize, categoryId, difficulty, search, "newest", isPublic, "newest");
+            discoverQuizzes.addSource(source, discoverQuizzes::setValue);
+            return discoverQuizzes;
+        }
+
+        /**
          * Tải tất cả quiz với các tùy chọn lọc
+         * Chỉ sử dụng trong trường hợp cần filter đặc biệt, thông thường nên sử dụng
+         * loadTrendingQuizzes hoặc loadDiscoverQuizzes
          *
          * @param page       Số trang (dựa trên 0)
          * @param pageSize   Số lượng item trên mỗi trang
@@ -143,7 +208,7 @@ public class HomeViewModels {
          * @param tab        Lọc theo tab (tùy chọn)
          * @return LiveData với Resource phản hồi phân trang của quiz
          */
-        public LiveData<Resource<PagedResponse<Quiz>>> loadQuizzes(
+        public LiveData<Resource<PagedResponse<Quiz>>> loadPagedQuizzes(
                 Integer page,
                 Integer pageSize,
                 Integer categoryId,
@@ -153,35 +218,25 @@ public class HomeViewModels {
                 Boolean isPublic,
                 String tab) {
 
-            if (!isNetworkConnected()) {
-                quizzes.setValue(createNetworkError());
-                return quizzes;
+            // Tùy thuộc vào sort và tab, sử dụng LiveData phù hợp
+            if ("popular".equals(sort) || "popular".equals(tab)) {
+                return loadTrendingQuizzes(page, pageSize, categoryId, difficulty, search, isPublic);
+            } else if ("newest".equals(sort) || "newest".equals(tab)) {
+                return loadDiscoverQuizzes(page, pageSize, categoryId, difficulty, search, isPublic);
             }
 
-            LiveData<Resource<PagedResponse<Quiz>>> source = quizRepository.getAllQuizzes(
-                    page, pageSize, categoryId, difficulty, search, sort, isPublic, tab);
-            quizzes.addSource(source, quizzes::setValue);
-            return quizzes;
-        }
+            // Nếu là trường hợp đặc biệt, tạo LiveData mới
+            MediatorLiveData<Resource<PagedResponse<Quiz>>> customQuizzes = new MediatorLiveData<>();
+            
+            if (!isNetworkConnected()) {
+                customQuizzes.setValue(createNetworkError());
+                return customQuizzes;
+            }
 
-        /**
-         * Tải quiz phân trang
-         *
-         * @param page     Số trang (dựa trên 0)
-         * @param pageSize Số lượng item trên mỗi trang
-         * @return LiveData với Resource phản hồi phân trang của quiz
-         */
-        public LiveData<Resource<PagedResponse<Quiz>>> loadPagedQuizzes(
-                Integer page,
-                Integer pageSize,
-                Integer categoryId,
-                String difficulty,
-                String search,
-                String sort,
-                Boolean isPublic,
-                String tab
-        ) {
-            return loadQuizzes(page, pageSize, categoryId, difficulty, search, sort, isPublic, tab);
+            LiveData<Resource<PagedResponse<Quiz>>> source = quizRepository.getPagedQuizzes(
+                    page, pageSize, categoryId, difficulty, search, sort, isPublic, tab);
+            customQuizzes.addSource(source, customQuizzes::setValue);
+            return customQuizzes;
         }
 
         /**

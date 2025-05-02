@@ -92,6 +92,10 @@ public class HomeFragment extends Fragment {
 
         // Tạo adapter và thiết lập xử lý sự kiện click
         discoverAdapter = new HomeAdapters.QuizAdapter(getContext());
+        discoverAdapter.setOnQuizClickListener(quiz -> {
+            // Xử lý khi người dùng chọn một quiz trong phần discover
+            Toast.makeText(getContext(), "Đã chọn quiz discover: " + quiz.getTitle(), Toast.LENGTH_SHORT).show();
+        });
 
         // Gán adapter cho RecyclerView
         rvDiscoverCategories.setAdapter(discoverAdapter);
@@ -99,6 +103,7 @@ public class HomeFragment extends Fragment {
         // Thiết lập nút "Xem tất cả"
         view.findViewById(R.id.tv_discover_view_all).setOnClickListener(v -> {
             // Chuyển đến màn hình hiển thị tất cả danh mục
+            Toast.makeText(getContext(), "Xem tất cả quiz discover", Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -204,7 +209,7 @@ public class HomeFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
 
                 // Cập nhật dữ liệu cho RecyclerView danh mục
-                categoryAdapter.updateCategories(resource.getData());
+                categoryAdapter.updateItems(resource.getData());
             } else {
                 // Hiển thị thông báo lỗi
                 swipeRefreshLayout.setRefreshing(false);
@@ -218,7 +223,7 @@ public class HomeFragment extends Fragment {
      */
     private void loadTrendingQuizzes() {
         // Tải quiz thịnh hành với sắp xếp theo độ phổ biến
-        quizViewModel.loadPagedQuizzes(0, 10, null, null, null, "popular", true, null)
+        quizViewModel.loadTrendingQuizzes(0, 10, null, null, null, true)
                 .observe(getViewLifecycleOwner(), resource -> {
                     if (ApiUtils.isLoading(resource)) {
                         // Hiển thị trạng thái đang tải
@@ -228,7 +233,7 @@ public class HomeFragment extends Fragment {
                         swipeRefreshLayout.setRefreshing(false);
                         PagedResponse<Quiz> pagedResponse = resource.getData();
                         if (pagedResponse != null && pagedResponse.getContent() != null) {
-                            trendingQuizAdapter.updateQuizzes(pagedResponse.getContent());
+                            trendingQuizAdapter.updateItems(pagedResponse.getContent());
                         }
                     } else {
                         // Hiển thị thông báo lỗi
@@ -242,8 +247,8 @@ public class HomeFragment extends Fragment {
      * Tải dữ liệu quiz discover từ API
      */
     private void loadDiscoverQuizzes() {
-        // Tải quiz khám phá với sắp xếp theo độ phổ biến
-        quizViewModel.loadPagedQuizzes(0, 10, null, null, null, "popular", true, "newest")
+        // Tải quiz khám phá với sắp xếp theo mới nhất
+        quizViewModel.loadDiscoverQuizzes(0, 10, null, null, null, true)
                 .observe(getViewLifecycleOwner(), resource -> {
                     if (ApiUtils.isLoading(resource)) {
                         // Hiển thị trạng thái đang tải
@@ -253,7 +258,7 @@ public class HomeFragment extends Fragment {
                         swipeRefreshLayout.setRefreshing(false);
                         PagedResponse<Quiz> pagedResponse = resource.getData();
                         if (pagedResponse != null && pagedResponse.getContent() != null) {
-                            discoverAdapter.updateQuizzes(pagedResponse.getContent());
+                            discoverAdapter.updateItems(pagedResponse.getContent());
                         }
                     } else {
                         // Hiển thị thông báo lỗi
@@ -276,7 +281,7 @@ public class HomeFragment extends Fragment {
                 // Cập nhật giao diện với danh sách tác giả
                 swipeRefreshLayout.setRefreshing(false);
                 if (resource.getData() != null) {
-                    authorAdapter.updateAuthors(resource.getData());
+                    authorAdapter.updateItems(resource.getData());
                 }
             } else {
                 // Hiển thị thông báo lỗi
