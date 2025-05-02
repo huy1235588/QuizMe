@@ -212,7 +212,7 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
             </LinearLayout>
 
-            <!-- Top Collections Section -->
+            <!-- Top Category Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -231,12 +231,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:text="Top Collections"
+                        android:text="Top Category"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/tv_collections_view_all"
+                        android:id="@+id/tv_category_view_all"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -244,9 +244,9 @@
                         android:textColor="#9370DB" />
                 </RelativeLayout>
 
-                <!-- Horizontal recyclerview for collections -->
+                <!-- Horizontal recyclerview for category -->
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_collections"
+                    android:id="@+id/rv_category"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"

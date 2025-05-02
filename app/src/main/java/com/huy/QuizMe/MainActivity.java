@@ -10,24 +10,37 @@ import com.huy.QuizMe.ui.home.HomeFragment;
 import com.huy.QuizMe.ui.library.LibraryFragment;
 import com.huy.QuizMe.ui.profile.ProfileFragment;
 
+/**
+ * MainActivity - màn hình chính của ứng dụng QuizMe
+ * Quản lý điều hướng giữa các màn hình chính thông qua bottom navigation
+ */
 public class MainActivity extends AppCompatActivity {
+    
+    // ViewBinding cho activity main
     private ActivityMainBinding binding;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Sử dụng ViewBinding để truy cập view
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Khởi tạo Fragment HomeFragment
-        HomeFragment homeFragment = new HomeFragment();
-        // Thay thế Fragment mặc định
-        replaceFragment(homeFragment);
+        // Hiển thị màn hình trang chủ mặc định khi khởi động ứng dụng
+        replaceFragment(new HomeFragment());
 
-        // Thiết lập sự kiện cho các nút điều hướng
+        // Thiết lập xử lý sự kiện cho bottom navigation
+        setupBottomNavigation();
+    }
+    
+    /**
+     * Thiết lập xử lý sự kiện cho bottom navigation
+     */
+    private void setupBottomNavigation() {
         binding.bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
-            // Thay thế Fragment dựa trên nút được chọn
+            // Chuyển đổi giữa các fragment dựa trên menu item được chọn
             if (itemId == R.id.nav_home) {
                 replaceFragment(new HomeFragment());
             } else if (itemId == R.id.nav_library) {
@@ -43,12 +56,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Thay thế Fragment hiện tại bằng Fragment mới
+     * Thay thế Fragment hiện tại trong container bằng Fragment mới
      * @param fragment Fragment mới để hiển thị
      */
     private void replaceFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frm_container, fragment)
                 .commit();
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Giải phóng binding khi activity bị hủy để tránh memory leak
+        binding = null;
     }
 }

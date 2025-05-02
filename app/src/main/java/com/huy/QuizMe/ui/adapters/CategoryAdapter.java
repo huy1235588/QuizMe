@@ -14,28 +14,46 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou;
-import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYouListener;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Category;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter quản lý và hiển thị danh sách các danh mục (category) trong RecyclerView
+ */
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
 
+    // Danh sách các danh mục được hiển thị
     private final List<Category> categories;
+    // Context để load ảnh và tài nguyên
     private final Context context;
+    // Listener xử lý sự kiện click vào danh mục
     private OnCategoryClickListener listener;
 
+    /**
+     * Khởi tạo adapter với context
+     *
+     * @param context Context của activity hoặc fragment
+     */
     public CategoryAdapter(Context context) {
         this.context = context;
         this.categories = new ArrayList<>();
     }
 
+    /**
+     * Interface xử lý sự kiện khi người dùng click vào một danh mục
+     */
     public interface OnCategoryClickListener {
         void onCategoryClick(Category category);
     }
 
+    /**
+     * Thiết lập listener cho sự kiện click vào danh mục
+     *
+     * @param listener Listener xử lý sự kiện
+     */
     public void setOnCategoryClickListener(OnCategoryClickListener listener) {
         this.listener = listener;
     }
@@ -43,6 +61,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     @NonNull
     @Override
     public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        // Tạo view mới từ layout item_category
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_category, parent, false);
         return new CategoryViewHolder(view);
     }
@@ -52,22 +71,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         Category category = categories.get(position);
         holder.tvCategoryName.setText(category.getName());
 
-        // Load image from category
-        if (category.getIconUrl() != null && !category.getIconUrl().isEmpty()) {
-            if (isSvgUrl(category.getIconUrl())) {
-                loadSvgImage(category.getIconUrl(), holder.ivCategoryImage);
-            } else {
-                // Regular image handling with Glide
-                Glide.with(context)
-                        .load(category.getIconUrl())
-                        .placeholder(R.drawable.placeholder_category)
-                        .error(R.drawable.placeholder_category)
-                        .into(holder.ivCategoryImage);
-            }
-        } else {
-            holder.ivCategoryImage.setImageResource(R.drawable.placeholder_category);
-        }
+        // Tải hình ảnh cho danh mục
+        loadCategoryImage(category.getIconUrl(), holder.ivCategoryImage);
 
+        // Xử lý sự kiện click vào item danh mục
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onCategoryClick(category);
@@ -75,21 +82,57 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         });
     }
 
-    // Check if URL points to an SVG image
+    /**
+     * Tải hình ảnh cho danh mục, xử lý cả định dạng SVG và bitmap thông thường
+     *
+     * @param imageUrl  URL của hình ảnh cần tải
+     * @param imageView ImageView để hiển thị hình ảnh
+     */
+    private void loadCategoryImage(String imageUrl, ImageView imageView) {
+        // Kiểm tra URL có hợp lệ không
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            if (isSvgUrl(imageUrl)) {
+                // Xử lý riêng cho ảnh SVG
+                loadSvgImage(imageUrl, imageView);
+            } else {
+                // Xử lý cho ảnh bitmap thông thường
+                Glide.with(context)
+                        .load(imageUrl)
+                        .placeholder(R.drawable.placeholder_category)
+                        .error(R.drawable.placeholder_category)
+                        .into(imageView);
+            }
+        } else {
+            // Sử dụng ảnh mặc định khi URL trống
+            imageView.setImageResource(R.drawable.placeholder_category);
+        }
+    }
+
+    /**
+     * Kiểm tra URL có phải là ảnh SVG hay không
+     *
+     * @param url URL cần kiểm tra
+     * @return true nếu URL trỏ đến file SVG
+     */
     private boolean isSvgUrl(String url) {
         return url != null && url.toLowerCase().endsWith(".svg");
     }
 
-    // Load SVG image using GlideToVectorYou library
+    /**
+     * Tải ảnh SVG sử dụng thư viện GlideToVectorYou
+     *
+     * @param url       URL của ảnh SVG
+     * @param imageView ImageView để hiển thị ảnh
+     */
     private void loadSvgImage(String url, ImageView imageView) {
         try {
-            // Parse the URL to URI
+            // Chuyển đổi URL thành URI
             Uri uri = Uri.parse(url);
 
-            // Set placeholder while loading
+            // Hiển thị ảnh placeholder trong khi tải
             imageView.setImageResource(R.drawable.placeholder_category);
 
-            // Use GlideToVectorYou to load SVG with a listener for better error handling
+            // Sử dụng GlideToVectorYou để tải ảnh SVG
             imageView.post(() -> {
                 if (context instanceof android.app.Activity && !((android.app.Activity) context).isDestroyed()) {
                     GlideToVectorYou
@@ -100,8 +143,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
                 }
             });
         } catch (Exception e) {
-            Log.e("CategoryAdapter", "Error loading SVG: " + e.getMessage(), e);
-            // Fallback to default image if SVG loading fails
+            Log.e("CategoryAdapter", "Lỗi khi tải ảnh SVG: " + e.getMessage(), e);
+            // Sử dụng ảnh mặc định khi không thể tải SVG
             imageView.setImageResource(R.drawable.placeholder_category);
         }
     }
@@ -111,6 +154,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         return categories.size();
     }
 
+    /**
+     * Cập nhật toàn bộ danh sách danh mục và thông báo thay đổi
+     *
+     * @param newCategories Danh sách danh mục mới
+     */
     public void updateCategories(List<Category> newCategories) {
         categories.clear();
         if (newCategories != null) {
@@ -119,7 +167,10 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         notifyDataSetChanged();
     }
 
-    static class CategoryViewHolder extends RecyclerView.ViewHolder {
+    /**
+     * ViewHolder chứa các view thành phần trong item danh mục
+     */
+    public static class CategoryViewHolder extends RecyclerView.ViewHolder {
         ImageView ivCategoryImage;
         TextView tvCategoryName;
 
