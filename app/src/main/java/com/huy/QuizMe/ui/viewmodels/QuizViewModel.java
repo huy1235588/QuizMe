@@ -28,14 +28,15 @@ public class QuizViewModel extends AndroidViewModel {
 
     /**
      * Tải tất cả quiz với các tùy chọn lọc
-     * @param page Số trang (dựa trên 0)
-     * @param pageSize Số lượng item trên mỗi trang
+     *
+     * @param page       Số trang (dựa trên 0)
+     * @param pageSize   Số lượng item trên mỗi trang
      * @param categoryId Lọc theo ID danh mục (tùy chọn)
      * @param difficulty Lọc theo độ khó (tùy chọn)
-     * @param search Từ khóa tìm kiếm (tùy chọn)
-     * @param sort Tùy chọn sắp xếp (tùy chọn)
-     * @param isPublic Lọc theo trạng thái công khai (tùy chọn)
-     * @param tab Lọc theo tab (tùy chọn)
+     * @param search     Từ khóa tìm kiếm (tùy chọn)
+     * @param sort       Tùy chọn sắp xếp (tùy chọn)
+     * @param isPublic   Lọc theo trạng thái công khai (tùy chọn)
+     * @param tab        Lọc theo tab (tùy chọn)
      * @return LiveData với Resource phản hồi phân trang của quiz
      */
     public LiveData<Resource<PagedResponse<Quiz>>> loadQuizzes(
@@ -47,7 +48,7 @@ public class QuizViewModel extends AndroidViewModel {
             String sort,
             Boolean isPublic,
             String tab) {
-        
+
         if (!checkNetworkConnection()) {
             return quizzes;
         }
@@ -59,7 +60,44 @@ public class QuizViewModel extends AndroidViewModel {
     }
 
     /**
+     * Tải quiz phân trang
+     *
+     * @param page     Số trang (dựa trên 0)
+     * @param pageSize Số lượng item trên mỗi trang
+     * @return LiveData với Resource phản hồi phân trang của quiz
+     */
+    public LiveData<Resource<PagedResponse<Quiz>>> loadPagedQuizzes(
+            Integer page,
+            Integer pageSize,
+            Integer categoryId,
+            String difficulty,
+            String search,
+            String sort,
+            Boolean isPublic,
+            String tab
+    ) {
+
+        if (!checkNetworkConnection()) {
+            return quizzes;
+        }
+
+        LiveData<Resource<PagedResponse<Quiz>>> source = quizRepository.getPagedQuizzes(
+                page,
+                pageSize,
+                categoryId,
+                difficulty,
+                search,
+                sort,
+                isPublic,
+                tab
+        );
+        quizzes.addSource(source, quizzes::setValue);
+        return quizzes;
+    }
+
+    /**
      * Tải một quiz cụ thể theo ID
+     *
      * @param quizId ID của quiz cần tải
      * @return LiveData với Resource của quiz
      */
@@ -72,9 +110,10 @@ public class QuizViewModel extends AndroidViewModel {
         quiz.addSource(source, quiz::setValue);
         return quiz;
     }
-    
+
     /**
      * Kiểm tra kết nối mạng và đặt trạng thái lỗi nếu không có kết nối
+     *
      * @return true nếu có kết nối mạng, false nếu không
      */
     private boolean checkNetworkConnection() {

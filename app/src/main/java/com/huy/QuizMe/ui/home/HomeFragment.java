@@ -58,8 +58,8 @@ public class HomeFragment extends Fragment {
         
         // Initialize RecyclerViews and adapters
 //        setupDiscoverSection(view);
-        setupCollectionsSection(view);
-//        setupTrendingQuizSection(view);
+//        setupCollectionsSection(view);
+        setupTrendingQuizSection(view);
         
         // Load data from API
         loadData();
@@ -127,8 +127,8 @@ public class HomeFragment extends Fragment {
     }
     
     private void loadData() {
-        loadCategories();
-//        loadTrendingQuizzes();
+//        loadCategories();
+        loadTrendingQuizzes();
     }
     
     private void loadCategories() {
@@ -153,7 +153,7 @@ public class HomeFragment extends Fragment {
     
     private void loadTrendingQuizzes() {
         // Load trending quizzes with sorting by popularity
-        quizViewModel.loadQuizzes(0, 10, null, null, null, "popular", true, null)
+        quizViewModel.loadPagedQuizzes(0, 10, null, null, null, "popular", true, null)
                 .observe(getViewLifecycleOwner(), resource -> {
                     if (ApiUtils.isLoading(resource)) {
                         // Show loading indicator if needed
