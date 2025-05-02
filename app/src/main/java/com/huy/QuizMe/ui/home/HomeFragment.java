@@ -1,5 +1,6 @@
 package com.huy.QuizMe.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.PagedResponse;
 import com.huy.QuizMe.data.model.Quiz;
+import com.huy.QuizMe.ui.discover.QuizListActivity;
 import com.huy.QuizMe.utils.ApiUtils;
 
 /**
@@ -59,7 +61,7 @@ public class HomeFragment extends Fragment {
 
         // Khởi tạo SwipeRefreshLayout để làm mới dữ liệu
         setupSwipeRefresh(view);
-        
+
         // Khởi tạo các sections
         setupDiscoverSection(view);
         setupCategorySection(view);
@@ -71,7 +73,7 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
-    
+
     /**
      * Thiết lập SwipeRefreshLayout để người dùng có thể kéo xuống làm mới dữ liệu
      */
@@ -102,8 +104,11 @@ public class HomeFragment extends Fragment {
 
         // Thiết lập nút "Xem tất cả"
         view.findViewById(R.id.tv_discover_view_all).setOnClickListener(v -> {
-            // Chuyển đến màn hình hiển thị tất cả danh mục
-            Toast.makeText(getContext(), "Xem tất cả quiz discover", Toast.LENGTH_SHORT).show();
+            // Chuyển đến màn hình hiển thị tất cả quiz
+            Intent intent = new Intent(getActivity(), QuizListActivity.class);
+            intent.putExtra("TITLE", "Popular Quizzes");
+            intent.putExtra("TYPE", "discover");
+            startActivity(intent);
         });
     }
 
@@ -154,8 +159,11 @@ public class HomeFragment extends Fragment {
 
         // Thiết lập nút "Xem tất cả"
         view.findViewById(R.id.tv_trending_view_all).setOnClickListener(v -> {
-            // Chuyển đến màn hình hiển thị tất cả quiz
-            Toast.makeText(getContext(), "Xem tất cả quiz", Toast.LENGTH_SHORT).show();
+            // Chuyển đến
+            Intent intent = new Intent(getActivity(), QuizListActivity.class);
+            intent.putExtra("TITLE", "Trending Quizzes");
+            intent.putExtra("TYPE", "trending");
+            startActivity(intent);
         });
     }
 
@@ -267,7 +275,7 @@ public class HomeFragment extends Fragment {
                     }
                 });
     }
-    
+
     /**
      * Tải dữ liệu về top tác giả từ API
      */
