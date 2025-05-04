@@ -1,8 +1,10 @@
 package com.huy.QuizMe.data.model;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Question {
+public class Question implements Serializable {
     private Long id;
     private Long quizId;
     private String quizTitle;
@@ -40,6 +42,7 @@ public class Question {
         this.options = options;
     }
 
+    // Phương thức để lấy câu trả lời đúng từ danh sách các tùy chọn
     public String getCorrectAnswer() {
         for (int i = 0; i < options.size(); i++) {
             if (options.get(i).getIsCorrect()) {
@@ -48,6 +51,17 @@ public class Question {
         }
 
         return null;
+    }
+
+    // Phương thức để lấy danh sách các câu trả lời sai từ danh sách các tùy chọn
+    public List<String> getWrongAnswers() {
+        List<String> wrongAnswers = new ArrayList<>();
+        for (int i = 0; i < options.size(); i++) {
+            if (!options.get(i).getIsCorrect()) {
+                wrongAnswers.add(options.get(i).getContent());
+            }
+        }
+        return wrongAnswers;
     }
 
     // Getters and setters
