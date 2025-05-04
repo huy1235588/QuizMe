@@ -50,7 +50,7 @@
                         android:layout_height="48dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:padding="12dp"
-                        android:src="@drawable/ic_star" />
+                        android:src="@drawable/ic_star_outline" />
 
                     <!-- Emoji/More Button -->
                     <ImageButton
@@ -59,7 +59,7 @@
                         android:layout_height="48dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:padding="12dp"
-                        android:src="@drawable/ic_emoji" />
+                        android:src="@drawable/ic_more" />
                 </LinearLayout>
             </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
