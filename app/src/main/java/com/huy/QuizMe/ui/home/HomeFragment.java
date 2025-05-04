@@ -18,6 +18,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.PagedResponse;
 import com.huy.QuizMe.data.model.Quiz;
+import com.huy.QuizMe.ui.quiz.QuizDetailActivity;
 import com.huy.QuizMe.ui.quizlist.QuizListActivity;
 import com.huy.QuizMe.utils.ApiUtils;
 
@@ -96,7 +97,9 @@ public class HomeFragment extends Fragment {
         discoverAdapter = new HomeAdapters.QuizAdapter(getContext());
         discoverAdapter.setOnQuizClickListener(quiz -> {
             // Xử lý khi người dùng chọn một quiz trong phần discover
-            Toast.makeText(getContext(), "Đã chọn quiz discover: " + quiz.getTitle(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), QuizDetailActivity.class);
+            intent.putExtra("EXTRA_QUIZ_ID", quiz.getId());
+            startActivity(intent);
         });
 
         // Gán adapter cho RecyclerView
@@ -151,7 +154,9 @@ public class HomeFragment extends Fragment {
         trendingQuizAdapter = new HomeAdapters.QuizAdapter(getContext());
         trendingQuizAdapter.setOnQuizClickListener(quiz -> {
             // Xử lý khi người dùng chọn một quiz - chuyển đến trang chi tiết
-            Toast.makeText(getContext(), "Đã chọn quiz: " + quiz.getTitle(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(), QuizDetailActivity.class);
+            intent.putExtra("EXTRA_QUIZ_ID", quiz.getId());
+            startActivity(intent);
         });
 
         // Gán adapter cho RecyclerView

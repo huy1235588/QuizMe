@@ -89,14 +89,14 @@ public class QuizRepository {
         MutableLiveData<Resource<Quiz>> quizData = new MutableLiveData<>();
         quizData.setValue(Resource.loading(null));
 
-        quizService.getQuizById(quizId).enqueue(new Callback<ApiResponse<List<Quiz>>>() {
+        quizService.getQuizById(quizId).enqueue(new Callback<ApiResponse<Quiz>>() {
             @Override
-            public void onResponse(@NonNull Call<ApiResponse<List<Quiz>>> call, @NonNull Response<ApiResponse<List<Quiz>>> response) {
+            public void onResponse(@NonNull Call<ApiResponse<Quiz>> call, @NonNull Response<ApiResponse<Quiz>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<List<Quiz>> apiResponse = response.body();
-                    if (apiResponse.isSuccess() && apiResponse.getData() != null && !apiResponse.getData().isEmpty()) {
+                    ApiResponse<Quiz> apiResponse = response.body();
+                    if (apiResponse.isSuccess() && apiResponse.getData() != null) {
                         // Take the first quiz from the list
-                        Quiz quiz = apiResponse.getData().get(0);
+                        Quiz quiz = apiResponse.getData();
                         quizData.setValue(Resource.success(quiz, apiResponse.getMessage()));
                     } else {
                         quizData.setValue(Resource.error(apiResponse.getMessage() != null ?
@@ -108,7 +108,7 @@ public class QuizRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<ApiResponse<List<Quiz>>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ApiResponse<Quiz>> call, @NonNull Throwable t) {
                 quizData.setValue(Resource.error(t.getMessage(), null));
             }
         });

@@ -1,5 +1,6 @@
 package com.huy.QuizMe.ui.quizlist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import com.huy.QuizMe.data.model.PagedResponse;
 import com.huy.QuizMe.data.model.Quiz;
 import com.huy.QuizMe.data.repository.QuizRepository;
 import com.huy.QuizMe.data.repository.Resource;
+import com.huy.QuizMe.ui.quiz.QuizDetailActivity;
 import com.huy.QuizMe.utils.ApiUtils;
 
 import java.util.ArrayList;
@@ -103,8 +105,10 @@ public class QuizListActivity extends AppCompatActivity {
 
         // Set click listener for quiz items
         quizListAdapter.setOnQuizClickListener(quiz -> {
-            // Handle quiz click
-            Toast.makeText(QuizListActivity.this, "Quiz: " + quiz.getTitle(), Toast.LENGTH_SHORT).show();
+            // Launch QuizDetailActivity when a quiz is clicked
+            Intent intent = new Intent(QuizListActivity.this, QuizDetailActivity.class);
+            intent.putExtra("QUIZ", quiz);
+            startActivity(intent);
         });
     }
 

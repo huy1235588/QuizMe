@@ -1,11 +1,12 @@
 package com.huy.QuizMe.data.model;
 
 import com.google.gson.annotations.SerializedName;
+import java.io.Serializable;
 
 /**
  * Lớp mô hình cho quiz
  */
-public class Quiz {
+public class Quiz implements Serializable {
     @SerializedName("id")
     private Integer id;
 
@@ -44,6 +45,9 @@ public class Quiz {
 
     @SerializedName("questionCount")
     private Integer questionCount;
+
+    @SerializedName("favoriteCount")
+    private Integer favoriteCount;
 
     @SerializedName("createdAt")
     private String createdAt;
@@ -102,6 +106,10 @@ public class Quiz {
 
     public Integer getQuestionCount() {
         return questionCount;
+    }
+
+    public Integer getFavoriteCount() {
+        return favoriteCount;
     }
 
     public String getCreatedAt() {

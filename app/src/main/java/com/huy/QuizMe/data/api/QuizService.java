@@ -72,5 +72,5 @@ public interface QuizService {
      * @return Quiz với ID đã cho
      */
     @GET("/api/quizzes/{id}")
-    Call<ApiResponse<List<Quiz>>> getQuizById(@Path("id") int quizId);
+    Call<ApiResponse<Quiz>> getQuizById(@Path("id") int quizId);
 }
