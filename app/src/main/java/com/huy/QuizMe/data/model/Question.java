@@ -40,6 +40,16 @@ public class Question {
         this.options = options;
     }
 
+    public String getCorrectAnswer() {
+        for (int i = 0; i < options.size(); i++) {
+            if (options.get(i).getIsCorrect()) {
+                return options.get(i).getContent();
+            }
+        }
+
+        return null;
+    }
+
     // Getters and setters
     public Long getId() {
         return id;
