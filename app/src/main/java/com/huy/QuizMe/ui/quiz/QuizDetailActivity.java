@@ -58,7 +58,7 @@ public class QuizDetailActivity extends AppCompatActivity {
         binding.btnPlaySolo.setOnClickListener(v -> handlePlaySolo());
         binding.btnPlayWithFriends.setOnClickListener(v -> handlePlayWithFriends());
         
-        binding.tvViewAll.setOnClickListener(v -> handleViewAllQuestions());
+//        binding.tvViewAll.setOnClickListener(v -> handleViewAllQuestions());
     }
 
     private void setupObservers() {
