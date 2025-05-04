@@ -6,9 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.huy.QuizMe.databinding.ActivityMainBinding;
-import com.huy.QuizMe.ui.home.HomeFragment;
-import com.huy.QuizMe.ui.library.LibraryFragment;
-import com.huy.QuizMe.ui.profile.ProfileFragment;
+import com.huy.QuizMe.ui.main.home.HomeFragment;
+import com.huy.QuizMe.ui.main.library.LibraryFragment;
+import com.huy.QuizMe.ui.main.profile.ProfileFragment;
 
 /**
  * MainActivity - màn hình chính của ứng dụng QuizMe

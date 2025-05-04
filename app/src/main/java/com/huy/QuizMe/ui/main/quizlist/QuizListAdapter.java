@@ -1,4 +1,4 @@
-package com.huy.QuizMe.ui.quizlist;
+package com.huy.QuizMe.ui.main.quizlist;
 
 import android.content.Context;
 import android.view.LayoutInflater;

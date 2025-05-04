@@ -75,6 +75,8 @@ dependencies {
 
     // Room Database
     implementation(libs.room.runtime)
+    implementation(libs.lifecycle.livedata.ktx)
+    implementation(libs.lifecycle.viewmodel.ktx)
     annotationProcessor(libs.room.compiler)
 
     // Retrofit & Gson

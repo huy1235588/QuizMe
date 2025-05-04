@@ -1,4 +1,4 @@
-package com.huy.QuizMe.ui.home;
+package com.huy.QuizMe.ui.main.home;
 
 import android.content.Context;
 import android.graphics.Color;

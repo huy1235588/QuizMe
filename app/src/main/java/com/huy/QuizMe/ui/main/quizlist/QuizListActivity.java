@@ -1,4 +1,4 @@
-package com.huy.QuizMe.ui.quizlist;
+package com.huy.QuizMe.ui.main.quizlist;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,7 +17,7 @@ import com.huy.QuizMe.data.model.PagedResponse;
 import com.huy.QuizMe.data.model.Quiz;
 import com.huy.QuizMe.data.repository.QuizRepository;
 import com.huy.QuizMe.data.repository.Resource;
-import com.huy.QuizMe.ui.quiz.QuizDetailActivity;
+import com.huy.QuizMe.ui.main.quizdetail.QuizDetailActivity;
 import com.huy.QuizMe.utils.ApiUtils;
 
 import java.util.ArrayList;

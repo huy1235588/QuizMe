@@ -1,4 +1,4 @@
-package com.huy.QuizMe.ui.quiz;
+package com.huy.QuizMe.ui.main.quizdetail;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

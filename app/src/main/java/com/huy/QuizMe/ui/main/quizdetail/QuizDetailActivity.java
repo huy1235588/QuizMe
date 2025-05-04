@@ -1,7 +1,6 @@
-package com.huy.QuizMe.ui.quiz;
+package com.huy.QuizMe.ui.main.quizdetail;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,9 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.huy.QuizMe.R;
-import com.huy.QuizMe.data.model.Question;
 import com.huy.QuizMe.data.model.Quiz;
-import com.huy.QuizMe.data.repository.Resource;
 import com.huy.QuizMe.databinding.ActivityQuizDetailBinding;
 
 public class QuizDetailActivity extends AppCompatActivity {

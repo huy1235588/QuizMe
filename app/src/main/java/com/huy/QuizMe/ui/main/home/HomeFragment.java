@@ -1,4 +1,4 @@
-package com.huy.QuizMe.ui.home;
+package com.huy.QuizMe.ui.main.home;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,8 +18,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.PagedResponse;
 import com.huy.QuizMe.data.model.Quiz;
-import com.huy.QuizMe.ui.quiz.QuizDetailActivity;
-import com.huy.QuizMe.ui.quizlist.QuizListActivity;
+import com.huy.QuizMe.ui.main.quizdetail.QuizDetailActivity;
+import com.huy.QuizMe.ui.main.quizlist.QuizListActivity;
 import com.huy.QuizMe.utils.ApiUtils;
 
 /**
