@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 
 import com.huy.QuizMe.databinding.ActivityMainBinding;
 import com.huy.QuizMe.ui.main.home.HomeFragment;
+import com.huy.QuizMe.ui.main.join.JoinRoomFragment;
 import com.huy.QuizMe.ui.main.library.LibraryFragment;
 import com.huy.QuizMe.ui.main.profile.ProfileFragment;
 
@@ -15,10 +16,10 @@ import com.huy.QuizMe.ui.main.profile.ProfileFragment;
  * Quản lý điều hướng giữa các màn hình chính thông qua bottom navigation
  */
 public class MainActivity extends AppCompatActivity {
-    
+
     // ViewBinding cho activity main
     private ActivityMainBinding binding;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         // Thiết lập xử lý sự kiện cho bottom navigation
         setupBottomNavigation();
     }
-    
+
     /**
      * Thiết lập xử lý sự kiện cho bottom navigation
      */
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
                 replaceFragment(new LibraryFragment());
             } else if (itemId == R.id.nav_profile) {
                 replaceFragment(new ProfileFragment());
+            } else if (itemId == R.id.nav_join) {
+                replaceFragment(new JoinRoomFragment());
             } else {
                 return false;
             }
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Thay thế Fragment hiện tại trong container bằng Fragment mới
+     *
      * @param fragment Fragment mới để hiển thị
      */
     private void replaceFragment(Fragment fragment) {
@@ -64,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.frm_container, fragment)
                 .commit();
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

@@ -13,7 +13,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Quiz;
 import com.huy.QuizMe.databinding.ActivityQuizDetailBinding;
-import com.huy.QuizMe.ui.quiz.QuizPlayActivity;
 
 public class QuizDetailActivity extends AppCompatActivity {
 
@@ -145,10 +144,10 @@ public class QuizDetailActivity extends AppCompatActivity {
     }
 
     private void handlePlaySolo() {
-        Intent intent = new Intent(this, QuizPlayActivity.class);
-        intent.putExtra(EXTRA_QUIZ_ID, getIntent().getIntExtra(EXTRA_QUIZ_ID, -1));
-        startActivity(intent);
-        finish();
+//        Intent intent = new Intent(this, QuizPlayActivity.class);
+//        intent.putExtra(EXTRA_QUIZ_ID, getIntent().getIntExtra(EXTRA_QUIZ_ID, -1));
+//        startActivity(intent);
+//        finish();
     }
 
     private void handlePlayWithFriends() {
