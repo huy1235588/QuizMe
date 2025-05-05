@@ -24,6 +24,12 @@ public class Room implements Serializable {
     @SerializedName("host")
     private User host;
 
+    @SerializedName("hasPassword")
+    private boolean hasPassword;
+
+    @SerializedName("isPublic")
+    private boolean isPublic;
+
     @SerializedName("currentPlayerCount")
     private int currentPlayerCount;
 
@@ -84,6 +90,22 @@ public class Room implements Serializable {
 
     public void setHost(User host) {
         this.host = host;
+    }
+
+    public boolean isHasPassword() {
+        return hasPassword;
+    }
+
+    public void setHasPassword(boolean hasPassword) {
+        this.hasPassword = hasPassword;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean isPublic) {
+        this.isPublic = isPublic;
     }
 
     public int getCurrentPlayerCount() {

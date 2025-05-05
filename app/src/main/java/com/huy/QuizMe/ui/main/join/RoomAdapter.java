@@ -73,7 +73,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder
         private final TextView tvQuizName;
         private final TextView tvPlayersCount;
         private final TextView tvStatus;
-        private final TextView tvCategoryName;
+        private final ImageView ivLock;
 
         public RoomViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -84,7 +84,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder
             tvQuizName = itemView.findViewById(R.id.tv_quiz_name);
             tvPlayersCount = itemView.findViewById(R.id.tv_players_count);
             tvStatus = itemView.findViewById(R.id.tv_room_status);
-            tvCategoryName = itemView.findViewById(R.id.tv_category_name);
+            ivLock = itemView.findViewById(R.id.iv_lock);
 
             // Thiết lập sự kiện click
             itemView.setOnClickListener(v -> {
@@ -102,7 +102,13 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.RoomViewHolder
             tvPlayersCount.setText(context.getString(R.string.player_count_format,
                     room.getCurrentPlayerCount(), room.getMaxPlayers()));
             tvStatus.setText(room.getStatus());
-            tvCategoryName.setText(room.getQuiz().getCategoryName());
+
+            // Hiển thị trạng thái phòng
+            if (room.isHasPassword()) {
+                ivLock.setVisibility(View.VISIBLE);
+            } else {
+                ivLock.setVisibility(View.GONE);
+            }
 
             // Tải hình ảnh
             if (room.getQuiz().getQuizThumbnails() != null && !room.getQuiz().getQuizThumbnails().isEmpty()) {

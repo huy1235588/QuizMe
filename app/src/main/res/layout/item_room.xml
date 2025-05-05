@@ -24,22 +24,18 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/placeholder_quiz" />
 
-        <!-- Nhãn danh mục -->
-        <TextView
-            android:id="@+id/tv_category_name"
+        <!-- Nhãn khoá -->
+        <ImageView
+            android:id="@+id/iv_lock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:background="@drawable/placeholder_category"
-            android:paddingStart="8dp"
-            android:paddingTop="4dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="4dp"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
+            android:background="@drawable/ic_lock"
+            android:padding="6dp"
+            android:visibility="gone"
+            android:contentDescription="Password Icon"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Khoa học" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <!-- Nhãn trạng thái phòng -->
         <TextView
