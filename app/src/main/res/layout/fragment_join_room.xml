@@ -19,7 +19,6 @@
                 android:id="@+id/search_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
                 android:iconifiedByDefault="false"
                 android:queryHint="Search Rooms"
                 app:iconifiedByDefault="false"
@@ -89,11 +88,10 @@
     <!-- FAB để tạo phòng mới (tùy chọn) -->
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_create_room"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:text="Create Room"
+        android:layout_margin="10dp"
         app:icon="@drawable/ic_add" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

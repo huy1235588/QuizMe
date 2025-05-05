@@ -16,26 +16,13 @@
         <ImageView
             android:id="@+id/iv_room_quiz_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
+            android:layout_height="160dp"
             android:contentDescription=""
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@drawable/placeholder_quiz" />
-
-        <!-- Nhãn khoá -->
-        <ImageView
-            android:id="@+id/iv_lock"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/ic_lock"
-            android:padding="6dp"
-            android:visibility="gone"
-            android:contentDescription="Password Icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
 
         <!-- Nhãn trạng thái phòng -->
         <TextView
@@ -74,10 +61,24 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_lock"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Phòng Thử Thách Vật Lý" />
+
+            <!-- Nhãn khoá -->
+            <ImageView
+                android:id="@+id/iv_lock"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="4dp"
+                android:contentDescription="Password Icon"
+                android:src="@drawable/ic_lock"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_room_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/tv_room_name"
+                app:layout_constraintTop_toTopOf="@+id/tv_room_name" />
 
             <!-- Tên quiz -->
             <TextView
