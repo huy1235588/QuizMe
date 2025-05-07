@@ -1,10 +1,10 @@
 package com.huy.QuizMe.ui.main.join;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -22,13 +22,10 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.PagedResponse;
-import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.model.Quiz;
+import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.model.request.RoomRequest;
 import com.huy.QuizMe.utils.ApiUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CreateRoomFragment extends Fragment {
     private CreateRoomViewModel viewModel;
@@ -50,8 +47,11 @@ public class CreateRoomFragment extends Fragment {
     private Button btnCreateRoom;
     private ProgressBar progressBar;
 
-    // Các adapter
+    // Adapter
     private QuizAdapter quizAdapter;
+
+    private static final int MAX_PARTICIPANTS_LIMIT = 100;
+    private static final int DEFAULT_PAGE_SIZE = 10;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,22 +88,26 @@ public class CreateRoomFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress_bar);
 
         // Thiết lập RecyclerView
+        setupRecyclerView();
+    }
+
+    private void setupRecyclerView() {
         quizAdapter = new QuizAdapter(requireContext());
         rvQuizzes.setLayoutManager(new LinearLayoutManager(getContext()));
         rvQuizzes.setAdapter(quizAdapter);
+        rvQuizzes.setHasFixedSize(true);
     }
 
     private void setupListeners() {
         // Chuyển đổi hiển thị trường mật khẩu dựa trên trạng thái công tắc
-        switchPassword.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            tilPassword.setVisibility(isChecked ? View.VISIBLE : View.GONE);
-        });
+        switchPassword.setOnCheckedChangeListener((buttonView, isChecked) -> 
+            tilPassword.setVisibility(isChecked ? View.VISIBLE : View.GONE));
 
         // Thiết lập người lắng nghe sự kiện chọn quiz
         quizAdapter.setOnQuizClickListener(quiz -> {
             // Xử lý khi chọn quiz
             viewModel.setSelectedQuiz(quiz);
-            quizAdapter.notifyDataSetChanged(); // Cập nhật UI để phản ánh lựa chọn
+            quizAdapter.notifyDataSetChanged();
         });
 
         // Thiết lập người lắng nghe sự kiện nút tạo phòng
@@ -116,21 +120,19 @@ public class CreateRoomFragment extends Fragment {
 
     private void loadQuizzes() {
         // Thiết lập người quan sát cho các quiz
-        viewModel.loadTrendingQuizzes(0, 10, null, null, null, true)
+        viewModel.loadTrendingQuizzes(0, DEFAULT_PAGE_SIZE, null, null, null, true)
                 .observe(getViewLifecycleOwner(), resource -> {
-                    if (ApiUtils.isLoading(resource)) {
-                        progressBar.setVisibility(View.VISIBLE);
-                    } else if (ApiUtils.isSuccess(resource)) {
-                        progressBar.setVisibility(View.GONE);
+                    toggleLoading(ApiUtils.isLoading(resource));
+                    
+                    if (ApiUtils.isSuccess(resource)) {
                         PagedResponse<Quiz> quizzes = resource.getData();
                         if (quizzes != null && quizzes.getContent() != null) {
                             quizAdapter.updateItems(quizzes);
                         } else {
-                            Toast.makeText(getContext(), "No quizzes available", Toast.LENGTH_SHORT).show();
+                            showToast("No quizzes available");
                         }
-                    } else {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();
+                    } else if (!ApiUtils.isLoading(resource)) {
+                        showToast(resource.getMessage());
                     }
                 });
     }
@@ -139,7 +141,8 @@ public class CreateRoomFragment extends Fragment {
         boolean isValid = true;
 
         // Xác thực tên phòng
-        if (etRoomName.getText().toString().trim().isEmpty()) {
+        String roomName = getTextFromEditText(etRoomName);
+        if (TextUtils.isEmpty(roomName)) {
             tilRoomName.setError("Room name cannot be empty");
             isValid = false;
         } else {
@@ -147,14 +150,15 @@ public class CreateRoomFragment extends Fragment {
         }
 
         // Xác thực số người tham gia tối đa
-        if (etMaxParticipants.getText().toString().trim().isEmpty()) {
+        String maxParticipantsStr = getTextFromEditText(etMaxParticipants);
+        if (TextUtils.isEmpty(maxParticipantsStr)) {
             tilMaxParticipants.setError("Maximum participants cannot be empty");
             isValid = false;
         } else {
             try {
-                int maxParticipants = Integer.parseInt(etMaxParticipants.getText().toString().trim());
-                if (maxParticipants <= 0 || maxParticipants > 100) { // Giới hạn trên tùy ý
-                    tilMaxParticipants.setError("Please enter a number between 1 and 100");
+                int maxParticipants = Integer.parseInt(maxParticipantsStr);
+                if (maxParticipants <= 0 || maxParticipants > MAX_PARTICIPANTS_LIMIT) {
+                    tilMaxParticipants.setError("Please enter a number between 1 and " + MAX_PARTICIPANTS_LIMIT);
                     isValid = false;
                 } else {
                     tilMaxParticipants.setError(null);
@@ -166,7 +170,7 @@ public class CreateRoomFragment extends Fragment {
         }
 
         // Xác thực mật khẩu nếu được yêu cầu
-        if (switchPassword.isChecked() && etPassword.getText().toString().trim().isEmpty()) {
+        if (switchPassword.isChecked() && TextUtils.isEmpty(getTextFromEditText(etPassword))) {
             tilPassword.setError("Password cannot be empty");
             isValid = false;
         } else {
@@ -175,7 +179,7 @@ public class CreateRoomFragment extends Fragment {
 
         // Xác thực lựa chọn quiz
         if (viewModel.getSelectedQuiz() == null) {
-            Toast.makeText(getContext(), "Please select a quiz", Toast.LENGTH_SHORT).show();
+            showToast("Please select a quiz");
             isValid = false;
         }
 
@@ -183,52 +187,65 @@ public class CreateRoomFragment extends Fragment {
     }
 
     private void createRoom() {
-        // Hiển thị tiến trình
-        progressBar.setVisibility(View.VISIBLE);
-        btnCreateRoom.setEnabled(false);
+        toggleLoading(true);
 
-        // Xây dựng đối tượng phòng
-        Room room = new Room();
-        room.setName(etRoomName.getText().toString().trim());
-        room.setMaxPlayers(Integer.parseInt(etMaxParticipants.getText().toString().trim()));
-        room.setPublic(switchPublic.isChecked());
-        room.setHasPassword(switchPassword.isChecked());
-
-        if (etRoomDescription.getText() != null && !etRoomDescription.getText().toString().trim().isEmpty()) {
-            // Đặt mô tả nếu được cung cấp (giả sử có phương thức setDescription)
-            // room.setDescription(etRoomDescription.getText().toString().trim());
-        }
-
-        // Đặt quiz
-        room.setQuiz(viewModel.getSelectedQuiz());
-
-        RoomRequest roomRequest = new RoomRequest(
-                room.getName(),
-                room.getQuiz().getId(),
-                room.getMaxPlayers(),
-                switchPassword.isChecked() ? etPassword.getText().toString() : null,
-                room.isPublic()
-        );
+        // Xây dựng đối tượng room request
+        RoomRequest roomRequest = buildRoomRequest();
 
         // Tạo phòng
         viewModel.createRoom(roomRequest)
                 .observe(getViewLifecycleOwner(), resource -> {
                     if (ApiUtils.isLoading(resource)) {
-                        progressBar.setVisibility(View.VISIBLE);
-                        btnCreateRoom.setEnabled(false);
+                        toggleLoading(true);
                     } else if (ApiUtils.isSuccess(resource)) {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "Failed to create room", Toast.LENGTH_SHORT).show();
+                        toggleLoading(false);
+                        showToast("Room created successfully");
 
                         // Điều hướng trở lại màn hình tham gia phòng
                         getParentFragmentManager().popBackStack();
                     } else {
-                        progressBar.setVisibility(View.GONE);
-                        btnCreateRoom.setEnabled(true);
-                        Toast.makeText(getContext(), resource.getMessage() != null ?
-                                        resource.getMessage() : "Room created successfully",
-                                Toast.LENGTH_SHORT).show();
+                        toggleLoading(false);
+                        showToast(resource.getMessage() != null ? 
+                            resource.getMessage() : "Failed to create room");
                     }
                 });
+    }
+
+    private RoomRequest buildRoomRequest() {
+        Room room = new Room();
+        room.setName(getTextFromEditText(etRoomName));
+        room.setMaxPlayers(Integer.parseInt(getTextFromEditText(etMaxParticipants)));
+        room.setPublic(switchPublic.isChecked());
+        room.setHasPassword(switchPassword.isChecked());
+        room.setQuiz(viewModel.getSelectedQuiz());
+
+        String description = getTextFromEditText(etRoomDescription);
+        if (!TextUtils.isEmpty(description)) {
+            // Đặt mô tả nếu được cung cấp (giả sử có phương thức setDescription)
+            // room.setDescription(description);
+        }
+
+        return new RoomRequest(
+                room.getName(),
+                room.getQuiz().getId(),
+                room.getMaxPlayers(),
+                switchPassword.isChecked() ? getTextFromEditText(etPassword) : null,
+                room.isPublic()
+        );
+    }
+
+    private String getTextFromEditText(TextInputEditText editText) {
+        return editText.getText() != null ? editText.getText().toString().trim() : "";
+    }
+
+    private void toggleLoading(boolean isLoading) {
+        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        btnCreateRoom.setEnabled(!isLoading);
+    }
+
+    private void showToast(String message) {
+        if (getContext() != null && message != null) {
+            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+        }
     }
 }

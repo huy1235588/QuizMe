@@ -1,10 +1,7 @@
 package com.huy.QuizMe.ui.main.join;
 
-import android.content.Context;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.huy.QuizMe.data.model.PagedResponse;
@@ -14,18 +11,16 @@ import com.huy.QuizMe.data.model.request.RoomRequest;
 import com.huy.QuizMe.data.repository.QuizRepository;
 import com.huy.QuizMe.data.repository.Resource;
 import com.huy.QuizMe.data.repository.RoomRepository;
-import com.huy.QuizMe.utils.NetworkUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CreateRoomViewModel extends ViewModel {
 
     // Quiz đã chọn để sử dụng cho phòng
     private Quiz selectedQuiz;
-    private RoomRepository roomRepository;
+    private final RoomRepository roomRepository;
     private final QuizRepository quizRepository;
     private final MediatorLiveData<Resource<PagedResponse<Quiz>>> trendingQuizzes = new MediatorLiveData<>();
+    
+    private static final String SORT_POPULAR = "popular";
 
     public CreateRoomViewModel() {
         roomRepository = new RoomRepository();
@@ -52,9 +47,14 @@ public class CreateRoomViewModel extends ViewModel {
             Boolean isPublic) {
 
         // Luôn sử dụng "popular" cho sắp xếp và tab đối với quiz thịnh hành
-        LiveData<Resource<PagedResponse<Quiz>>> source = quizRepository.getPagedQuizzes(
-                page, pageSize, categoryId, difficulty, search, "popular", isPublic, "popular");
-        trendingQuizzes.addSource(source, trendingQuizzes::setValue);
+        trendingQuizzes.addSource(
+            quizRepository.getPagedQuizzes(
+                page, pageSize, categoryId, difficulty, search, 
+                SORT_POPULAR, isPublic, SORT_POPULAR
+            ),
+            trendingQuizzes::setValue
+        );
+        
         return trendingQuizzes;
     }
 
@@ -65,11 +65,7 @@ public class CreateRoomViewModel extends ViewModel {
      * @return LiveData với Resource phản hồi của phòng đã tạo
      */
     public LiveData<Resource<Room>> createRoom(RoomRequest roomRequest) {
-        LiveData<Resource<Room>> result;
-
-        result = roomRepository.createRoom(roomRequest);
-
-        return result;
+        return roomRepository.createRoom(roomRequest);
     }
 
     /**
@@ -88,5 +84,12 @@ public class CreateRoomViewModel extends ViewModel {
      */
     public void setSelectedQuiz(Quiz quiz) {
         this.selectedQuiz = quiz;
+    }
+    
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        // Xóa các nguồn LiveData để tránh rò rỉ bộ nhớ
+        trendingQuizzes.removeSource(trendingQuizzes);
     }
 }

@@ -21,6 +21,11 @@ import retrofit2.Response;
  */
 public class RoomRepository {
     private final RoomService roomService;
+    
+    // Error message constants
+    private static final String ERROR_LOADING_ROOMS = "Unable to load room list";
+    private static final String ERROR_CREATING_ROOM = "Unable to create room";
+    private static final String ERROR_UPDATING_ROOM = "Unable to update room";
 
     public RoomRepository() {
         roomService = ApiClient.getInstance().getRoomService();
@@ -41,16 +46,7 @@ public class RoomRepository {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<List<Room>>> call,
                                    @NonNull Response<ApiResponse<List<Room>>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<List<Room>> apiResponse = response.body();
-                    if (apiResponse.isSuccess()) {
-                        roomsData.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
-                    } else {
-                        roomsData.setValue(Resource.error(apiResponse.getMessage(), null));
-                    }
-                } else {
-                    roomsData.setValue(Resource.error("Không thể tải danh sách phòng", null));
-                }
+                handleResponse(response, roomsData, ERROR_LOADING_ROOMS);
             }
 
             @Override
@@ -76,16 +72,7 @@ public class RoomRepository {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<Room>> call,
                                    @NonNull Response<ApiResponse<Room>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<Room> apiResponse = response.body();
-                    if (apiResponse.isSuccess()) {
-                        roomData.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
-                    } else {
-                        roomData.setValue(Resource.error(apiResponse.getMessage(), null));
-                    }
-                } else {
-                    roomData.setValue(Resource.error("Không thể tạo phòng", null));
-                }
+                handleResponse(response, roomData, ERROR_CREATING_ROOM);
             }
 
             @Override
@@ -112,16 +99,7 @@ public class RoomRepository {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<Room>> call,
                                    @NonNull Response<ApiResponse<Room>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<Room> apiResponse = response.body();
-                    if (apiResponse.isSuccess()) {
-                        roomData.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
-                    } else {
-                        roomData.setValue(Resource.error(apiResponse.getMessage(), null));
-                    }
-                } else {
-                    roomData.setValue(Resource.error("Không thể cập nhật phòng", null));
-                }
+                handleResponse(response, roomData, ERROR_UPDATING_ROOM);
             }
 
             @Override
@@ -131,5 +109,30 @@ public class RoomRepository {
         });
 
         return roomData;
+    }
+    
+    /**
+     * Xử lý phản hồi chung cho các cuộc gọi API
+     * 
+     * @param response Phản hồi từ API
+     * @param liveData LiveData để cập nhật
+     * @param defaultErrorMessage Thông báo lỗi mặc định
+     * @param <T> Kiểu dữ liệu của phản hồi
+     */
+    private <T> void handleResponse(
+            @NonNull Response<ApiResponse<T>> response, 
+            @NonNull MutableLiveData<Resource<T>> liveData,
+            @NonNull String defaultErrorMessage) {
+            
+        if (response.isSuccessful() && response.body() != null) {
+            ApiResponse<T> apiResponse = response.body();
+            if (apiResponse.isSuccess()) {
+                liveData.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
+            } else {
+                liveData.setValue(Resource.error(apiResponse.getMessage(), null));
+            }
+        } else {
+            liveData.setValue(Resource.error(defaultErrorMessage, null));
+        }
     }
 }
