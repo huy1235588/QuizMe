@@ -22,9 +22,9 @@ public class AuthRepository {
     private final SharedPreferencesManager prefsManager;
 
     // Error message constants
-    private static final String ERROR_LOGIN = "Đăng nhập thất bại";
-    private static final String ERROR_REGISTER = "Đăng ký thất bại";
-    private static final String ERROR_LOGOUT = "Đăng xuất thất bại";
+    private static final String ERROR_LOGIN = "Login failed";
+    private static final String ERROR_REGISTER = "Registration failed";
+    private static final String ERROR_LOGOUT = "Logout failed";
 
     public AuthRepository() {
         this.authService = ApiClient.getInstance().getAuthService();
@@ -57,7 +57,7 @@ public class AuthRepository {
                     prefsManager.saveAuthToken(auth.getAccessToken());
                     prefsManager.saveRefreshToken(auth.getRefreshToken());
 
-                    loginResult.setValue(Resource.success(auth, "Đăng nhập thành công"));
+                    loginResult.setValue(Resource.success(auth, "Login successful"));
                 } else {
                     loginResult.setValue(Resource.error(ERROR_LOGIN, null));
                 }
@@ -75,18 +75,18 @@ public class AuthRepository {
     /**
      * Đăng ký tài khoản mới
      *
-     * @param name        Tên người dùng
-     * @param email       Email đăng ký
-     * @param password    Mật khẩu
-     * @param phoneNumber Số điện thoại
-     * @param avatar      Ảnh đại diện
-     * @return LiveData<Resource < Auth>> kết quả đăng ký
+     * @param username        Tên đăng nhập
+     * @param email           Email đăng ký
+     * @param password        Mật khẩu
+     * @param confirmPassword Xác nhận mật khẩu
+     * @param fullName        Họ tên đầy đủ
+     * @return LiveData<Resource<Auth>> kết quả đăng ký
      */
-    public LiveData<Resource<Auth>> register(String name, String email, String password, String phoneNumber, String avatar) {
+    public LiveData<Resource<Auth>> register(String username, String email, String password, String confirmPassword, String fullName) {
         MutableLiveData<Resource<Auth>> registerResult = new MutableLiveData<>();
         registerResult.setValue(Resource.loading(null));
 
-        RegisterRequest registerRequest = new RegisterRequest(name, email, password, phoneNumber, avatar);
+        RegisterRequest registerRequest = new RegisterRequest(username, email, password, confirmPassword, fullName);
         authService.register(registerRequest).enqueue(new Callback<Auth>() {
             @Override
             public void onResponse(@NonNull Call<Auth> call,
@@ -100,7 +100,7 @@ public class AuthRepository {
                     prefsManager.saveAuthToken(auth.getAccessToken());
                     prefsManager.saveRefreshToken(auth.getRefreshToken());
 
-                    registerResult.setValue(Resource.success(auth, "Đăng ký thành công"));
+                    registerResult.setValue(Resource.success(auth, "Registration successful"));
                 } else {
                     registerResult.setValue(Resource.error(ERROR_REGISTER, null));
                 }
@@ -128,7 +128,7 @@ public class AuthRepository {
         if (refreshToken == null || refreshToken.isEmpty()) {
             // Không có token, coi như đã đăng xuất
             clearUserData();
-            logoutResult.setValue(Resource.success(null, "Đã đăng xuất"));
+            logoutResult.setValue(Resource.success(null, "Logged out"));
             return logoutResult;
         }
 
@@ -140,10 +140,10 @@ public class AuthRepository {
                 // Xóa thông tin người dùng khỏi bộ nhớ cục bộ
                 clearUserData();
                 if (response.isSuccessful()) {
-                    logoutResult.setValue(Resource.success(null, "Đã đăng xuất"));
+                    logoutResult.setValue(Resource.success(null, "Logged out"));
                 } else {
                     // Vẫn xóa dữ liệu cục bộ ngay cả khi API thất bại
-                    logoutResult.setValue(Resource.success(null, "Đã đăng xuất khỏi thiết bị"));
+                    logoutResult.setValue(Resource.success(null, "Logged out from device"));
                 }
             }
 
@@ -151,7 +151,7 @@ public class AuthRepository {
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
                 // Mặc dù API thất bại, vẫn xóa dữ liệu cục bộ
                 clearUserData();
-                logoutResult.setValue(Resource.success(null, "Đã đăng xuất khỏi thiết bị"));
+                logoutResult.setValue(Resource.success(null, "Logged out from device"));
             }
         });
 

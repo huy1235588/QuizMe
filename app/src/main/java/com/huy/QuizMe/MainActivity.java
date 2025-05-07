@@ -33,9 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Thiết lập xử lý sự kiện cho bottom navigation
         setupBottomNavigation();
-
-        // Khởi tạo SharedPreferencesManager để quản lý dữ liệu người dùng
-        SharedPreferencesManager.init(this);
     }
 
     /**
