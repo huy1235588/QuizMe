@@ -89,4 +89,13 @@ public class ApiClient {
     public RoomService getRoomService() {
         return retrofit.create(RoomService.class);
     }
+
+    /**
+     * Lấy instance của AuthService
+     *
+     * @return AuthService
+     */
+    public AuthService getAuthService() {
+        return retrofit.create(AuthService.class);
+    }
 }

@@ -10,6 +10,7 @@ import com.huy.QuizMe.ui.main.home.HomeFragment;
 import com.huy.QuizMe.ui.main.join.JoinRoomFragment;
 import com.huy.QuizMe.ui.main.library.LibraryFragment;
 import com.huy.QuizMe.ui.main.profile.ProfileFragment;
+import com.huy.QuizMe.utils.SharedPreferencesManager;
 
 /**
  * MainActivity - màn hình chính của ứng dụng QuizMe
@@ -32,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Thiết lập xử lý sự kiện cho bottom navigation
         setupBottomNavigation();
+
+        // Khởi tạo SharedPreferencesManager để quản lý dữ liệu người dùng
+        SharedPreferencesManager.init(this);
     }
 
     /**

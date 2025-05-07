@@ -16,15 +16,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".ui.quiz.ResultActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.quiz.QuizPlayActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.quiz.QuizPlayActivity"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
