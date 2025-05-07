@@ -8,7 +8,7 @@ import java.io.Serializable;
  */
 public class Quiz implements Serializable {
     @SerializedName("id")
-    private Integer id;
+    private Long id;
 
     @SerializedName("title")
     private String title;
@@ -56,7 +56,7 @@ public class Quiz implements Serializable {
     private String updatedAt;
 
     // Các phương thức getter
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
@@ -118,5 +118,22 @@ public class Quiz implements Serializable {
 
     public String getUpdatedAt() {
         return updatedAt;
+    }
+    
+    // Setter methods needed for creating quiz objects
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setQuestionCount(int questionCount) {
+        this.questionCount = questionCount;
     }
 }

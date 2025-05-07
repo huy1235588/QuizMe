@@ -18,6 +18,7 @@ import androidx.appcompat.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.utils.ApiUtils;
@@ -32,6 +33,7 @@ public class JoinRoomFragment extends Fragment {
     private ChipGroup chipGroupCategories;
     private SearchView searchView;
     private View emptyView;
+    private ExtendedFloatingActionButton fabCreateRoom;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,14 +53,33 @@ public class JoinRoomFragment extends Fragment {
         chipGroupCategories = view.findViewById(R.id.chip_group_categories);
         searchView = view.findViewById(R.id.search_view);
         emptyView = view.findViewById(R.id.empty_view);
+        fabCreateRoom = view.findViewById(R.id.fab_create_room);
 
         setupSwipeRefresh();
         setupRecyclerView();
         setupSearch();
+        setupFabCreateRoom();
 //        loadCategories();
         loadRooms();
 
         return view;
+    }
+
+    // Thiết lập sự kiện click cho FAB tạo phòng
+    private void setupFabCreateRoom() {
+        fabCreateRoom.setOnClickListener(v -> {
+            // Mở fragment tạo phòng mới
+            navigateToCreateRoomFragment();
+        });
+    }
+
+    // Chuyển đến fragment tạo phòng mới
+    private void navigateToCreateRoomFragment() {
+        CreateRoomFragment createRoomFragment = new CreateRoomFragment();
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.frm_container, createRoomFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     // Hàm này sẽ được gọi khi người dùng kéo xuống để làm mới danh sách
