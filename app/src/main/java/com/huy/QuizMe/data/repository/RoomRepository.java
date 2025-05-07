@@ -8,6 +8,7 @@ import com.huy.QuizMe.data.api.ApiClient;
 import com.huy.QuizMe.data.api.RoomService;
 import com.huy.QuizMe.data.model.ApiResponse;
 import com.huy.QuizMe.data.model.Room;
+import com.huy.QuizMe.data.model.request.RoomRequest;
 
 import java.util.List;
 
@@ -59,5 +60,76 @@ public class RoomRepository {
         });
 
         return roomsData;
+    }
+
+    /**
+     * Tạo phòng mới
+     *
+     * @param roomRequest Thông tin phòng
+     * @return Đối tượng LiveData với thông tin phòng vừa tạo
+     */
+    public LiveData<Resource<Room>> createRoom(RoomRequest roomRequest) {
+        MutableLiveData<Resource<Room>> roomData = new MutableLiveData<>();
+        roomData.setValue(Resource.loading(null));
+
+        roomService.createRoom(roomRequest).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Room>> call,
+                                   @NonNull Response<ApiResponse<Room>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<Room> apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        roomData.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
+                    } else {
+                        roomData.setValue(Resource.error(apiResponse.getMessage(), null));
+                    }
+                } else {
+                    roomData.setValue(Resource.error("Không thể tạo phòng", null));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Room>> call, @NonNull Throwable t) {
+                roomData.setValue(Resource.error(t.getMessage(), null));
+            }
+        });
+
+        return roomData;
+    }
+
+    /**
+     * Cập nhật thông tin phòng
+     *
+     * @param roomId      ID của phòng
+     * @param roomRequest Thông tin phòng mới
+     * @return Đối tượng LiveData với thông tin phòng đã cập nhật
+     */
+    public LiveData<Resource<Room>> updateRoom(Long roomId, RoomRequest roomRequest) {
+        MutableLiveData<Resource<Room>> roomData = new MutableLiveData<>();
+        roomData.setValue(Resource.loading(null));
+
+        roomService.updateRoom(roomId, roomRequest).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Room>> call,
+                                   @NonNull Response<ApiResponse<Room>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<Room> apiResponse = response.body();
+                    if (apiResponse.isSuccess()) {
+                        roomData.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
+                    } else {
+                        roomData.setValue(Resource.error(apiResponse.getMessage(), null));
+                    }
+                } else {
+                    roomData.setValue(Resource.error("Không thể cập nhật phòng", null));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Room>> call, @NonNull Throwable t) {
+                roomData.setValue(Resource.error(t.getMessage(), null));
+            }
+        });
+
+        return roomData;
     }
 }

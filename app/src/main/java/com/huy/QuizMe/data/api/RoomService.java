@@ -2,6 +2,7 @@ package com.huy.QuizMe.data.api;
 
 import com.huy.QuizMe.data.model.ApiResponse;
 import com.huy.QuizMe.data.model.Room;
+import com.huy.QuizMe.data.model.request.RoomRequest;
 
 import java.util.List;
 
@@ -45,4 +46,23 @@ public interface RoomService {
      */
     @GET("/api/rooms/{code}")
     Call<ApiResponse<Room>> getRoomByCode(@Path("code") String code);
+
+    /**
+     * Tạo phòng mới
+     *
+     * @param roomRequest Thông tin phòng
+     * @return Thông tin phòng vừa tạo
+     */
+    @POST("/api/rooms")
+    Call<ApiResponse<Room>> createRoom(@retrofit2.http.Body RoomRequest roomRequest);
+
+    /**
+     * Cập nhật thông tin phòng
+     *
+     * @param roomId      ID của phòng
+     * @param roomRequest Thông tin phòng mới
+     * @return Thông tin phòng đã cập nhật
+     */
+    @PATCH("/api/rooms/{roomId}")
+    Call<ApiResponse<Room>> updateRoom(@Path("roomId") Long roomId, @retrofit2.http.Body RoomRequest roomRequest);
 }
