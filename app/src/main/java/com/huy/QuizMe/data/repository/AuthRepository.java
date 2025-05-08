@@ -43,7 +43,7 @@ public class AuthRepository {
         loginResult.setValue(Resource.loading(null));
 
         LoginRequest loginRequest = new LoginRequest(email, password);
-        authService.login(loginRequest).enqueue(new Callback<Auth>() {
+        authService.login(loginRequest).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<Auth> call,
                                    @NonNull Response<Auth> response) {
@@ -87,7 +87,7 @@ public class AuthRepository {
         registerResult.setValue(Resource.loading(null));
 
         RegisterRequest registerRequest = new RegisterRequest(username, email, password, confirmPassword, fullName);
-        authService.register(registerRequest).enqueue(new Callback<Auth>() {
+        authService.register(registerRequest).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<Auth> call,
                                    @NonNull Response<Auth> response) {
@@ -133,7 +133,7 @@ public class AuthRepository {
         }
 
         TokenRequest tokenRequest = new TokenRequest(refreshToken);
-        authService.logout(tokenRequest).enqueue(new Callback<Void>() {
+        authService.logout(tokenRequest).enqueue(new Callback<>() {
             @Override
             public void onResponse(@NonNull Call<Void> call,
                                    @NonNull Response<Void> response) {

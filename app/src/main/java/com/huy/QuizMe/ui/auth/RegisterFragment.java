@@ -150,9 +150,7 @@ public class RegisterFragment extends Fragment {
 
         if (cancel) {
             // Có lỗi, tập trung vào trường đầu tiên có lỗi
-            if (focusView != null) {
-                focusView.requestFocus();
-            }
+            focusView.requestFocus();
         } else {
             // Thực hiện đăng ký
             authViewModel.register(username, email, password, passwordConfirm, name);

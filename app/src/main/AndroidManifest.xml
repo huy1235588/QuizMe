@@ -17,7 +17,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".ui.auth.AuthActivity"
+            android:name=".ui.splash.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,8 +26,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.auth.AuthActivity"
+            android:exported="true" />
+        <activity
             android:name=".MainActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".ui.main.quizlist.QuizListActivity"
             android:exported="false" />
