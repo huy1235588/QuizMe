@@ -3,61 +3,61 @@ package com.huy.QuizMe.data.model;
 import com.google.gson.annotations.SerializedName;
 
 public class Auth {
-    @SerializedName("AccessToken")
-    private String AccessToken;
+    @SerializedName("accessToken")
+    private String accessToken;
 
-    @SerializedName("AccessTokenExpiry")
-    private String AccessTokenExpiry;
+    @SerializedName("accessTokenExpiry")
+    private String accessTokenExpiry;
 
-    @SerializedName("RefreshToken")
-    private String RefreshToken;
+    @SerializedName("refreshToken")
+    private String refreshToken;
 
-    @SerializedName("RefreshTokenExpiry")
-    private String RefreshTokenExpiry;
+    @SerializedName("refreshTokenExpiry")
+    private String refreshTokenExpiry;
 
     @SerializedName("user")
     private User user;
 
     public Auth(String accessToken, String accessTokenExpiry, String refreshToken, String refreshTokenExpiry, User user) {
-        AccessToken = accessToken;
-        AccessTokenExpiry = accessTokenExpiry;
-        RefreshToken = refreshToken;
-        RefreshTokenExpiry = refreshTokenExpiry;
+        accessToken = accessToken;
+        accessTokenExpiry = accessTokenExpiry;
+        refreshToken = refreshToken;
+        refreshTokenExpiry = refreshTokenExpiry;
         this.user = user;
     }
 
     // Getters and Setters
 
     public String getAccessToken() {
-        return AccessToken;
+        return accessToken;
     }
 
     public void setAccessToken(String accessToken) {
-        AccessToken = accessToken;
+        this.accessToken = accessToken;
     }
 
     public String getAccessTokenExpiry() {
-        return AccessTokenExpiry;
+        return accessTokenExpiry;
     }
 
     public void setAccessTokenExpiry(String accessTokenExpiry) {
-        AccessTokenExpiry = accessTokenExpiry;
+        this.accessTokenExpiry = accessTokenExpiry;
     }
 
     public String getRefreshToken() {
-        return RefreshToken;
+        return refreshToken;
     }
 
     public void setRefreshToken(String refreshToken) {
-        RefreshToken = refreshToken;
+        this.refreshToken = refreshToken;
     }
 
     public String getRefreshTokenExpiry() {
-        return RefreshTokenExpiry;
+        return refreshTokenExpiry;
     }
 
     public void setRefreshTokenExpiry(String refreshTokenExpiry) {
-        RefreshTokenExpiry = refreshTokenExpiry;
+        this.refreshTokenExpiry = refreshTokenExpiry;
     }
 
     public User getUser() {

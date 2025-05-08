@@ -22,7 +22,11 @@ public class ApiClient {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
+        // Tạo SelectiveAuthInterceptor để thêm token chỉ cho các API được đánh dấu
+        SelectiveAuthInterceptor authInterceptor = new SelectiveAuthInterceptor();
+
         OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(authInterceptor)
                 .addInterceptor(loggingInterceptor)
                 .build();
 
