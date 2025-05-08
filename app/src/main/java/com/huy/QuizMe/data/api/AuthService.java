@@ -1,5 +1,6 @@
 package com.huy.QuizMe.data.api;
 
+import com.huy.QuizMe.data.model.ApiResponse;
 import com.huy.QuizMe.data.model.Auth;
 import com.huy.QuizMe.data.model.User;
 import com.huy.QuizMe.data.model.request.LoginRequest;
@@ -18,7 +19,7 @@ public interface AuthService {
      * @return Thông tin xác thực
      */
     @POST("/api/auth/login")
-    Call<Auth> login(@Body LoginRequest loginRequest);
+    Call<ApiResponse<Auth>> login(@Body LoginRequest loginRequest);
 
     /**
      * Đăng xuất
@@ -35,5 +36,5 @@ public interface AuthService {
      * @return Thông tin xác thực
      */
     @POST("/api/auth/register")
-    Call<Auth> register(@Body RegisterRequest loginRequest);
+    Call<ApiResponse<Auth>> register(@Body RegisterRequest loginRequest);
 }

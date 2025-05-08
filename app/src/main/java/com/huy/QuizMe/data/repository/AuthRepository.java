@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.huy.QuizMe.data.api.ApiClient;
 import com.huy.QuizMe.data.api.AuthService;
+import com.huy.QuizMe.data.model.ApiResponse;
 import com.huy.QuizMe.data.model.Auth;
 import com.huy.QuizMe.data.model.User;
 import com.huy.QuizMe.data.model.request.LoginRequest;
@@ -36,7 +37,7 @@ public class AuthRepository {
      *
      * @param email    Email đăng nhập
      * @param password Mật khẩu
-     * @return LiveData<Resource<Auth>> kết quả đăng nhập
+     * @return LiveData<Resource < Auth>> kết quả đăng nhập
      */
     public LiveData<Resource<Auth>> login(String email, String password) {
         MutableLiveData<Resource<Auth>> loginResult = new MutableLiveData<>();
@@ -45,13 +46,14 @@ public class AuthRepository {
         LoginRequest loginRequest = new LoginRequest(email, password);
         authService.login(loginRequest).enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<Auth> call,
-                                   @NonNull Response<Auth> response) {
+            public void onResponse(@NonNull Call<ApiResponse<Auth>> call,
+                                   @NonNull Response<ApiResponse<Auth>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Auth auth = response.body();
+                    ApiResponse<Auth> apiResponse = response.body();
 
+                    Auth auth = apiResponse.getData();
                     // Lưu thông tin đăng nhập vào SharedPreferences
-                    if (auth.getUser() != null) {
+                    if (apiResponse.isSuccess()) {
                         prefsManager.saveUser(auth.getUser());
                     }
                     prefsManager.saveAuthToken(auth.getAccessToken());
@@ -64,7 +66,7 @@ public class AuthRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Auth> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ApiResponse<Auth>> call, @NonNull Throwable t) {
                 loginResult.setValue(Resource.error(t.getMessage(), null));
             }
         });
@@ -80,7 +82,7 @@ public class AuthRepository {
      * @param password        Mật khẩu
      * @param confirmPassword Xác nhận mật khẩu
      * @param fullName        Họ tên đầy đủ
-     * @return LiveData<Resource<Auth>> kết quả đăng ký
+     * @return LiveData<Resource < Auth>> kết quả đăng ký
      */
     public LiveData<Resource<Auth>> register(String username, String email, String password, String confirmPassword, String fullName) {
         MutableLiveData<Resource<Auth>> registerResult = new MutableLiveData<>();
@@ -89,12 +91,13 @@ public class AuthRepository {
         RegisterRequest registerRequest = new RegisterRequest(username, email, password, confirmPassword, fullName);
         authService.register(registerRequest).enqueue(new Callback<>() {
             @Override
-            public void onResponse(@NonNull Call<Auth> call,
-                                   @NonNull Response<Auth> response) {
+            public void onResponse(@NonNull Call<ApiResponse<Auth>> call,
+                                   @NonNull Response<ApiResponse<Auth>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Auth auth = response.body();
+                    ApiResponse<Auth> apiResponse = response.body();
                     // Lưu thông tin đăng nhập vào SharedPreferences
-                    if (auth.getUser() != null) {
+                    Auth auth = apiResponse.getData();
+                    if (apiResponse.isSuccess()) {
                         prefsManager.saveUser(auth.getUser());
                     }
                     prefsManager.saveAuthToken(auth.getAccessToken());
@@ -107,7 +110,7 @@ public class AuthRepository {
             }
 
             @Override
-            public void onFailure(@NonNull Call<Auth> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ApiResponse<Auth>> call, @NonNull Throwable t) {
                 registerResult.setValue(Resource.error(t.getMessage(), null));
             }
         });
