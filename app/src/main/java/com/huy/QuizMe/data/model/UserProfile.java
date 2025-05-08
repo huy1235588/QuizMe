@@ -2,8 +2,6 @@ package com.huy.QuizMe.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.time.LocalDate;
-
 public class UserProfile {
     @SerializedName("id")
     private Long id;
@@ -12,7 +10,7 @@ public class UserProfile {
     private Long userId;
 
     @SerializedName("dateOfBirth")
-    private LocalDate dateOfBirth;
+    private String dateOfBirth;
 
     @SerializedName("city")
     private String city;
@@ -41,7 +39,7 @@ public class UserProfile {
         return userId;
     }
 
-    public LocalDate getDateOfBirth() {
+    public String getDateOfBirth() {
         return dateOfBirth;
     }
 
