@@ -13,4 +13,19 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="player_count_format">%1$d/%2$d players</string>
+    
+    <!-- Profile Fragment -->
+    <string name="edit_profile">Edit Profile</string>
+    <string name="personal_info">Thông tin cá nhân</string>
+    <string name="total_score">Total Score</string>
+    <string name="quizzes_played">Quizzes Played</string>
+    <string name="quizzes_created">Quizzes Created</string>
+    <string name="recent_activity">Hoạt động gần đây</string>
+    <string name="view_all">Xem tất cả</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="no_recent_activity">Hiện không có hoạt động nào</string>
+    <string name="email">Email</string>
+    <string name="phone">SĐT</string>
+    <string name="date_of_birth">Ngày sinh</string>
+    <string name="city">Thành phố</string>
 </resources>
