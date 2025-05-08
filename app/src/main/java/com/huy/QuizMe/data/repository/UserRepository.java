@@ -8,6 +8,7 @@ import com.huy.QuizMe.data.api.ApiClient;
 import com.huy.QuizMe.data.api.UserService;
 import com.huy.QuizMe.data.model.ApiResponse;
 import com.huy.QuizMe.data.model.User;
+import com.huy.QuizMe.data.model.UserProfile;
 
 import java.util.List;
 
@@ -56,4 +57,72 @@ public class UserRepository {
         return usersData;
     }
 
+
+    /**
+     * Lấy thông tin người dùng hiện tại
+     *
+     * @return Thông tin người dùng
+     */
+    public LiveData<Resource<UserProfile>> getCurrentUserProfile() {
+        MutableLiveData<Resource<UserProfile>> userData = new MutableLiveData<>();
+        userData.setValue(Resource.loading(null));
+
+        userService.getCurrentUserProfile().enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<UserProfile>> call,
+                                   @NonNull Response<ApiResponse<UserProfile>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<UserProfile> apiResponse = response.body();
+                    if (apiResponse.isSuccess() && apiResponse.getData() != null) {
+                        userData.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
+                    } else {
+                        userData.setValue(Resource.error(apiResponse.getMessage(), null));
+                    }
+                } else {
+                    userData.setValue(Resource.error("Failed to fetch current user profile", null));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<UserProfile>> call, @NonNull Throwable t) {
+                userData.setValue(Resource.error(t.getMessage(), null));
+            }
+        });
+
+        return userData;
+    }
+
+    /**
+     * Lấy thông tin người dùng theo ID
+     *
+     * @param userId ID của người dùng
+     * @return Thông tin người dùng
+     */
+    public LiveData<Resource<UserProfile>> getUserProfileById(Long userId) {
+        MutableLiveData<Resource<UserProfile>> userData = new MutableLiveData<>();
+        userData.setValue(Resource.loading(null));
+        userService.getUserProfileById(userId).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<UserProfile>> call,
+                                   @NonNull Response<ApiResponse<UserProfile>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<UserProfile> apiResponse = response.body();
+                    if (apiResponse.isSuccess() && apiResponse.getData() != null) {
+                        userData.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
+                    } else {
+                        userData.setValue(Resource.error(apiResponse.getMessage(), null));
+                    }
+                } else {
+                    userData.setValue(Resource.error("Failed to fetch user profile by ID", null));
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<UserProfile>> call, @NonNull Throwable t) {
+                userData.setValue(Resource.error(t.getMessage(), null));
+            }
+        });
+
+        return userData;
+    }
 }
