@@ -84,7 +84,6 @@ public class ApiClient {
         return retrofit.create(QuestionService.class);
     }
 
-
     /**
      * Lấy instance của RoomService
      *
@@ -101,5 +100,14 @@ public class ApiClient {
      */
     public AuthService getAuthService() {
         return retrofit.create(AuthService.class);
+    }
+    
+    /**
+     * Lấy instance của ChatService
+     *
+     * @return ChatService
+     */
+    public ChatService getChatService() {
+        return retrofit.create(ChatService.class);
     }
 }
