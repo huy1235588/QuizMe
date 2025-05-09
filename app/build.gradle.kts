@@ -84,7 +84,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.gson)
-    implementation (libs.logging.interceptor)
+    implementation(libs.logging.interceptor)
 
     // Glide for image loading
     implementation(libs.glide)
@@ -92,10 +92,14 @@ dependencies {
     
     // SVG support for Glide
     implementation(libs.glidetovectoryou)
-    implementation (libs.okhttp3.integration)
+    implementation(libs.okhttp3.integration)
 
     // SwipeRefreshLayout
     implementation(libs.swiperefreshlayout)
+    
+    // WebSocket & STOMP
+    implementation(libs.stompprotocolandroid)
+    implementation(libs.java.websocket)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
