@@ -26,6 +26,10 @@ public class RoomRepository {
     private static final String ERROR_LOADING_ROOMS = "Unable to load room list";
     private static final String ERROR_CREATING_ROOM = "Unable to create room";
     private static final String ERROR_UPDATING_ROOM = "Unable to update room";
+    private static final String ERROR_JOINING_ROOM = "Unable to join room";
+    private static final String ERROR_LEAVING_ROOM = "Unable to leave room";
+    private static final String ERROR_STARTING_GAME = "Unable to start game";
+    private static final String ERROR_GETTING_ROOM = "Unable to get room details";
 
     public RoomRepository() {
         roomService = ApiClient.getInstance().getRoomService();
@@ -100,6 +104,110 @@ public class RoomRepository {
             public void onResponse(@NonNull Call<ApiResponse<Room>> call,
                                    @NonNull Response<ApiResponse<Room>> response) {
                 handleResponse(response, roomData, ERROR_UPDATING_ROOM);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Room>> call, @NonNull Throwable t) {
+                roomData.setValue(Resource.error(t.getMessage(), null));
+            }
+        });
+
+        return roomData;
+    }
+    
+    /**
+     * Tham gia vào một phòng
+     *
+     * @param roomId ID của phòng
+     * @return Đối tượng LiveData với thông tin phòng
+     */
+    public LiveData<Resource<Room>> joinRoom(Long roomId) {
+        MutableLiveData<Resource<Room>> roomData = new MutableLiveData<>();
+        roomData.setValue(Resource.loading(null));
+
+        roomService.joinRoom(roomId).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Room>> call,
+                                  @NonNull Response<ApiResponse<Room>> response) {
+                handleResponse(response, roomData, ERROR_JOINING_ROOM);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Room>> call, @NonNull Throwable t) {
+                roomData.setValue(Resource.error(t.getMessage(), null));
+            }
+        });
+
+        return roomData;
+    }
+    
+    /**
+     * Lấy thông tin chi tiết của phòng
+     *
+     * @param roomId ID của phòng
+     * @return Đối tượng LiveData với thông tin phòng
+     */
+    public LiveData<Resource<Room>> getRoomById(Long roomId) {
+        MutableLiveData<Resource<Room>> roomData = new MutableLiveData<>();
+        roomData.setValue(Resource.loading(null));
+
+        roomService.getRoomById(roomId).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Room>> call,
+                                  @NonNull Response<ApiResponse<Room>> response) {
+                handleResponse(response, roomData, ERROR_GETTING_ROOM);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Room>> call, @NonNull Throwable t) {
+                roomData.setValue(Resource.error(t.getMessage(), null));
+            }
+        });
+
+        return roomData;
+    }
+    
+    /**
+     * Rời khỏi phòng
+     *
+     * @param roomId ID của phòng
+     * @return Đối tượng LiveData với kết quả
+     */
+    public LiveData<Resource<Boolean>> leaveRoom(Long roomId) {
+        MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        roomService.leaveRoom(roomId).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Boolean>> call,
+                                  @NonNull Response<ApiResponse<Boolean>> response) {
+                handleResponse(response, result, ERROR_LEAVING_ROOM);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Boolean>> call, @NonNull Throwable t) {
+                result.setValue(Resource.error(t.getMessage(), null));
+            }
+        });
+
+        return result;
+    }
+    
+    /**
+     * Bắt đầu trò chơi (chỉ chủ phòng)
+     *
+     * @param roomId ID của phòng
+     * @return Đối tượng LiveData với thông tin phòng
+     */
+    public LiveData<Resource<Room>> startGame(Long roomId) {
+        MutableLiveData<Resource<Room>> roomData = new MutableLiveData<>();
+        roomData.setValue(Resource.loading(null));
+
+        roomService.startGame(roomId).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Room>> call,
+                                  @NonNull Response<ApiResponse<Room>> response) {
+                handleResponse(response, roomData, ERROR_STARTING_GAME);
             }
 
             @Override

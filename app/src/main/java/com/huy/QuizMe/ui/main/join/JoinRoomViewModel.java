@@ -29,4 +29,9 @@ public class JoinRoomViewModel extends ViewModel {
     public LiveData<Resource<List<Room>>> getAvailableRooms() {
         return roomRepository.getAvailableRooms(currentCategoryId, currentSearch);
     }
+
+    // Gọi API để tham gia một phòng
+    public LiveData<Resource<Room>> joinRoom(Long roomId) {
+        return roomRepository.joinRoom(roomId);
+    }
 }

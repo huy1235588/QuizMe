@@ -21,7 +21,9 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Room;
+import com.huy.QuizMe.data.repository.Resource;
 import com.huy.QuizMe.utils.ApiUtils;
+import com.huy.QuizMe.ui.main.room.WaitingRoomFragment;
 
 import java.util.List;
 
@@ -92,13 +94,10 @@ public class JoinRoomFragment extends Fragment {
     private void setupRecyclerView() {
         roomAdapter = new RoomAdapter(requireContext());
         rvRooms.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvRooms.setAdapter(roomAdapter);
-
-        // Thiết lập sự kiện click phòng
+        rvRooms.setAdapter(roomAdapter);        // Thiết lập sự kiện click phòng
         roomAdapter.setOnRoomClickListener(room -> {
-            // Điều hướng tới màn hình tham gia phòng
-            Toast.makeText(getContext(), "Tham gia phòng: " + room.getName(), Toast.LENGTH_SHORT).show();
-            // TODO: Chuyển đến màn hình tham gia phòng với code của phòng
+            // Điều hướng tới màn hình phòng đợi
+            navigateToWaitingRoom(room);
         });
     }
 
@@ -142,6 +141,32 @@ public class JoinRoomFragment extends Fragment {
             } else {
                 swipeRefreshLayout.setRefreshing(false);
                 Toast.makeText(getContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Chuyển đến fragment phòng đợi khi người dùng chọn một phòng
+    private void navigateToWaitingRoom(Room room) {
+        // Tạo instance của WaitingRoomFragment
+        WaitingRoomFragment waitingRoomFragment = WaitingRoomFragment.newInstance(room);
+
+        // Hiển thị hộp thoại loading
+        // TODO: Hiển thị loading nếu cần
+
+        // Gọi API để tham gia phòng (nếu cần)
+        viewModel.joinRoom(room.getId()).observe(getViewLifecycleOwner(), resource -> {
+            // TODO: Ẩn loading nếu đã hiển thị
+
+            if (resource.getStatus() == Resource.Status.SUCCESS) {
+                // Điều hướng đến fragment phòng đợi
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.frm_container, waitingRoomFragment)
+                        .addToBackStack(null)
+                        .commit();
+            } else {
+                // Hiển thị thông báo lỗi nếu không thể tham gia phòng
+                Toast.makeText(getContext(), "Không thể tham gia phòng: " +
+                    resource.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
