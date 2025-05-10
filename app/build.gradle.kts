@@ -100,6 +100,8 @@ dependencies {
     // WebSocket & STOMP
     implementation(libs.stompprotocolandroid)
     implementation(libs.java.websocket)
+    implementation (libs.rxjava)
+    implementation (libs.rxandroid)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
