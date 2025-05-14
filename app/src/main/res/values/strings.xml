@@ -28,4 +28,20 @@
     <string name="phone">SĐT</string>
     <string name="date_of_birth">Ngày sinh</string>
     <string name="city">Thành phố</string>
+
+    <!-- Waiting Room -->
+    <string name="back">Back</string>
+    <string name="users">Users</string>
+    <string name="settings">Settings</string>
+    <string name="waiting_room">Phòng đợi</string>
+    <string name="waiting_for_host">Đang chờ chủ phòng bắt đầu...</string>
+    <string name="participants">Người tham gia</string>
+    <string name="participants_count">%1$d người tham gia</string>
+    <string name="emoji">Emoji</string>
+    <string name="send_message">Gửi tin nhắn</string>
+    <string name="type_message">Nhập tin nhắn...</string>
+    <string name="leave_room">Thoát phòng</string>
+    <string name="start_quiz">Bắt đầu</string>
+    <string name="room_settings">Cài đặt phòng</string>
+    <string name="host_badge">Chủ phòng</string>
 </resources>
