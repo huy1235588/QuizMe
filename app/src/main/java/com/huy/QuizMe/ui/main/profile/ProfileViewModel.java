@@ -6,17 +6,20 @@ import androidx.lifecycle.ViewModel;
 
 import com.huy.QuizMe.data.model.User;
 import com.huy.QuizMe.data.model.UserProfile;
+import com.huy.QuizMe.data.repository.AuthRepository;
 import com.huy.QuizMe.data.repository.Resource;
 import com.huy.QuizMe.data.repository.UserRepository;
 import com.huy.QuizMe.utils.SharedPreferencesManager;
 
 public class ProfileViewModel extends ViewModel {
     private final UserRepository userRepository;
+    private final AuthRepository authRepository;
     private final MediatorLiveData<Resource<ProfileData>> profileData;
     private final SharedPreferencesManager sharedPreferencesManager;
 
     public ProfileViewModel() {
         userRepository = new UserRepository();
+        authRepository = new AuthRepository();
         profileData = new MediatorLiveData<>();
         profileData.setValue(Resource.loading(null));
         sharedPreferencesManager = SharedPreferencesManager.getInstance();
@@ -62,6 +65,14 @@ public class ProfileViewModel extends ViewModel {
     public void refreshProfileData() {
         profileData.setValue(Resource.loading(profileData.getValue() != null ? profileData.getValue().getData() : null));
         loadProfileData();
+    }
+
+    /**
+     * Đăng xuất khỏi tài khoản hiện tại
+     * @return LiveData<Resource<Void>> kết quả đăng xuất
+     */
+    public LiveData<Resource<Void>> logout() {
+        return authRepository.logout();
     }
 
     /**

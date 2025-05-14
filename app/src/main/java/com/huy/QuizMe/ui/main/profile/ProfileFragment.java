@@ -1,5 +1,7 @@
 package com.huy.QuizMe.ui.main.profile;
 
+import android.content.Intent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,10 +90,25 @@ public class ProfileFragment extends Fragment {
             // TODO: Navigate to Edit Profile screen
             Toast.makeText(getContext(), "Edit Profile (Coming Soon)", Toast.LENGTH_SHORT).show();
         });
-        
-        btnLogout.setOnClickListener(v -> {
-            // TODO: Implement logout functionality
+          btnLogout.setOnClickListener(v -> {
+            // Show loading toast
             Toast.makeText(getContext(), "Logging out...", Toast.LENGTH_SHORT).show();
+            // Call logout from ViewModel
+            viewModel.logout().observe(getViewLifecycleOwner(), resource -> {
+                switch (resource.getStatus()) {
+                    case LOADING:
+                        // Already showing loading toast
+                        break;
+                    case SUCCESS:
+                        // Logout successful, navigate to Auth Activity
+                        navigateToAuthActivity();
+                        break;
+                    case ERROR:
+                        // Show error message
+                        Toast.makeText(getContext(), resource.getMessage(), Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            });
         });
     }
 
@@ -156,5 +173,17 @@ public class ProfileFragment extends Fragment {
 
     private void hideLoading() {
         progressBar.setVisibility(View.GONE);
+    }
+    
+    /**
+     * Chuyển đến màn hình đăng nhập sau khi đăng xuất
+     */
+    private void navigateToAuthActivity() {
+        if (getActivity() != null) {
+            Intent intent = new Intent(getActivity(), com.huy.QuizMe.ui.auth.AuthActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            getActivity().finish();
+        }
     }
 }

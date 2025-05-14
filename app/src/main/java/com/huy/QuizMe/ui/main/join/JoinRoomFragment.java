@@ -23,7 +23,7 @@ import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.repository.Resource;
 import com.huy.QuizMe.utils.ApiUtils;
-import com.huy.QuizMe.ui.main.room.WaitingRoomFragment;
+//import com.huy.QuizMe.ui.main.room.WaitingRoomFragment;
 
 import java.util.List;
 
@@ -147,28 +147,28 @@ public class JoinRoomFragment extends Fragment {
 
     // Chuyển đến fragment phòng đợi khi người dùng chọn một phòng
     private void navigateToWaitingRoom(Room room) {
-        // Tạo instance của WaitingRoomFragment
-        WaitingRoomFragment waitingRoomFragment = WaitingRoomFragment.newInstance(room);
-
-        // Hiển thị hộp thoại loading
-        // TODO: Hiển thị loading nếu cần
-
-        // Gọi API để tham gia phòng (nếu cần)
-        viewModel.joinRoom(room.getId()).observe(getViewLifecycleOwner(), resource -> {
-            // TODO: Ẩn loading nếu đã hiển thị
-
-            if (resource.getStatus() == Resource.Status.SUCCESS) {
-                // Điều hướng đến fragment phòng đợi
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.frm_container, waitingRoomFragment)
-                        .addToBackStack(null)
-                        .commit();
-            } else {
-                // Hiển thị thông báo lỗi nếu không thể tham gia phòng
-                Toast.makeText(getContext(), "Không thể tham gia phòng: " +
-                    resource.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+//        // Tạo instance của WaitingRoomFragment
+//        WaitingRoomFragment waitingRoomFragment = WaitingRoomFragment.newInstance(room);
+//
+//        // Hiển thị hộp thoại loading
+//        // TODO: Hiển thị loading nếu cần
+//
+//        // Gọi API để tham gia phòng (nếu cần)
+//        viewModel.joinRoom(room.getId()).observe(getViewLifecycleOwner(), resource -> {
+//            // TODO: Ẩn loading nếu đã hiển thị
+//
+//            if (resource.getStatus() == Resource.Status.SUCCESS) {
+//                // Điều hướng đến fragment phòng đợi
+//                getParentFragmentManager().beginTransaction()
+//                        .replace(R.id.frm_container, waitingRoomFragment)
+//                        .addToBackStack(null)
+//                        .commit();
+//            } else {
+//                // Hiển thị thông báo lỗi nếu không thể tham gia phòng
+//                Toast.makeText(getContext(), "Không thể tham gia phòng: " +
+//                    resource.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
     }
 
 }
