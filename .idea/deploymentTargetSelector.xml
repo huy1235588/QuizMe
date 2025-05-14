@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="QuizMe.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-14T07:19:43.354479Z">
+        <DropdownSelection timestamp="2025-05-14T12:53:26.622592700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=D:\Program Files\.android\.android\avd\Medium_Phone.avd" />

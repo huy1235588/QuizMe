@@ -37,7 +37,8 @@
     <ImageView
         android:id="@+id/ivHostBadge"
         android:layout_width="24dp"
-        android:layout_height="24dp"        android:contentDescription="@string/host_badge"
+        android:layout_height="24dp"
+        android:contentDescription="@string/host_badge"
         android:src="@drawable/ic_crown"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
