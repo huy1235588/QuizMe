@@ -53,6 +53,7 @@ public interface RoomService {
      * @param roomRequest Thông tin phòng
      * @return Thông tin phòng vừa tạo
      */
+    @RequiresAuth
     @POST("/api/rooms")
     Call<ApiResponse<Room>> createRoom(@retrofit2.http.Body RoomRequest roomRequest);
 
@@ -81,7 +82,8 @@ public interface RoomService {
      * @param roomId ID của phòng
      * @return Thông tin phòng sau khi tham gia
      */
-    @POST("/api/rooms/{roomId}/join")
+    @RequiresAuth
+    @POST("/api/rooms/join/{roomId}")
     Call<ApiResponse<Room>> joinRoom(@Path("roomId") Long roomId);
 
     /**
@@ -90,7 +92,8 @@ public interface RoomService {
      * @param roomId ID của phòng
      * @return Kết quả rời phòng
      */
-    @POST("/api/rooms/{roomId}/leave")
+    @RequiresAuth
+    @DELETE("/api/rooms/leave/{roomId}")
     Call<ApiResponse<Boolean>> leaveRoom(@Path("roomId") Long roomId);
 
     /**
@@ -99,6 +102,6 @@ public interface RoomService {
      * @param roomId ID của phòng
      * @return Thông tin phòng sau khi bắt đầu
      */
-    @POST("/api/rooms/{roomId}/start")
+    @POST("/api/rooms/start/{roomId}")
     Call<ApiResponse<Room>> startGame(@Path("roomId") Long roomId);
 }

@@ -20,10 +20,11 @@ public interface ChatService {
     /**
      * Lấy tất cả tin nhắn trong một phòng chat
      *
+     * @param roomId ID của phòng chat
      * @return Danh sách tin nhắn
      */
-    @GET("/api/chat/rooms/{roomId}")
-    Call<ApiResponse<List<ChatMessage>>> getMessages();
+    @GET("/api/chat/room/{roomId}")
+    Call<ApiResponse<List<ChatMessage>>> getMessages(@Path("roomId") Long roomId);
 
     /**
      * Gửi tin nhắn mới vào phòng chat

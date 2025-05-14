@@ -33,13 +33,14 @@ public class ChatRepository {
     /**
      * Lấy tin nhắn từ một phòng chat
      *
+     * @param roomId ID của phòng chat
      * @return LiveData chứa danh sách tin nhắn
      */
-    public LiveData<Resource<List<ChatMessage>>> getMessages() {
+    public LiveData<Resource<List<ChatMessage>>> getMessages(Long roomId) {
         MutableLiveData<Resource<List<ChatMessage>>> messagesData = new MutableLiveData<>();
         messagesData.setValue(Resource.loading(null));
 
-        chatService.getMessages().enqueue(new Callback<ApiResponse<List<ChatMessage>>>() {
+        chatService.getMessages(roomId).enqueue(new Callback<ApiResponse<List<ChatMessage>>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<List<ChatMessage>>> call,
                                    @NonNull Response<ApiResponse<List<ChatMessage>>> response) {
