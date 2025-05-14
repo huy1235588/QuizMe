@@ -1,5 +1,6 @@
 package com.huy.QuizMe.ui.main.join;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ import com.huy.QuizMe.data.model.PagedResponse;
 import com.huy.QuizMe.data.model.Quiz;
 import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.model.request.RoomRequest;
+import com.huy.QuizMe.ui.room.WaitingRoomActivity;
 import com.huy.QuizMe.utils.ApiUtils;
 
 public class CreateRoomFragment extends Fragment {
@@ -204,7 +206,10 @@ public class CreateRoomFragment extends Fragment {
                         // Điều hướng đến activity phòng chờ
                         Room room = resource.getData();
                         if (room != null) {
-                            
+                            // Chuyển đến activity phòng chờ
+                            Intent intent = new Intent(getContext(), WaitingRoomActivity.class);
+                            intent.putExtra("ROOM", room);
+                            startActivity(intent);
                         }                        
 
                     } else {

@@ -2,6 +2,7 @@ package com.huy.QuizMe.ui.main.join;
 
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,7 +15,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.appcompat.widget.SearchView;
+
 import android.widget.Toast;
 
 import com.google.android.material.chip.ChipGroup;
@@ -22,6 +25,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.repository.Resource;
+import com.huy.QuizMe.ui.room.WaitingRoomActivity;
 import com.huy.QuizMe.utils.ApiUtils;
 
 import java.util.List;
@@ -146,7 +150,28 @@ public class JoinRoomFragment extends Fragment {
 
     // Chuyển đến activity phòng đợi
     private void navigateToWaitingRoom(Room room) {
+        // Hiển thị loading
+        swipeRefreshLayout.setRefreshing(true);
 
+        // Gọi API để tham gia phòng
+        viewModel.joinRoom(room.getId()).observe(getViewLifecycleOwner(), resource -> {
+            swipeRefreshLayout.setRefreshing(false);
+
+            if (ApiUtils.isSuccess(resource)) {
+                // Lấy thông tin phòng đã cập nhật sau khi tham gia thành công
+                Room updatedRoom = resource.getData();
+                if (updatedRoom != null) {
+                    // Chuyển đến activity phòng chờ
+                    Intent intent = new Intent(getContext(), WaitingRoomActivity.class);
+                    intent.putExtra("ROOM", updatedRoom);
+                    startActivity(intent);
+                }
+            } else {
+                // Hiển thị thông báo lỗi
+                Toast.makeText(getContext(),
+                        resource.getMessage() != null ? resource.getMessage() : "Failed to join room",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-
 }
