@@ -201,8 +201,12 @@ public class CreateRoomFragment extends Fragment {
                         toggleLoading(false);
                         showToast("Room created successfully");
 
-                        // Điều hướng trở lại màn hình tham gia phòng
-                        getParentFragmentManager().popBackStack();
+                        // Điều hướng đến activity phòng chờ
+                        Room room = resource.getData();
+                        if (room != null) {
+                            
+                        }                        
+
                     } else {
                         toggleLoading(false);
                         showToast(resource.getMessage() != null ? 
