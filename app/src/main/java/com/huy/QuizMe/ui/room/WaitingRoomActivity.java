@@ -61,15 +61,15 @@ public class WaitingRoomActivity extends AppCompatActivity {
             return insets;
         });
 
-        // Initialize ViewModel
+        // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(WaitingRoomViewModel.class);
         
-        // Initialize views
+        // Khởi tạo giao diện
         initializeViews();
         setupRecyclerViews();
         setupListeners();
         
-        // Get Room data from intent
+        // Lấy dữ liệu phòng từ intent
         Room room = (Room) getIntent().getSerializableExtra("ROOM");
         if (room != null) {
             viewModel.setupWaitingRoom(room);
@@ -79,7 +79,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
             return;
         }
         
-        // Observe LiveData objects
+        // Quan sát các đối tượng LiveData
         observeViewModel();
     }
     
@@ -96,20 +96,20 @@ public class WaitingRoomActivity extends AppCompatActivity {
         tvRoomDescription = findViewById(R.id.tvRoomDescription);
         tvParticipantsCount = findViewById(R.id.tvParticipantsCount);
         
-        // Add start quiz button if needed
+        // Thêm nút bắt đầu nếu cần
         btnStartQuiz = findViewById(R.id.btnStartQuiz);
         if (btnStartQuiz != null) {
-            btnStartQuiz.setVisibility(View.GONE); // Initially hide it
+            btnStartQuiz.setVisibility(View.GONE); // Ẩn ban đầu
         }
     }
     
     private void setupRecyclerViews() {
-        // Setup chat messages RecyclerView
+        // Thiết lập RecyclerView cho tin nhắn trò chuyện
         chatAdapter = new ChatMessageAdapter(this);
         rvChatMessages.setLayoutManager(new LinearLayoutManager(this));
         rvChatMessages.setAdapter(chatAdapter);
         
-        // Setup participants RecyclerView
+        // Thiết lập RecyclerView cho người tham gia
         participantAdapter = new ParticipantAdapter(this);
         rvParticipants.setLayoutManager(new LinearLayoutManager(this));
         rvParticipants.setAdapter(participantAdapter);
@@ -150,25 +150,25 @@ public class WaitingRoomActivity extends AppCompatActivity {
     }
     
     private void observeViewModel() {
-        // Observe current room
+        // Theo dõi phòng hiện tại
         viewModel.getCurrentRoom().observe(this, room -> {
             if (room != null) {
                 updateRoomInfo(room);
             }
         });
         
-        // Observe chat messages
+        // Theo dõi tin nhắn trò chuyện
         viewModel.getChatMessages().observe(this, messages -> {
             if (messages != null) {
                 chatAdapter.setMessages(messages);
-                // Scroll to the latest message
+                // Cuộn tới tin nhắn mới nhất
                 if (messages.size() > 0) {
                     rvChatMessages.smoothScrollToPosition(messages.size() - 1);
                 }
             }
         });
         
-        // Observe participants list
+        // Theo dõi danh sách người tham gia
         viewModel.getParticipants().observe(this, participants -> {
             if (participants != null) {
                 participantAdapter.setParticipants(participants);
@@ -176,28 +176,28 @@ public class WaitingRoomActivity extends AppCompatActivity {
             }
         });
         
-        // Observe WebSocket connection status
+        // Theo dõi trạng thái kết nối WebSocket
         viewModel.getIsConnected().observe(this, isConnected -> {
-            // Show/hide network error indicator if needed
+            // Hiển thị/ẩn chỉ báo lỗi mạng nếu cần
         });
         
-        // Observe error messages
+        // Theo dõi thông báo lỗi
         viewModel.getErrorMessage().observe(this, errorMessage -> {
             if (errorMessage != null && !errorMessage.isEmpty()) {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
         
-        // Observe game start event
+        // Theo dõi sự kiện bắt đầu trò chơi
         viewModel.getGameStartEvent().observe(this, roomResource -> {
             if (roomResource != null && roomResource.getStatus() == Resource.Status.SUCCESS) {
-                // Handle game start
+                // Xử lý bắt đầu trò chơi
                 Toast.makeText(this, "Game starting...", Toast.LENGTH_SHORT).show();
-                // Navigate to game activity
+                // Chuyển hướng đến màn hình trò chơi
             }
         });
         
-        // Check if current user is host to show start button
+        // Kiểm tra xem người dùng hiện tại có phải là chủ phòng để hiển thị nút bắt đầu
         if (viewModel.isCurrentUserHost()) {
             if (btnStartQuiz != null) {
                 btnStartQuiz.setVisibility(View.VISIBLE);
@@ -223,7 +223,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
             if (result != null) {
                 if (result.getStatus() == Resource.Status.SUCCESS) {
                     Toast.makeText(this, "Game started!", Toast.LENGTH_SHORT).show();
-                    // Navigation will be handled by the observer for game start event
+                    // Chuyển hướng sẽ được xử lý bởi observer cho sự kiện bắt đầu trò chơi
                 } else if (result.getStatus() == Resource.Status.ERROR) {
                     Toast.makeText(this, "Error starting game: " + result.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -256,7 +256,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Make sure to unsubscribe from WebSocket events
+        // Đảm bảo hủy đăng ký khỏi các sự kiện WebSocket
         if (viewModel != null) {
             viewModel.unsubscribeFromEvents();
         }

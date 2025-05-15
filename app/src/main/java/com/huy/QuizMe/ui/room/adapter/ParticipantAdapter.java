@@ -66,7 +66,7 @@ public class ParticipantAdapter extends RecyclerView.Adapter<ParticipantAdapter.
         }
 
         void bind(Participant participant) {
-            // Set username
+            // Đặt tên người dùng
             String username;
             if (participant.isGuest()) {
                 username = participant.getGuestName();
@@ -74,7 +74,7 @@ public class ParticipantAdapter extends RecyclerView.Adapter<ParticipantAdapter.
             } else {
                 username = participant.getUser().getUsername();
                 
-                // Load avatar image
+                // Tải hình ảnh đại diện
                 if (participant.getUser().getProfileImage() != null && !participant.getUser().getProfileImage().isEmpty()) {
                     ImageLoader.loadProfileImage(itemView.getContext(), ivUserAvatar, 
                             participant.getUser().getProfileImage(), R.drawable.placeholder_avatar);
@@ -84,7 +84,7 @@ public class ParticipantAdapter extends RecyclerView.Adapter<ParticipantAdapter.
             }
             tvUserName.setText(username);
             
-            // Show host badge if this participant is the host
+            // Hiển thị biểu tượng chủ phòng nếu người tham gia này là chủ phòng
             ivHostBadge.setVisibility(participant.isHost() ? View.VISIBLE : View.GONE);
         }
     }

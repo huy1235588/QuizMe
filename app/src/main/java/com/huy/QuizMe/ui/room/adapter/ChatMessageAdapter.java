@@ -113,7 +113,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         return "";
     }
-      // Holder for sent messages
+    // ViewHolder cho tin nhắn đã gửi
     static class SentMessageViewHolder extends RecyclerView.ViewHolder {
         TextView tvSenderName, tvMessage;
         
@@ -128,7 +128,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             tvMessage.setText(message.getMessage());
         }
     }
-      // Holder for received messages
+    // ViewHolder cho tin nhắn đã nhận
     static class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
         TextView tvSenderName, tvMessage;
         ImageView ivUserAvatar;
@@ -145,7 +145,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if (message.getUser() != null) {
                 senderName = message.getUser().getUsername();
                 
-                // Load avatar
+                // Tải avatar
                 if (message.getUser().getProfileImage() != null && !message.getUser().getProfileImage().isEmpty()) {
                     ImageLoader.loadProfileImage(itemView.getContext(), ivUserAvatar, 
                             message.getUser().getProfileImage(), R.drawable.placeholder_avatar);
