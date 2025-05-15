@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="QuizMe.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-05-14T16:03:19.184744300Z">
+        <DropdownSelection timestamp="2025-05-15T04:12:45.522296400Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=8SOJDUZ5JFIRHYSW" />

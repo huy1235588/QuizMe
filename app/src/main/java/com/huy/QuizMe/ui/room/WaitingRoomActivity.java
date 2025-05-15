@@ -1,9 +1,7 @@
 package com.huy.QuizMe.ui.room;
 
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -22,53 +20,52 @@ import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.repository.Resource;
 import com.huy.QuizMe.ui.room.adapter.ChatMessageAdapter;
 import com.huy.QuizMe.ui.room.adapter.ParticipantAdapter;
+import com.huy.QuizMe.utils.KeyboardUtils;
 
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class WaitingRoomActivity extends AppCompatActivity {
     private WaitingRoomViewModel viewModel;
     private DrawerLayout drawerLayout;
-    private RecyclerView rvChatMessages;
-    private RecyclerView rvParticipants;
+    private RecyclerView rvChatMessages, rvParticipants;
     private ChatMessageAdapter chatAdapter;
     private ParticipantAdapter participantAdapter;
-    private ImageButton btnBack;
-    private ImageButton btnUsers;
-    private ImageButton btnSettings;
-    private ImageButton btnEmoji;
+    private ImageButton btnBack, btnUsers, btnSettings, btnEmoji;
     private FloatingActionButton btnSend;
     private EditText etChatMessage;
-    private TextView tvRoomDescription;
-    private TextView tvParticipantsCount;
+    private TextView tvRoomDescription, tvParticipantsCount;
     private Button btnStartQuiz;
-    private LinearLayout networkErrorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
 
+        // Thiết lập chế độ điều chỉnh bàn phím
+        KeyboardUtils.setupKeyboardAdjustResize(this);
+
         setContentView(R.layout.activity_waiting_room);
+
+        // Thiết lập chế độ điều chỉnh cửa sổ
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
             return insets;
         });
 
         // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(WaitingRoomViewModel.class);
-        
+
         // Khởi tạo giao diện
         initializeViews();
         setupRecyclerViews();
         setupListeners();
-        
+
         // Lấy dữ liệu phòng từ intent
         Room room = (Room) getIntent().getSerializableExtra("ROOM");
         if (room != null) {
@@ -78,11 +75,15 @@ public class WaitingRoomActivity extends AppCompatActivity {
             finish();
             return;
         }
-        
+
         // Quan sát các đối tượng LiveData
         observeViewModel();
+
+        // Thiết lập DrawerLayout
+        View rootView = findViewById(R.id.main);
+        KeyboardUtils.setupChatAreaKeyboardListener(rootView, rvChatMessages);
     }
-    
+
     private void initializeViews() {
         drawerLayout = findViewById(R.id.drawer_layout);
         rvChatMessages = findViewById(R.id.rvChatMessages);
@@ -95,29 +96,29 @@ public class WaitingRoomActivity extends AppCompatActivity {
         etChatMessage = findViewById(R.id.etChatMessage);
         tvRoomDescription = findViewById(R.id.tvRoomDescription);
         tvParticipantsCount = findViewById(R.id.tvParticipantsCount);
-        
+
         // Thêm nút bắt đầu nếu cần
         btnStartQuiz = findViewById(R.id.btnStartQuiz);
         if (btnStartQuiz != null) {
             btnStartQuiz.setVisibility(View.GONE); // Ẩn ban đầu
         }
     }
-    
+
     private void setupRecyclerViews() {
         // Thiết lập RecyclerView cho tin nhắn trò chuyện
         chatAdapter = new ChatMessageAdapter(this);
         rvChatMessages.setLayoutManager(new LinearLayoutManager(this));
         rvChatMessages.setAdapter(chatAdapter);
-        
+
         // Thiết lập RecyclerView cho người tham gia
         participantAdapter = new ParticipantAdapter(this);
         rvParticipants.setLayoutManager(new LinearLayoutManager(this));
         rvParticipants.setAdapter(participantAdapter);
     }
-    
+
     private void setupListeners() {
         btnBack.setOnClickListener(v -> onBackPressed());
-        
+
         btnUsers.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
                 drawerLayout.closeDrawer(GravityCompat.END);
@@ -125,18 +126,18 @@ public class WaitingRoomActivity extends AppCompatActivity {
                 drawerLayout.openDrawer(GravityCompat.END);
             }
         });
-        
+
         btnSettings.setOnClickListener(v -> {
             Toast.makeText(this, "Room settings feature coming soon", Toast.LENGTH_SHORT).show();
         });
-        
+
         btnEmoji.setOnClickListener(v -> {
             Toast.makeText(this, "Emoji picker feature coming soon", Toast.LENGTH_SHORT).show();
         });
-        
+
         btnSend.setOnClickListener(v -> sendMessage());
     }
-    
+
     private void sendMessage() {
         String message = etChatMessage.getText().toString().trim();
         if (!message.isEmpty()) {
@@ -148,7 +149,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
             }
         }
     }
-    
+
     private void observeViewModel() {
         // Theo dõi phòng hiện tại
         viewModel.getCurrentRoom().observe(this, room -> {
@@ -156,7 +157,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
                 updateRoomInfo(room);
             }
         });
-        
+
         // Theo dõi tin nhắn trò chuyện
         viewModel.getChatMessages().observe(this, messages -> {
             if (messages != null) {
@@ -167,7 +168,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
                 }
             }
         });
-        
+
         // Theo dõi danh sách người tham gia
         viewModel.getParticipants().observe(this, participants -> {
             if (participants != null) {
@@ -175,19 +176,19 @@ public class WaitingRoomActivity extends AppCompatActivity {
                 updateParticipantsCount(participants.size());
             }
         });
-        
+
         // Theo dõi trạng thái kết nối WebSocket
         viewModel.getIsConnected().observe(this, isConnected -> {
             // Hiển thị/ẩn chỉ báo lỗi mạng nếu cần
         });
-        
+
         // Theo dõi thông báo lỗi
         viewModel.getErrorMessage().observe(this, errorMessage -> {
             if (errorMessage != null && !errorMessage.isEmpty()) {
                 Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
             }
         });
-        
+
         // Theo dõi sự kiện bắt đầu trò chơi
         viewModel.getGameStartEvent().observe(this, roomResource -> {
             if (roomResource != null && roomResource.getStatus() == Resource.Status.SUCCESS) {
@@ -196,7 +197,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
                 // Chuyển hướng đến màn hình trò chơi
             }
         });
-        
+
         // Kiểm tra xem người dùng hiện tại có phải là chủ phòng để hiển thị nút bắt đầu
         if (viewModel.isCurrentUserHost()) {
             if (btnStartQuiz != null) {
@@ -205,19 +206,19 @@ public class WaitingRoomActivity extends AppCompatActivity {
             }
         }
     }
-    
+
     private void updateRoomInfo(Room room) {
         if (room.getHost() != null) {
             String description = "Waiting for " + room.getHost().getUsername() + " to start the quiz...";
             tvRoomDescription.setText(description);
         }
     }
-    
+
     private void updateParticipantsCount(int count) {
         String countText = count + " " + getString(R.string.participants);
         tvParticipantsCount.setText(countText);
     }
-    
+
     private void startGame() {
         viewModel.startGame().observe(this, result -> {
             if (result != null) {
@@ -230,7 +231,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
             }
         });
     }
-    
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
@@ -239,7 +240,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
             leaveRoom();
         }
     }
-    
+
     private void leaveRoom() {
         viewModel.leaveRoom().observe(this, result -> {
             if (result != null) {
@@ -252,7 +253,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
             }
         });
     }
-    
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

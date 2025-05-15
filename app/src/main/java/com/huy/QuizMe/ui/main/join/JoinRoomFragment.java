@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -157,7 +158,7 @@ public class JoinRoomFragment extends Fragment {
         viewModel.joinRoom(room.getId()).observe(getViewLifecycleOwner(), resource -> {
             swipeRefreshLayout.setRefreshing(false);
 
-            if (ApiUtils.isSuccess(resource)) {
+            if (resource.getStatus() == Resource.Status.SUCCESS) {
                 // Lấy thông tin phòng đã cập nhật sau khi tham gia thành công
                 Room updatedRoom = resource.getData();
                 if (updatedRoom != null) {
@@ -166,7 +167,7 @@ public class JoinRoomFragment extends Fragment {
                     intent.putExtra("ROOM", updatedRoom);
                     startActivity(intent);
                 }
-            } else {
+            } else if (resource.getStatus() == Resource.Status.ERROR) {
                 // Hiển thị thông báo lỗi
                 Toast.makeText(getContext(),
                         resource.getMessage() != null ? resource.getMessage() : "Failed to join room",
