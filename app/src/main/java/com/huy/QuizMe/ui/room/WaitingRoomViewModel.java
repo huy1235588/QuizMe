@@ -211,6 +211,18 @@ public class WaitingRoomViewModel extends ViewModel {
     }
 
     /**
+     * Đóng phòng (chỉ chủ phòng)
+     */
+    public LiveData<Resource<Room>> closeRoom() {
+        isLoading.setValue(true);
+        Room room = currentRoom.getValue();
+        if (room != null && room.getId() != null) {
+            return roomRepository.closeRoom(room.getId());
+        }
+        return new MutableLiveData<>(Resource.error("Không thể đóng phòng", null));
+    }
+
+    /**
      * Rời khỏi phòng
      */
     public LiveData<Resource<Boolean>> leaveRoom() {

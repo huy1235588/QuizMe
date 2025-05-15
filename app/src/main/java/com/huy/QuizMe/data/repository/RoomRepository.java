@@ -220,6 +220,32 @@ public class RoomRepository {
 
         return roomData;
     }
+
+    /**
+     * Đóng phòng (chỉ chủ phòng)
+     *
+     * @param roomId ID của phòng
+     * @return Đối tượng LiveData với thông tin phòng
+     */
+    public LiveData<Resource<Room>> closeRoom(Long roomId) {
+        MutableLiveData<Resource<Room>> roomData = new MutableLiveData<>();
+        roomData.setValue(Resource.loading(null));
+
+        roomService.closeRoom(roomId).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<Room>> call,
+                                   @NonNull Response<ApiResponse<Room>> response) {
+                handleResponse(response, roomData, ERROR_UPDATING_ROOM);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<Room>> call, @NonNull Throwable t) {
+                roomData.setValue(Resource.error(t.getMessage(), null));
+            }
+        });
+
+        return roomData;
+    }
     
     /**
      * Xử lý phản hồi chung cho các cuộc gọi API

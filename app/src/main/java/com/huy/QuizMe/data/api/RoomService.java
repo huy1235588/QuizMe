@@ -104,4 +104,14 @@ public interface RoomService {
      */
     @POST("/api/rooms/start/{roomId}")
     Call<ApiResponse<Room>> startGame(@Path("roomId") Long roomId);
+
+    /**
+     * Đóng phòng (chỉ chủ phòng)
+     *
+     * @param roomId ID của phòng
+     * @return Kết quả đóng phòng
+     */
+    @RequiresAuth
+    @PATCH("/api/rooms/close/{roomId}")
+    Call<ApiResponse<Room>> closeRoom(@Path("roomId") Long roomId);
 }

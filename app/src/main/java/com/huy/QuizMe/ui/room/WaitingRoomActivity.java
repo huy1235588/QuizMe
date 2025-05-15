@@ -239,8 +239,39 @@ public class WaitingRoomActivity extends AppCompatActivity {
             public void handleOnBackPressed() {
                 if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
                     drawerLayout.closeDrawer(GravityCompat.END);
+                } else if (viewModel.isCurrentUserHost()) {
+                    // Hiển thị hộp thoại xác nhận đóng phòng nếu người dùng là chủ phòng
+                    showCloseRoomConfirmationDialog();
                 } else {
+                    // Người chơi bình thường thì rời phòng
                     leaveRoom();
+                }
+            }
+        });
+    }
+
+    private void showCloseRoomConfirmationDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Đóng phòng");
+        builder.setMessage("Bạn có chắc muốn đóng phòng không? Tất cả người chơi sẽ bị đẩy ra khỏi phòng.");
+        builder.setPositiveButton("Đồng ý", (dialog, which) -> {
+            closeRoom();
+        });
+        builder.setNegativeButton("Hủy", (dialog, which) -> {
+            dialog.dismiss();
+        });
+        builder.setCancelable(true);
+        builder.show();
+    }
+
+    private void closeRoom() {
+        viewModel.closeRoom().observe(this, result -> {
+            if (result != null) {
+                if (result.getStatus() == Resource.Status.SUCCESS) {
+                    Toast.makeText(this, "Phòng đã được đóng", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else if (result.getStatus() == Resource.Status.ERROR) {
+                    Toast.makeText(this, "Lỗi khi đóng phòng: " + result.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
