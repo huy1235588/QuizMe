@@ -26,13 +26,13 @@ import java.util.Locale;
 public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_SENT = 0;
     private static final int VIEW_TYPE_RECEIVED = 1;
-    
+
     private final Context context;
     private final List<ChatMessage> messages;
     private final SharedPreferencesManager preferencesManager;
     private final SimpleDateFormat apiDateFormat;
     private final SimpleDateFormat displayDateFormat;
-    
+
     public ChatMessageAdapter(Context context) {
         this.context = context;
         this.messages = new ArrayList<>();
@@ -40,12 +40,12 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.apiDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
         this.displayDateFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
     }
-    
+
     @Override
     public int getItemViewType(int position) {
         ChatMessage message = messages.get(position);
         User currentUser = preferencesManager.getUser();
-        
+
         if (isCurrentUser(message, currentUser)) {
             return VIEW_TYPE_SENT;
         } else {
@@ -57,10 +57,10 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (message.getUser() == null && message.getGuest() && currentUser == null) {
             return true;
         }
-        return currentUser != null && message.getUser() != null && 
-               currentUser.getId().equals(message.getUser().getId());
+        return currentUser != null && message.getUser() != null &&
+                currentUser.getId().equals(message.getUser().getId());
     }
-    
+
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -72,28 +72,28 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return new ReceivedMessageViewHolder(view);
         }
     }
-    
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ChatMessage message = messages.get(position);
-        
+
         if (getItemViewType(position) == VIEW_TYPE_SENT) {
             ((SentMessageViewHolder) holder).bind(message);
         } else {
             ((ReceivedMessageViewHolder) holder).bind(message);
         }
     }
-    
+
     @Override
     public int getItemCount() {
         return messages.size();
     }
-    
+
     public void addMessage(ChatMessage message) {
         messages.add(message);
         notifyItemInserted(messages.size() - 1);
     }
-    
+
     public void setMessages(List<ChatMessage> newMessages) {
         messages.clear();
         if (newMessages != null) {
@@ -101,7 +101,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         notifyDataSetChanged();
     }
-    
+
     private String formatTime(String sentAt) {
         try {
             Date date = apiDateFormat.parse(sentAt);
@@ -113,50 +113,56 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
         return "";
     }
+
     // ViewHolder cho tin nhắn đã gửi
     static class SentMessageViewHolder extends RecyclerView.ViewHolder {
-        TextView tvSenderName, tvMessage;
-        
+        TextView tvSenderName, tvMessage, tvTimestamp;
+
         SentMessageViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSenderName = itemView.findViewById(R.id.tvSenderName);
             tvMessage = itemView.findViewById(R.id.tvMessage);
+            tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
         }
-        
+
         void bind(ChatMessage message) {
             tvSenderName.setText("You");
             tvMessage.setText(message.getMessage());
+            tvTimestamp.setText(message.getSentAt());
         }
     }
+
     // ViewHolder cho tin nhắn đã nhận
     static class ReceivedMessageViewHolder extends RecyclerView.ViewHolder {
-        TextView tvSenderName, tvMessage;
+        TextView tvSenderName, tvMessage, tvTimestamp;
         ImageView ivUserAvatar;
-        
+
         ReceivedMessageViewHolder(@NonNull View itemView) {
             super(itemView);
             tvSenderName = itemView.findViewById(R.id.tvSenderName);
             tvMessage = itemView.findViewById(R.id.tvMessage);
             ivUserAvatar = itemView.findViewById(R.id.ivUserAvatar);
+            tvTimestamp = itemView.findViewById(R.id.tvTimestamp);
         }
-        
+
         void bind(ChatMessage message) {
             String senderName;
             if (message.getUser() != null) {
                 senderName = message.getUser().getUsername();
-                
+
                 // Tải avatar
                 if (message.getUser().getProfileImage() != null && !message.getUser().getProfileImage().isEmpty()) {
-                    ImageLoader.loadProfileImage(itemView.getContext(), ivUserAvatar, 
+                    ImageLoader.loadProfileImage(itemView.getContext(), ivUserAvatar,
                             message.getUser().getProfileImage(), R.drawable.placeholder_avatar);
                 }
             } else {
                 senderName = message.getGuestName() != null ? message.getGuestName() : "Guest";
                 ivUserAvatar.setImageResource(R.drawable.placeholder_avatar);
             }
-            
+
             tvSenderName.setText(senderName);
             tvMessage.setText(message.getMessage());
+            tvTimestamp.setText(message.getSentAt());
         }
     }
 }
