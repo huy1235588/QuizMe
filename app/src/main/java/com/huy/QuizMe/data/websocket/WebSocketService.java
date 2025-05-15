@@ -2,16 +2,19 @@ package com.huy.QuizMe.data.websocket;
 
 import android.util.Log;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.huy.QuizMe.BuildConfig;
 import com.huy.QuizMe.data.model.ChatMessage;
 import com.huy.QuizMe.utils.GsonUtils;
 import com.huy.QuizMe.utils.SharedPreferencesManager;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import io.reactivex.CompletableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -31,7 +34,7 @@ public class WebSocketService {
     private static final String TAG = "WebSocketService";
 
     // Đường dẫn WebSocket
-    private static final String WEBSOCKET_URL = BuildConfig.BASE_URL.replace("http", "ws") + "/ws";
+    private static final String WEBSOCKET_URL = BuildConfig.BASE_URL.replace("http", "ws") + "ws/websocket";
 
     // Constants cho các topic WebSocket (phải khớp với backend)
     public static final String ROOM_TOPIC_PREFIX = "/topic/room/";
@@ -55,6 +58,79 @@ public class WebSocketService {
     // Quản lý SharedPreferences
     private final SharedPreferencesManager prefsManager;
 
+    /**
+     * WebSocketMessage wrapper - phải khớp với định dạng từ backend nhưng không dùng Lombok
+     */
+    public static class WebSocketMessage<T> {
+        private String type;
+        private T payload;
+        private String timestamp;
+
+        // Constructor đầy đủ
+        public WebSocketMessage(String type, T payload, String timestamp) {
+            this.type = type;
+            this.payload = payload;
+            this.timestamp = timestamp;
+        }
+
+        // Constructor chỉ với type và payload
+        public WebSocketMessage(String type, T payload) {
+            this.type = type;
+            this.payload = payload;
+            // Không đặt timestamp ở đây vì timestamp được set từ backend
+        }
+
+        // Getters and Setters
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
+        }
+
+        public T getPayload() {
+            return payload;
+        }
+
+        public void setPayload(T payload) {
+            this.payload = payload;
+        }
+
+        public String getTimestamp() {
+            return timestamp;
+        }
+
+        public void setTimestamp(String timestamp) {
+            this.timestamp = timestamp;
+        }
+
+        // equals và hashCode để so sánh đối tượng
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            WebSocketMessage<?> that = (WebSocketMessage<?>) o;
+            return Objects.equals(type, that.type) &&
+                   Objects.equals(payload, that.payload) &&
+                   Objects.equals(timestamp, that.timestamp);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(type, payload, timestamp);
+        }
+
+        @Override
+        public String toString() {
+            return "WebSocketMessage{" +
+                   "type='" + type + '\'' +
+                   ", payload=" + payload +
+                   ", timestamp='" + timestamp + '\'' +
+                   '}';
+        }
+    }
+
     private WebSocketService() {
         compositeDisposable = new CompositeDisposable();
         prefsManager = SharedPreferencesManager.getInstance();
@@ -76,6 +152,8 @@ public class WebSocketService {
         try {
             // Disconnect nếu đã kết nối trước đó
             disconnect();
+
+            Log.d(TAG, "Connecting to WebSocket server at " + WEBSOCKET_URL);
 
             // Tạo client mới
             stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, WEBSOCKET_URL);
@@ -239,41 +317,60 @@ public class WebSocketService {
     }
 
     /**
-     * Đăng ký một topic và xử lý tin nhắn
+     * Đăng ký một topic và xử lý tin nhắn - phân tích cấu trúc WebSocketMessage từ server
      *
      * @param topicPath Đường dẫn đến topic
-     * @param clazz     Lớp đối tượng dữ liệu
+     * @param payloadClass     Lớp đối tượng dữ liệu
      * @param listener  Callback xử lý tin nhắn
      * @return boolean  Trạng thái đã đăng ký thành công hay không
      */
-    private <T> boolean subscribe(String topicPath, Class<T> clazz, MessageListener<T> listener) {
-        // Kiểm tra tham số
+    private <T> boolean subscribe(String topicPath, Class<T> payloadClass, MessageListener<T> listener) {
+        // Kiểm tra điều kiện
         if (topicPath == null || listener == null) {
             Log.e(TAG, "Cannot subscribe: topic path or listener is null");
             return false;
         }
 
-        // Kiểm tra kết nối
         if (stompClient == null || !stompClient.isConnected()) {
             Log.e(TAG, "WebSocket is not connected. Please connect before subscribing.");
             return false;
         }
 
-        // Hủy đăng ký topic cũ nếu có
+        // Hủy subscription cũ nếu có
         unsubscribe(topicPath);
 
         try {
-            // Đăng ký topic mới
             Disposable disposable = stompClient.topic(topicPath)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             topicMessage -> {
                                 try {
-                                    // Chuyển đổi dữ liệu JSON thành đối tượng
-                                    String payload = topicMessage.getPayload();
-                                    T data = GsonUtils.fromJson(payload, clazz);
-                                    listener.onMessage(data);
+                                    // Lấy dữ liệu JSON từ tin nhắn
+                                    String json = topicMessage.getPayload();
+                                    Log.d(TAG, "Raw message received: " + json);
+                                    
+                                    // Parse JSON vào JsonObject để trích xuất các trường
+                                    JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+                                    
+                                    // Trích xuất các trường từ WebSocketMessage
+                                    String type = jsonObject.has("type") ? 
+                                            jsonObject.get("type").getAsString() : "";
+                                    
+                                    // Trích xuất payload và chuyển đổi sang đối tượng mong muốn
+                                    if (jsonObject.has("payload")) {
+                                        JsonElement payloadElement = jsonObject.get("payload");
+                                        T payloadData = GsonUtils.fromJson(payloadElement.toString(), payloadClass);
+                                        
+                                        // Gọi listener với payload đã parse
+                                        if (payloadData != null) {
+                                            listener.onMessage(payloadData);
+                                        } else {
+                                            Log.w(TAG, "Payload was null after parsing");
+                                        }
+                                    } else {
+                                        Log.w(TAG, "Message doesn't contain payload field");
+                                    }
                                 } catch (Exception e) {
                                     Log.e(TAG, "Error parsing message from topic " + topicPath, e);
                                 }
@@ -281,7 +378,7 @@ public class WebSocketService {
                             throwable -> Log.e(TAG, "Error subscribing to topic " + topicPath, throwable)
                     );
 
-            // Lưu subscription để có thể hủy sau này
+            // Lưu subscription
             topicSubscriptions.put(topicPath, disposable);
             compositeDisposable.add(disposable);
             return true;
@@ -317,7 +414,15 @@ public class WebSocketService {
             Log.e(TAG, "Cannot send message: roomId is null");
             return false;
         }
-        return sendMessage("/app/chat/" + roomId, message);
+
+        // Tạo đúng định dạng request theo ChatMessageRequest trên server
+        Map<String, Object> chatMessage = new HashMap<>();
+        chatMessage.put("roomId", roomId);
+        chatMessage.put("message", message);
+        chatMessage.put("guestName", null);
+
+        // Gửi tin nhắn đến topic chat
+        return sendMessage("/app/chat/" + roomId, chatMessage);
     }
 
     /**
