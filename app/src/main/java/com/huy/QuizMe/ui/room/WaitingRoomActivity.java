@@ -63,6 +63,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
 
         // Khởi tạo giao diện
         initializeViews();
+        setupBackPressHandler();
         setupRecyclerViews();
         setupListeners();
 
@@ -117,7 +118,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        btnBack.setOnClickListener(v -> onBackPressed());
+        btnBack.setOnClickListener(v -> getOnBackPressedDispatcher().onBackPressed());
 
         btnUsers.setOnClickListener(v -> {
             if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
@@ -163,7 +164,7 @@ public class WaitingRoomActivity extends AppCompatActivity {
             if (messages != null) {
                 chatAdapter.setMessages(messages);
                 // Cuộn tới tin nhắn mới nhất
-                if (messages.size() > 0) {
+                if (!messages.isEmpty()) {
                     rvChatMessages.smoothScrollToPosition(messages.size() - 1);
                 }
             }
@@ -232,13 +233,17 @@ public class WaitingRoomActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
-            drawerLayout.closeDrawer(GravityCompat.END);
-        } else {
-            leaveRoom();
-        }
+    private void setupBackPressHandler() {
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                    drawerLayout.closeDrawer(GravityCompat.END);
+                } else {
+                    leaveRoom();
+                }
+            }
+        });
     }
 
     private void leaveRoom() {

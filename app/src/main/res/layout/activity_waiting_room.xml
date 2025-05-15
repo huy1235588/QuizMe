@@ -33,8 +33,8 @@
                 <!-- Back Button -->
                 <ImageButton
                     android:id="@+id/btnBack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/back"
                     android:padding="8dp"
@@ -47,8 +47,8 @@
                 <!-- Users Button -->
                 <ImageButton
                     android:id="@+id/btnUsers"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginEnd="8dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/users"
@@ -62,8 +62,8 @@
                 <!-- Settings Button -->
                 <ImageButton
                     android:id="@+id/btnSettings"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/settings"
                     android:padding="8dp"

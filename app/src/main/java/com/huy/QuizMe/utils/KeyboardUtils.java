@@ -3,10 +3,7 @@ package com.huy.QuizMe.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
