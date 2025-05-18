@@ -150,38 +150,36 @@ public class WebSocketService {
      */
     public boolean connect() {
         try {
-            // Disconnect nếu đã kết nối trước đó
+            // Clean up existing connection if present
             disconnect();
 
             Log.d(TAG, "Connecting to WebSocket server at " + WEBSOCKET_URL);
 
-            // Tạo client mới
+            // Create new client
             stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, WEBSOCKET_URL);
+            
+            // Set heartbeats for stable connection
+            stompClient.withClientHeartbeat(10000).withServerHeartbeat(10000);
 
-            // Log chi tiết nếu đang trong môi trường debug
-            if (BuildConfig.DEBUG) {
-                stompClient.withClientHeartbeat(10000).withServerHeartbeat(10000);
-            }
-
-            // Thêm header xác thực nếu có
+            // Add authentication header matching Spring Security expectations
             String authToken = prefsManager.getAuthToken();
             List<StompHeader> headers = new ArrayList<>();
             if (authToken != null && !authToken.isEmpty()) {
                 headers.add(new StompHeader("Authorization", "Bearer " + authToken));
-                stompClient.withClientHeartbeat(10000).withServerHeartbeat(10000);
             }
 
-            // Kết nối và theo dõi trạng thái
+            // Listen for connection lifecycle events
             Disposable lifecycleDisposable = stompClient.lifecycle()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(lifecycleEvent -> {
                         switch (lifecycleEvent.getType()) {
                             case OPENED:
-                                Log.d(TAG, "WebSocket connection opened");
+                                Log.d(TAG, "WebSocket connection established");
                                 break;
                             case ERROR:
                                 Log.e(TAG, "WebSocket connection error", lifecycleEvent.getException());
+                                // Consider implementing reconnection logic here
                                 break;
                             case CLOSED:
                                 Log.d(TAG, "WebSocket connection closed");
@@ -196,7 +194,7 @@ public class WebSocketService {
             return true;
 
         } catch (Exception e) {
-            Log.e(TAG, "Error connecting to WebSocket server", e);
+            Log.e(TAG, "Failed to connect to WebSocket server", e);
             return false;
         }
     }
@@ -348,49 +346,37 @@ public class WebSocketService {
                                 try {
                                     // Lấy dữ liệu JSON từ tin nhắn
                                     String json = topicMessage.getPayload();
-                                    Log.d(TAG, "Raw message received: " + json);
+                                    Log.d(TAG, "Raw message from " + topicPath + ": " + json);
 
-                                    // Parse JSON vào JsonObject để trích xuất các trường
+                                    // Parse JSON
                                     JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
 
                                     // Trích xuất các trường từ WebSocketMessage
-                                    String type = jsonObject.has("type") ?
-                                            jsonObject.get("type").getAsString() : "";
-                                    // Trích xuất payload và chuyển đổi sang đối tượng mong muốn
                                     if (jsonObject.has("payload")) {
                                         JsonElement payloadElement = jsonObject.get("payload");
-
-                                        // Xử lý đặc biệt cho trường hợp payloadClass là String
+                                        
+                                        // Special handling for String payloads
                                         if (payloadClass == String.class) {
-                                            if (payloadElement.isJsonPrimitive()) {
-                                                String stringPayload = payloadElement.getAsString();
-                                                listener.onMessage((T) stringPayload);
-                                            } else {
-                                                Log.w(TAG, "Expected String payload but got: " + payloadElement);
-                                            }
+                                            String stringPayload = payloadElement.isJsonPrimitive() ? 
+                                                    payloadElement.getAsString() : payloadElement.toString();
+                                            listener.onMessage((T) stringPayload);
                                         } else {
-                                            // Xử lý các đối tượng phức tạp
-                                            try {
-                                                T payloadData = GsonUtils.fromJson(payloadElement.toString(), payloadClass);
-
-                                                // Gọi listener với payload đã parse
-                                                if (payloadData != null) {
-                                                    listener.onMessage(payloadData);
-                                                } else {
-                                                    Log.w(TAG, "Payload was null after parsing");
-                                                }
-                                            } catch (Exception e) {
-                                                Log.e(TAG, "Error parsing payload: " + e.getMessage(), e);
+                                            // For complex objects
+                                            T payloadData = GsonUtils.fromJson(payloadElement.toString(), payloadClass);
+                                            if (payloadData != null) {
+                                                listener.onMessage(payloadData);
+                                            } else {
+                                                Log.w(TAG, "Failed to parse payload: null result");
                                             }
                                         }
                                     } else {
-                                        Log.w(TAG, "Message doesn't contain payload field");
+                                        Log.w(TAG, "Message missing payload field: " + json);
                                     }
                                 } catch (Exception e) {
-                                    Log.e(TAG, "Error parsing message from topic " + topicPath, e);
+                                    Log.e(TAG, "Error parsing message from " + topicPath, e);
                                 }
                             },
-                            throwable -> Log.e(TAG, "Error subscribing to topic " + topicPath, throwable)
+                            throwable -> Log.e(TAG, "Subscription error for " + topicPath, throwable)
                     );
 
             // Lưu subscription
@@ -398,7 +384,7 @@ public class WebSocketService {
             compositeDisposable.add(disposable);
             return true;
         } catch (Exception e) {
-            Log.e(TAG, "Error subscribing to topic " + topicPath, e);
+            Log.e(TAG, "Failed to subscribe to " + topicPath, e);
             return false;
         }
     }
