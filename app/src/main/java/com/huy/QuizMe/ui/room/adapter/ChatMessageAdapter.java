@@ -26,6 +26,7 @@ import java.util.Locale;
 public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int VIEW_TYPE_SENT = 0;
     private static final int VIEW_TYPE_RECEIVED = 1;
+    private static final int VIEW_TYPE_SYSTEM = 2;
 
     private final Context context;
     private final List<ChatMessage> messages;
@@ -44,6 +45,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public int getItemViewType(int position) {
         ChatMessage message = messages.get(position);
+
+        // Check if this is a system message
+        if (message.getUser() == null && (message.getGuest() == null || !message.getGuest()) &&
+                message.getMessage() != null && message.getMessage().startsWith("SYSTEM_MESSAGE:")) {
+            return VIEW_TYPE_SYSTEM;
+        }
+
         User currentUser = preferencesManager.getUser();
 
         if (isCurrentUser(message, currentUser)) {
@@ -54,7 +62,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     private boolean isCurrentUser(ChatMessage message, User currentUser) {
-        if (message.getUser() == null && message.getGuest() && currentUser == null) {
+        if (message.getUser() == null && message.getGuest() != null && message.getGuest() && currentUser == null) {
             return true;
         }
         return currentUser != null && message.getUser() != null &&
@@ -67,6 +75,9 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (viewType == VIEW_TYPE_SENT) {
             View view = LayoutInflater.from(context).inflate(R.layout.item_chat_message_sent, parent, false);
             return new SentMessageViewHolder(view);
+        } else if (viewType == VIEW_TYPE_SYSTEM) {
+            View view = LayoutInflater.from(context).inflate(R.layout.item_chat_message_system, parent, false);
+            return new SystemMessageViewHolder(view);
         } else {
             View view = LayoutInflater.from(context).inflate(R.layout.item_chat_message_received, parent, false);
             return new ReceivedMessageViewHolder(view);
@@ -77,8 +88,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ChatMessage message = messages.get(position);
 
-        if (getItemViewType(position) == VIEW_TYPE_SENT) {
+        int viewType = getItemViewType(position);
+        if (viewType == VIEW_TYPE_SENT) {
             ((SentMessageViewHolder) holder).bind(message);
+        } else if (viewType == VIEW_TYPE_SYSTEM) {
+            ((SystemMessageViewHolder) holder).bind(message);
         } else {
             ((ReceivedMessageViewHolder) holder).bind(message);
         }
@@ -163,6 +177,26 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             tvSenderName.setText(senderName);
             tvMessage.setText(message.getMessage());
             tvTimestamp.setText(message.getSentAt());
+        }
+    }
+
+    // ViewHolder cho tin nhắn hệ thống
+    static class SystemMessageViewHolder extends RecyclerView.ViewHolder {
+        TextView tvSystemMessage;
+
+        SystemMessageViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvSystemMessage = itemView.findViewById(R.id.tvSystemMessage);
+        }
+
+        void bind(ChatMessage message) {
+            // Loại bỏ prefix "SYSTEM_MESSAGE:" khỏi nội dung hiển thị
+            String systemMessage = message.getMessage();
+            if (systemMessage != null && systemMessage.startsWith("SYSTEM_MESSAGE:")) {
+                systemMessage = systemMessage.substring("SYSTEM_MESSAGE:".length()).trim();
+            }
+
+            tvSystemMessage.setText(systemMessage);
         }
     }
 }

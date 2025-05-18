@@ -14,8 +14,18 @@ import com.huy.QuizMe.data.repository.RoomRepository;
 import com.huy.QuizMe.data.websocket.WebSocketService;
 import com.huy.QuizMe.utils.SharedPreferencesManager;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+/**
+ * Interface để xử lý tin nhắn dạng String từ WebSocket
+ */
+interface StringMessageListener {
+    void onMessage(String message);
+}
 
 /**
  * ViewModel cho màn hình phòng chờ (Waiting Room)
@@ -25,6 +35,9 @@ public class WaitingRoomViewModel extends ViewModel {
     private final RoomRepository roomRepository;
     private final WebSocketService webSocketService;
     private final SharedPreferencesManager sharedPreferencesManager;
+
+    // Prefix cho tin nhắn hệ thống
+    private static final String SYSTEM_MESSAGE_PREFIX = "SYSTEM_MESSAGE:";
 
     // Lưu thông tin phòng hiện tại
     private final MutableLiveData<Room> currentRoom = new MutableLiveData<>();
@@ -135,7 +148,6 @@ public class WaitingRoomViewModel extends ViewModel {
             errorMessage.setValue("ID phòng không hợp lệ");
             return;
         }
-
         try {
             // Đăng ký nhận tin nhắn chat
             boolean chatSubscribed = webSocketService.subscribeToChatMessages(roomId, this::handleNewChatMessage);
@@ -144,10 +156,10 @@ public class WaitingRoomViewModel extends ViewModel {
             }
 
             // Đăng ký sự kiện người chơi tham gia
-            webSocketService.subscribeToPlayerJoinEvents(roomId, Room.class, this::handlePlayerJoinEvent);
+            webSocketService.subscribeToPlayerJoinEvents(roomId, String.class, this::handlePlayerJoinEventMessage);
 
             // Đăng ký sự kiện người chơi rời phòng
-            webSocketService.subscribeToPlayerLeaveEvents(roomId, Room.class, this::handlePlayerLeaveEvent);
+            webSocketService.subscribeToPlayerLeaveEvents(roomId, String.class, this::handlePlayerLeaveEventMessage);
 
             // Đăng ký sự kiện bắt đầu trò chơi
             webSocketService.subscribeToGameStartEvents(roomId, Room.class, this::handleGameStartEvent);
@@ -182,6 +194,36 @@ public class WaitingRoomViewModel extends ViewModel {
             return roomRepository.getRoomById(roomId);
         }
         return new MutableLiveData<>(Resource.error("Không tìm thấy thông tin phòng", null));
+    }
+
+    /**
+     * Tạo và thêm tin nhắn hệ thống vào danh sách tin nhắn
+     *
+     * @param systemMessage Nội dung tin nhắn hệ thống
+     */
+    private void addSystemMessage(String systemMessage) {
+        Room room = currentRoom.getValue();
+        if (room == null || room.getId() == null) {
+            return;
+        }
+
+        // Tạo tin nhắn hệ thống mới
+        ChatMessage message = new ChatMessage(
+                null,
+                room.getId(),
+                null,  // null user vì đây là tin nhắn hệ thống
+                false, // không phải khách
+                null,  // không có tên khách
+                SYSTEM_MESSAGE_PREFIX + systemMessage, // thêm prefix để định danh
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).format(new Date()) // thời gian hiện tại
+        );
+
+        // Thêm vào danh sách tin nhắn
+        List<ChatMessage> currentMessages = chatMessages.getValue();
+        if (currentMessages != null) {
+            currentMessages.add(message);
+            chatMessages.setValue(currentMessages);
+        }
     }
 
     /**
@@ -267,6 +309,33 @@ public class WaitingRoomViewModel extends ViewModel {
      */
     private void handlePlayerJoinEvent(Room updatedRoom) {
         if (updatedRoom != null) {
+            // Tìm người chơi mới tham gia
+            Room currentRoomValue = currentRoom.getValue();
+            List<Participant> newParticipants = updatedRoom.getParticipants();
+            List<Participant> oldParticipants = currentRoomValue != null ? currentRoomValue.getParticipants() : new ArrayList<>();
+
+            if (newParticipants != null && oldParticipants != null && newParticipants.size() > oldParticipants.size()) {
+                // Tìm người chơi mới tham gia
+                for (Participant newParticipant : newParticipants) {
+                    boolean isNewPlayer = true;
+                    for (Participant oldParticipant : oldParticipants) {
+                        if (newParticipant.getUser() != null && oldParticipant.getUser() != null &&
+                                newParticipant.getUser().getId().equals(oldParticipant.getUser().getId())) {
+                            isNewPlayer = false;
+                            break;
+                        }
+                    }
+
+                    if (isNewPlayer && newParticipant.getUser() != null) {
+                        // Thêm tin nhắn hệ thống thông báo người chơi tham gia
+                        String playerName = newParticipant.getUser().getUsername();
+                        addSystemMessage(playerName + " đã tham gia phòng chờ");
+                        break;
+                    }
+                }
+            }
+
+            // Cập nhật thông tin phòng và danh sách người tham gia
             currentRoom.setValue(updatedRoom);
             if (updatedRoom.getParticipants() != null) {
                 participants.setValue(updatedRoom.getParticipants());
@@ -281,6 +350,33 @@ public class WaitingRoomViewModel extends ViewModel {
      */
     private void handlePlayerLeaveEvent(Room updatedRoom) {
         if (updatedRoom != null) {
+            // Tìm người chơi đã rời đi
+            Room currentRoomValue = currentRoom.getValue();
+            List<Participant> newParticipants = updatedRoom.getParticipants();
+            List<Participant> oldParticipants = currentRoomValue != null ? currentRoomValue.getParticipants() : new ArrayList<>();
+
+            if (newParticipants != null && oldParticipants != null && newParticipants.size() < oldParticipants.size()) {
+                // Tìm người chơi đã rời đi
+                for (Participant oldParticipant : oldParticipants) {
+                    boolean playerLeft = true;
+                    for (Participant newParticipant : newParticipants) {
+                        if (oldParticipant.getUser() != null && newParticipant.getUser() != null &&
+                                oldParticipant.getUser().getId().equals(newParticipant.getUser().getId())) {
+                            playerLeft = false;
+                            break;
+                        }
+                    }
+
+                    if (playerLeft && oldParticipant.getUser() != null) {
+                        // Thêm tin nhắn hệ thống thông báo người chơi rời đi
+                        String playerName = oldParticipant.getUser().getUsername();
+                        addSystemMessage(playerName + " đã rời phòng chờ");
+                        break;
+                    }
+                }
+            }
+
+            // Cập nhật thông tin phòng và danh sách người tham gia
             currentRoom.setValue(updatedRoom);
             if (updatedRoom.getParticipants() != null) {
                 participants.setValue(updatedRoom.getParticipants());
@@ -296,6 +392,36 @@ public class WaitingRoomViewModel extends ViewModel {
     private void handleGameStartEvent(Room updatedRoom) {
         if (updatedRoom != null) {
             gameStartEvent.setValue(Resource.success(updatedRoom, "Trò chơi đã bắt đầu"));
+        }
+    }
+
+    /**
+     * Xử lý tin nhắn sự kiện người chơi tham gia (dạng String)
+     *
+     * @param message Nội dung tin nhắn
+     */
+    private void handlePlayerJoinEventMessage(String message) {
+        if (message != null && !message.isEmpty()) {
+            // Add system message for player joining
+            addSystemMessage(message);
+
+            // Refresh room info to update participants list
+            refreshRoomInfo();
+        }
+    }
+
+    /**
+     * Xử lý tin nhắn sự kiện người chơi rời đi (dạng String)
+     *
+     * @param message Nội dung tin nhắn
+     */
+    private void handlePlayerLeaveEventMessage(String message) {
+        if (message != null && !message.isEmpty()) {
+            // Add system message for player leaving
+            addSystemMessage(message);
+
+            // Refresh room info to update participants list
+            refreshRoomInfo();
         }
     }
 

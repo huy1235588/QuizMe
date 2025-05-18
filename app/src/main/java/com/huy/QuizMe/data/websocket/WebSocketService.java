@@ -112,8 +112,8 @@ public class WebSocketService {
             if (o == null || getClass() != o.getClass()) return false;
             WebSocketMessage<?> that = (WebSocketMessage<?>) o;
             return Objects.equals(type, that.type) &&
-                   Objects.equals(payload, that.payload) &&
-                   Objects.equals(timestamp, that.timestamp);
+                    Objects.equals(payload, that.payload) &&
+                    Objects.equals(timestamp, that.timestamp);
         }
 
         @Override
@@ -124,10 +124,10 @@ public class WebSocketService {
         @Override
         public String toString() {
             return "WebSocketMessage{" +
-                   "type='" + type + '\'' +
-                   ", payload=" + payload +
-                   ", timestamp='" + timestamp + '\'' +
-                   '}';
+                    "type='" + type + '\'' +
+                    ", payload=" + payload +
+                    ", timestamp='" + timestamp + '\'' +
+                    '}';
         }
     }
 
@@ -319,9 +319,9 @@ public class WebSocketService {
     /**
      * Đăng ký một topic và xử lý tin nhắn - phân tích cấu trúc WebSocketMessage từ server
      *
-     * @param topicPath Đường dẫn đến topic
-     * @param payloadClass     Lớp đối tượng dữ liệu
-     * @param listener  Callback xử lý tin nhắn
+     * @param topicPath    Đường dẫn đến topic
+     * @param payloadClass Lớp đối tượng dữ liệu
+     * @param listener     Callback xử lý tin nhắn
      * @return boolean  Trạng thái đã đăng ký thành công hay không
      */
     private <T> boolean subscribe(String topicPath, Class<T> payloadClass, MessageListener<T> listener) {
@@ -349,24 +349,39 @@ public class WebSocketService {
                                     // Lấy dữ liệu JSON từ tin nhắn
                                     String json = topicMessage.getPayload();
                                     Log.d(TAG, "Raw message received: " + json);
-                                    
+
                                     // Parse JSON vào JsonObject để trích xuất các trường
                                     JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
-                                    
+
                                     // Trích xuất các trường từ WebSocketMessage
-                                    String type = jsonObject.has("type") ? 
+                                    String type = jsonObject.has("type") ?
                                             jsonObject.get("type").getAsString() : "";
-                                    
                                     // Trích xuất payload và chuyển đổi sang đối tượng mong muốn
                                     if (jsonObject.has("payload")) {
                                         JsonElement payloadElement = jsonObject.get("payload");
-                                        T payloadData = GsonUtils.fromJson(payloadElement.toString(), payloadClass);
-                                        
-                                        // Gọi listener với payload đã parse
-                                        if (payloadData != null) {
-                                            listener.onMessage(payloadData);
+
+                                        // Xử lý đặc biệt cho trường hợp payloadClass là String
+                                        if (payloadClass == String.class) {
+                                            if (payloadElement.isJsonPrimitive()) {
+                                                String stringPayload = payloadElement.getAsString();
+                                                listener.onMessage((T) stringPayload);
+                                            } else {
+                                                Log.w(TAG, "Expected String payload but got: " + payloadElement);
+                                            }
                                         } else {
-                                            Log.w(TAG, "Payload was null after parsing");
+                                            // Xử lý các đối tượng phức tạp
+                                            try {
+                                                T payloadData = GsonUtils.fromJson(payloadElement.toString(), payloadClass);
+
+                                                // Gọi listener với payload đã parse
+                                                if (payloadData != null) {
+                                                    listener.onMessage(payloadData);
+                                                } else {
+                                                    Log.w(TAG, "Payload was null after parsing");
+                                                }
+                                            } catch (Exception e) {
+                                                Log.e(TAG, "Error parsing payload: " + e.getMessage(), e);
+                                            }
                                         }
                                     } else {
                                         Log.w(TAG, "Message doesn't contain payload field");
