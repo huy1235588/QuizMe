@@ -2,6 +2,8 @@ package com.huy.QuizMe.data.websocket;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -121,6 +123,7 @@ public class WebSocketService {
             return Objects.hash(type, payload, timestamp);
         }
 
+        @NonNull
         @Override
         public String toString() {
             return "WebSocketMessage{" +
@@ -157,7 +160,7 @@ public class WebSocketService {
 
             // Create new client
             stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, WEBSOCKET_URL);
-            
+
             // Set heartbeats for stable connection
             stompClient.withClientHeartbeat(10000).withServerHeartbeat(10000);
 
@@ -253,9 +256,14 @@ public class WebSocketService {
      * @param roomId   ID của phòng
      * @param clazz    Lớp đối tượng dữ liệu
      * @param listener Callback xử lý sự kiện
+     * @return boolean Trạng thái đăng ký thành công hay không
      */
-    public <T> void subscribeToGameStartEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_START_EVENT, clazz, listener);
+    public <T> boolean subscribeToGameStartEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
+        if (roomId == null) {
+            Log.e(TAG, "Không thể đăng ký sự kiện bắt đầu: roomId là null");
+            return false;
+        }
+        return subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_START_EVENT, clazz, listener);
     }
 
     /**
@@ -264,9 +272,14 @@ public class WebSocketService {
      * @param roomId   ID của phòng
      * @param clazz    Lớp đối tượng dữ liệu
      * @param listener Callback xử lý sự kiện
+     * @return boolean Trạng thái đăng ký thành công hay không
      */
-    public <T> void subscribeToPlayerJoinEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        subscribe(ROOM_TOPIC_PREFIX + roomId + PLAYER_JOIN_EVENT, clazz, listener);
+    public <T> boolean subscribeToPlayerJoinEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
+        if (roomId == null) {
+            Log.e(TAG, "Không thể đăng ký sự kiện tham gia: roomId là null");
+            return false;
+        }
+        return subscribe(ROOM_TOPIC_PREFIX + roomId + PLAYER_JOIN_EVENT, clazz, listener);
     }
 
     /**
@@ -275,9 +288,14 @@ public class WebSocketService {
      * @param roomId   ID của phòng
      * @param clazz    Lớp đối tượng dữ liệu
      * @param listener Callback xử lý sự kiện
+     * @return boolean Trạng thái đăng ký thành công hay không
      */
-    public <T> void subscribeToPlayerLeaveEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        subscribe(ROOM_TOPIC_PREFIX + roomId + PLAYER_LEAVE_EVENT, clazz, listener);
+    public <T> boolean subscribeToPlayerLeaveEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
+        if (roomId == null) {
+            Log.e(TAG, "Không thể đăng ký sự kiện rời phòng: roomId là null");
+            return false;
+        }
+        return subscribe(ROOM_TOPIC_PREFIX + roomId + PLAYER_LEAVE_EVENT, clazz, listener);
     }
 
     /**
@@ -286,9 +304,14 @@ public class WebSocketService {
      * @param roomId   ID của phòng
      * @param clazz    Lớp đối tượng dữ liệu
      * @param listener Callback xử lý sự kiện
+     * @return boolean Trạng thái đăng ký thành công hay không
      */
-    public <T> void subscribeToGameProgressEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_PROGRESS_EVENT, clazz, listener);
+    public <T> boolean subscribeToGameProgressEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
+        if (roomId == null) {
+            Log.e(TAG, "Không thể đăng ký sự kiện tiến trình: roomId là null");
+            return false;
+        }
+        return subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_PROGRESS_EVENT, clazz, listener);
     }
 
     /**
@@ -297,9 +320,14 @@ public class WebSocketService {
      * @param roomId   ID của phòng
      * @param clazz    Lớp đối tượng dữ liệu
      * @param listener Callback xử lý sự kiện
+     * @return boolean Trạng thái đăng ký thành công hay không
      */
-    public <T> void subscribeToGameEndEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_END_EVENT, clazz, listener);
+    public <T> boolean subscribeToGameEndEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
+        if (roomId == null) {
+            Log.e(TAG, "Không thể đăng ký sự kiện kết thúc: roomId là null");
+            return false;
+        }
+        return subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_END_EVENT, clazz, listener);
     }
 
     /**
@@ -309,9 +337,14 @@ public class WebSocketService {
      * @param eventType Loại sự kiện
      * @param clazz     Lớp đối tượng dữ liệu
      * @param listener  Callback xử lý sự kiện
+     * @return boolean  Trạng thái đăng ký thành công hay không
      */
-    public <T> void subscribeToCustomRoomEvent(Long roomId, String eventType, Class<T> clazz, MessageListener<T> listener) {
-        subscribe(ROOM_TOPIC_PREFIX + roomId + "/" + eventType, clazz, listener);
+    public <T> boolean subscribeToCustomRoomEvent(Long roomId, String eventType, Class<T> clazz, MessageListener<T> listener) {
+        if (roomId == null || eventType == null || eventType.trim().isEmpty()) {
+            Log.e(TAG, "Không thể đăng ký sự kiện tùy chỉnh: roomId hoặc eventType không hợp lệ");
+            return false;
+        }
+        return subscribe(ROOM_TOPIC_PREFIX + roomId + "/" + eventType, clazz, listener);
     }
 
     /**
@@ -323,18 +356,18 @@ public class WebSocketService {
      * @return boolean  Trạng thái đã đăng ký thành công hay không
      */
     private <T> boolean subscribe(String topicPath, Class<T> payloadClass, MessageListener<T> listener) {
-        // Kiểm tra điều kiện
+        // Kiểm tra điều kiện đầu vào
         if (topicPath == null || listener == null) {
-            Log.e(TAG, "Cannot subscribe: topic path or listener is null");
+            Log.e(TAG, "Không thể đăng ký: đường dẫn topic hoặc listener là null");
             return false;
         }
 
-        if (stompClient == null || !stompClient.isConnected()) {
-            Log.e(TAG, "WebSocket is not connected. Please connect before subscribing.");
+        if (!isConnected()) {
+            Log.e(TAG, "WebSocket chưa kết nối. Hãy kết nối trước khi đăng ký.");
             return false;
         }
 
-        // Hủy subscription cũ nếu có
+        // Hủy subscription cũ nếu có để tránh đăng ký trùng lặp
         unsubscribe(topicPath);
 
         try {
@@ -346,37 +379,49 @@ public class WebSocketService {
                                 try {
                                     // Lấy dữ liệu JSON từ tin nhắn
                                     String json = topicMessage.getPayload();
-                                    Log.d(TAG, "Raw message from " + topicPath + ": " + json);
+                                    if (BuildConfig.DEBUG) {
+                                        Log.d(TAG, "Nhận tin nhắn từ " + topicPath + ": " + json);
+                                    }
 
-                                    // Parse JSON
-                                    JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
+                                    // Xử lý JSON - tối ưu quá trình parse
+                                    JsonElement jsonElement = JsonParser.parseString(json);
+                                    if (!jsonElement.isJsonObject()) {
+                                        Log.w(TAG, "Tin nhắn không phải là JSON object: " + json);
+                                        return;
+                                    }
+
+                                    JsonObject jsonObject = jsonElement.getAsJsonObject();
 
                                     // Trích xuất các trường từ WebSocketMessage
                                     if (jsonObject.has("payload")) {
                                         JsonElement payloadElement = jsonObject.get("payload");
-                                        
-                                        // Special handling for String payloads
+
+                                        // Xử lý đặc biệt cho payload dạng String
                                         if (payloadClass == String.class) {
-                                            String stringPayload = payloadElement.isJsonPrimitive() ? 
+                                            String stringPayload = payloadElement.isJsonPrimitive() ?
                                                     payloadElement.getAsString() : payloadElement.toString();
                                             listener.onMessage((T) stringPayload);
                                         } else {
-                                            // For complex objects
-                                            T payloadData = GsonUtils.fromJson(payloadElement.toString(), payloadClass);
-                                            if (payloadData != null) {
-                                                listener.onMessage(payloadData);
-                                            } else {
-                                                Log.w(TAG, "Failed to parse payload: null result");
+                                            // Cho các đối tượng phức tạp
+                                            try {
+                                                T payloadData = GsonUtils.fromJson(payloadElement.toString(), payloadClass);
+                                                if (payloadData != null) {
+                                                    listener.onMessage(payloadData);
+                                                } else {
+                                                    Log.w(TAG, "Parse payload thất bại: kết quả null");
+                                                }
+                                            } catch (Exception e) {
+                                                Log.e(TAG, "Lỗi khi chuyển đổi payload sang " + payloadClass.getSimpleName(), e);
                                             }
                                         }
                                     } else {
-                                        Log.w(TAG, "Message missing payload field: " + json);
+                                        Log.w(TAG, "Tin nhắn thiếu trường payload: " + json);
                                     }
                                 } catch (Exception e) {
-                                    Log.e(TAG, "Error parsing message from " + topicPath, e);
+                                    Log.e(TAG, "Lỗi xử lý tin nhắn từ " + topicPath, e);
                                 }
                             },
-                            throwable -> Log.e(TAG, "Subscription error for " + topicPath, throwable)
+                            throwable -> Log.e(TAG, "Lỗi đăng ký cho " + topicPath, throwable)
                     );
 
             // Lưu subscription
@@ -434,8 +479,13 @@ public class WebSocketService {
      * @return boolean    Trạng thái đã gửi thành công hay không
      */
     public boolean sendMessage(String destination, Object message) {
-        if (stompClient == null || !stompClient.isConnected()) {
-            Log.e(TAG, "WebSocket is not connected. Please connect before sending a message.");
+        if (!isConnected()) {
+            Log.e(TAG, "WebSocket chưa kết nối. Hãy kết nối trước khi gửi tin nhắn.");
+            return false;
+        }
+
+        if (destination == null || destination.trim().isEmpty() || message == null) {
+            Log.e(TAG, "Không thể gửi tin nhắn: destination hoặc message là null");
             return false;
         }
 
@@ -445,19 +495,25 @@ public class WebSocketService {
                     stompClient.send(destination, jsonMessage)
                             .compose(applySchedulers())
                             .subscribe(
-                                    () -> Log.d(TAG, "Message sent successfully to " + destination),
-                                    throwable -> Log.e(TAG, "Error sending message to " + destination, throwable)
+                                    () -> {
+                                        if (BuildConfig.DEBUG) {
+                                            Log.d(TAG, "Gửi tin nhắn thành công tới " + destination);
+                                        }
+                                    },
+                                    throwable -> Log.e(TAG, "Lỗi gửi tin nhắn tới " + destination, throwable)
                             )
             );
             return true;
         } catch (Exception e) {
-            Log.e(TAG, "Error sending message", e);
+            Log.e(TAG, "Lỗi khi chuẩn bị gửi tin nhắn: " + e.getMessage(), e);
             return false;
         }
     }
 
     /**
-     * Áp dụng scheduler để chuyển đổi luồng xử lý
+     * Áp dụng scheduler để chuyển đổi luồng xử lý cho Completable
+     * Giúp đảm bảo các hoạt động mạng được thực hiện trên background thread
+     * và kết quả được xử lý trên main thread
      */
     private CompletableTransformer applySchedulers() {
         return upstream -> upstream

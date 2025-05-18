@@ -1,5 +1,7 @@
 package com.huy.QuizMe.ui.room;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * ViewModel cho màn hình phòng chờ (Waiting Room)
@@ -58,9 +61,11 @@ public class WaitingRoomViewModel extends ViewModel {
     private final MediatorLiveData<Resource<Room>> gameStartEvent = new MediatorLiveData<>();
 
     /**
-     * Constructor
+     * Constructor - Khởi tạo ViewModel với các thành phần cần thiết
+     * Sử dụng Singleton pattern để lấy instance từ các service và repository
      */
     public WaitingRoomViewModel() {
+        // Khởi tạo với các Singleton service/repository
         this.roomRepository = new RoomRepository();
         this.webSocketService = WebSocketService.getInstance();
         this.sharedPreferencesManager = SharedPreferencesManager.getInstance();
@@ -87,12 +92,13 @@ public class WaitingRoomViewModel extends ViewModel {
 
     /**
      * Kết nối WebSocket và đăng ký lắng nghe các sự kiện khi kết nối thành công
+     * Sử dụng mô hình bất đồng bộ để không chặn UI thread
      *
      * @param roomId ID của phòng
      */
     private void connectAndSubscribe(Long roomId) {
         if (roomId == null) {
-            errorMessage.setValue("Không tìm thấy thông tin phòng");
+            errorMessage.postValue("Không tìm thấy thông tin phòng");
             return;
         }
 
@@ -100,41 +106,49 @@ public class WaitingRoomViewModel extends ViewModel {
         if (webSocketService.isConnected()) {
             // Đã kết nối, đăng ký các sự kiện
             subscribeToWebSocketEvents(roomId);
-            isConnected.setValue(true);
+            isConnected.postValue(true);
             return;
         }
+
+        // Thông báo đang kết nối
+        isConnected.postValue(false);
+        isLoading.postValue(true);
 
         // Chưa kết nối, thực hiện kết nối
         if (!webSocketService.connect()) {
-            errorMessage.setValue("Không thể kết nối đến máy chủ");
-            isConnected.setValue(false);
+            errorMessage.postValue("Không thể khởi tạo kết nối đến máy chủ");
+            isConnected.postValue(false);
+            isLoading.postValue(false);
             return;
         }
 
-        // Đợi một khoảng thời gian ngắn để kết nối được thiết lập
+        // Đợi kết nối trong background thread
         new Thread(() -> {
             try {
                 // Đợi tối đa WEBSOCKET_CONNECTION_TIMEOUT mili-giây cho kết nối
                 long startTime = System.currentTimeMillis();
                 long elapsedTime = 0;
+                boolean isConnectedSuccessfully = false;
 
-                while (!webSocketService.isConnected() && elapsedTime < WEBSOCKET_CONNECTION_TIMEOUT) {
+                while (!isConnectedSuccessfully && elapsedTime < WEBSOCKET_CONNECTION_TIMEOUT) {
                     Thread.sleep(200); // Kiểm tra mỗi 200ms
+                    isConnectedSuccessfully = webSocketService.isConnected();
                     elapsedTime = System.currentTimeMillis() - startTime;
                 }
 
-                // Kiểm tra trạng thái kết nối sau khi đợi
-                boolean connected = webSocketService.isConnected();
-                isConnected.postValue(connected);
+                // Cập nhật trạng thái kết nối
+                isConnected.postValue(isConnectedSuccessfully);
+                isLoading.postValue(false);
 
-                if (connected) {
+                if (isConnectedSuccessfully) {
                     // Kết nối thành công, đăng ký các sự kiện
                     subscribeToWebSocketEvents(roomId);
                 } else {
-                    // Kết nối thất bại
-                    errorMessage.postValue("Không thể kết nối đến máy chủ trò chuyện");
+                    // Kết nối thất bại sau khi timeout
+                    errorMessage.postValue("Kết nối máy chủ bị gián đoạn, vui lòng thử lại");
                 }
             } catch (InterruptedException e) {
+                isLoading.postValue(false);
                 errorMessage.postValue("Lỗi kết nối: " + e.getMessage());
                 Thread.currentThread().interrupt();
             }
@@ -143,48 +157,75 @@ public class WaitingRoomViewModel extends ViewModel {
 
     /**
      * Đăng ký các sự kiện WebSocket cho phòng chờ
+     * Đảm bảo mỗi sự kiện được xử lý đúng cách và báo lỗi chi tiết
      *
      * @param roomId ID của phòng
      */
     private void subscribeToWebSocketEvents(Long roomId) {
         if (roomId == null) {
-            errorMessage.setValue("ID phòng không hợp lệ");
+            errorMessage.postValue("ID phòng không hợp lệ");
             return;
         }
-        try {            // Đăng ký nhận tin nhắn chat
-            if (!webSocketService.subscribeToChatMessages(roomId, this::handleNewChatMessage)) {
-                errorMessage.setValue("Không thể kết nối đến kênh trò chuyện");
+
+        try {
+            // Đăng ký nhận tin nhắn chat
+            boolean chatSubscribed = webSocketService.subscribeToChatMessages(roomId, this::handleNewChatMessage);
+            if (!chatSubscribed) {
+                errorMessage.postValue("Không thể kết nối đến kênh trò chuyện");
             }
 
-            // Đăng ký sự kiện người chơi tham gia và rời phòng
-            webSocketService.subscribeToPlayerJoinEvents(roomId, RoomEvent.class, this::handleRoomEvent);
-            webSocketService.subscribeToPlayerLeaveEvents(roomId, RoomEvent.class, this::handleRoomEvent);
+            // Đăng ký sự kiện người chơi tham gia phòng
+            boolean joinSubscribed = webSocketService.subscribeToPlayerJoinEvents(roomId, RoomEvent.class, this::handleRoomEvent);
+            if (!joinSubscribed) {
+                Log.w("WaitingRoomViewModel", "Không thể đăng ký sự kiện tham gia phòng");
+            }
+
+            // Đăng ký sự kiện người chơi rời phòng
+            boolean leaveSubscribed = webSocketService.subscribeToPlayerLeaveEvents(roomId, RoomEvent.class, this::handleRoomEvent);
+            if (!leaveSubscribed) {
+                Log.w("WaitingRoomViewModel", "Không thể đăng ký sự kiện rời phòng");
+            }
 
             // Đăng ký sự kiện bắt đầu trò chơi
-            webSocketService.subscribeToGameStartEvents(roomId, Room.class, this::handleGameStartEvent);
+            boolean gameStartSubscribed = webSocketService.subscribeToGameStartEvents(roomId, Room.class, this::handleGameStartEvent);
+            if (!gameStartSubscribed) {
+                Log.w("WaitingRoomViewModel", "Không thể đăng ký sự kiện bắt đầu trò chơi");
+            }
+
+            // Nếu tất cả đều thất bại, đưa ra thông báo
+            if (!chatSubscribed && !joinSubscribed && !leaveSubscribed && !gameStartSubscribed) {
+                errorMessage.postValue("Không thể kết nối với các sự kiện phòng chờ");
+            }
         } catch (Exception e) {
-            errorMessage.setValue("Lỗi khi đăng ký sự kiện: " + e.getMessage());
+            errorMessage.postValue("Lỗi khi đăng ký sự kiện: " + e.getMessage());
+            Log.e("WaitingRoomViewModel", "Lỗi đăng ký sự kiện WebSocket", e);
         }
     }
 
     /**
      * Hủy đăng ký các sự kiện WebSocket khi không cần nữa
+     * Sử dụng các hằng số từ WebSocketService để đảm bảo tính nhất quán
      */
     public void unsubscribeFromEvents() {
         Room room = currentRoom.getValue();
-        if (room != null && room.getId() != null) {
-            Long roomId = room.getId();
-            // Hủy đăng ký các topic WebSocket
-            String[] topics = {
-                    "/topic/chat/" + roomId,
-                    "/topic/room/" + roomId + "/player-join",
-                    "/topic/room/" + roomId + "/player-leave",
-                    "/topic/room/" + roomId + "/game-start"
-            };
+        if (room == null || room.getId() == null) {
+            return;
+        }
 
-            for (String topic : topics) {
-                webSocketService.unsubscribe(topic);
-            }
+        Long roomId = room.getId();
+
+        // Sử dụng các hằng số từ WebSocketService để tạo topic paths
+        String[] topics = {
+                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.CHAT_EVENT,
+                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.PLAYER_JOIN_EVENT,
+                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.PLAYER_LEAVE_EVENT,
+                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.GAME_START_EVENT,
+                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.GAME_PROGRESS_EVENT,
+                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.GAME_END_EVENT
+        };
+
+        for (String topic : topics) {
+            webSocketService.unsubscribe(topic);
         }
     }
 
@@ -203,16 +244,17 @@ public class WaitingRoomViewModel extends ViewModel {
 
     /**
      * Tạo và thêm tin nhắn hệ thống vào danh sách tin nhắn
+     * Tin nhắn hệ thống được đánh dấu bằng prefix đặc biệt
      *
      * @param systemMessage Nội dung tin nhắn hệ thống
      */
     private void addSystemMessage(String systemMessage) {
         Room room = currentRoom.getValue();
-        if (room == null || room.getId() == null || systemMessage == null) {
+        if (room == null || room.getId() == null || systemMessage == null || systemMessage.trim().isEmpty()) {
             return;
         }
 
-        // Tạo tin nhắn hệ thống mới
+        // Tạo tin nhắn hệ thống mới với định dạng ISO-8601 cho thời gian
         ChatMessage message = new ChatMessage(
                 null,
                 room.getId(),
@@ -223,11 +265,12 @@ public class WaitingRoomViewModel extends ViewModel {
                 new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).format(new Date()) // thời gian hiện tại
         );
 
-        // Thêm vào danh sách tin nhắn
+        // Tạo một bản sao mới của danh sách tin nhắn để LiveData nhận biết thay đổi
         List<ChatMessage> currentMessages = chatMessages.getValue();
         if (currentMessages != null) {
-            currentMessages.add(message);
-            chatMessages.setValue(currentMessages);
+            List<ChatMessage> updatedMessages = new ArrayList<>(currentMessages);
+            updatedMessages.add(message);
+            chatMessages.postValue(updatedMessages);
         }
     }
 
@@ -295,33 +338,52 @@ public class WaitingRoomViewModel extends ViewModel {
     }
 
     /**
-     * Xử lý tin nhắn mới nhận được
+     * Xử lý tin nhắn mới nhận được từ WebSocket
+     * Đảm bảo LiveData được cập nhật đúng cách để UI cập nhật
      *
      * @param chatMessage Tin nhắn chat mới
      */
     private void handleNewChatMessage(ChatMessage chatMessage) {
+        if (chatMessage == null) {
+            return;
+        }
+
         List<ChatMessage> currentMessages = chatMessages.getValue();
-        if (currentMessages != null && chatMessage != null) {
-            currentMessages.add(chatMessage);
-            chatMessages.setValue(currentMessages);
+        if (currentMessages != null) {
+            // Tạo bản sao mới để đảm bảo LiveData nhận biết thay đổi
+            List<ChatMessage> updatedMessages = new ArrayList<>(currentMessages);
+            updatedMessages.add(chatMessage);
+
+            // Sử dụng postValue để đảm bảo an toàn khi cập nhật từ background thread
+            chatMessages.postValue(updatedMessages);
         }
     }
 
     /**
      * Xử lý sự kiện phòng (tham gia/rời đi)
+     * Cập nhật danh sách người tham gia và hiển thị thông báo hệ thống
      *
      * @param event Đối tượng sự kiện chứa thông tin về người dùng và loại sự kiện
      */
     private void handleRoomEvent(RoomEvent event) {
-        if (event != null && event.getMessage() != null && !event.getMessage().isEmpty()) {
-            // Thêm tin nhắn hệ thống
-            addSystemMessage(event.getMessage());
+        if (event == null) {
+            return;
+        }
 
-            // Cập nhật danh sách người tham gia trực tiếp từ sự kiện
-            if ("join".equals(event.getEventType())) {
+        // Thêm tin nhắn hệ thống nếu có
+        if (event.getMessage() != null && !event.getMessage().trim().isEmpty()) {
+            addSystemMessage(event.getMessage());
+        }
+
+        // Cập nhật danh sách người tham gia trực tiếp từ sự kiện
+        String eventType = event.getEventType();
+        if (eventType != null) {
+            if ("join".equalsIgnoreCase(eventType)) {
                 addParticipant(event);
-            } else if ("leave".equals(event.getEventType())) {
+            } else if ("leave".equalsIgnoreCase(eventType)) {
                 removeParticipant(event);
+            } else {
+                Log.d("WaitingRoomViewModel", "Nhận sự kiện không xác định: " + eventType);
             }
         }
     }
@@ -334,7 +396,7 @@ public class WaitingRoomViewModel extends ViewModel {
     private void addParticipant(RoomEvent event) {
         if (event == null || event.getUserId() == null) return;
 
-        List<Participant> currentParticipants = new ArrayList<>(participants.getValue());
+        List<Participant> currentParticipants = new ArrayList<>(Objects.requireNonNull(participants.getValue()));
 
         // Kiểm tra xem người này đã có trong danh sách chưa
         for (Participant participant : currentParticipants) {
@@ -365,19 +427,27 @@ public class WaitingRoomViewModel extends ViewModel {
     }
 
     /**
-     * Xóa người tham gia khỏi danh sách
+     * Xóa người tham gia khỏi danh sách khi họ rời phòng
+     * Đảm bảo danh sách người tham gia được cập nhật đúng cách
      *
      * @param event Đối tượng sự kiện chứa thông tin người rời đi
      */
     private void removeParticipant(RoomEvent event) {
         if (event == null || event.getUserId() == null) return;
 
-        List<Participant> currentParticipants = new ArrayList<>(participants.getValue());
+        List<Participant> currentParticipants = participants.getValue();
+        if (currentParticipants == null || currentParticipants.isEmpty()) {
+            return;
+        }
+
+        // Tạo bản sao để không thay đổi trực tiếp LiveData
+        List<Participant> updatedParticipants = new ArrayList<>(currentParticipants);
         Participant toRemove = null;
 
         // Tìm người tham gia cần xóa
-        for (Participant participant : currentParticipants) {
-            if (!participant.isGuest() && participant.getUser() != null &&
+        for (Participant participant : updatedParticipants) {
+            if (!participant.isGuest() &&
+                    participant.getUser() != null &&
                     participant.getUser().getId() != null &&
                     participant.getUser().getId().equals(event.getUserId())) {
                 toRemove = participant;
@@ -387,19 +457,33 @@ public class WaitingRoomViewModel extends ViewModel {
 
         // Xóa người tham gia khỏi danh sách
         if (toRemove != null) {
-            currentParticipants.remove(toRemove);
-            participants.setValue(currentParticipants);
+            updatedParticipants.remove(toRemove);
+
+            // Sử dụng postValue để đảm bảo an toàn khi gọi từ background thread
+            participants.postValue(updatedParticipants);
+
+            // Ghi log để dễ dàng debug
+            Log.d("WaitingRoomViewModel", "Đã xóa người tham gia: " +
+                    (toRemove.getUser() != null ? toRemove.getUser().getUsername() : "unknown"));
         }
     }
 
     /**
-     * Xử lý sự kiện bắt đầu trò chơi
+     * Xử lý sự kiện bắt đầu trò chơi từ WebSocket
+     * Cập nhật thông tin phòng hiện tại và thông báo cho UI
      *
-     * @param updatedRoom Phòng đã được cập nhật
+     * @param updatedRoom Phòng đã được cập nhật với trạng thái trò chơi mới
      */
     private void handleGameStartEvent(Room updatedRoom) {
         if (updatedRoom != null) {
-            gameStartEvent.setValue(Resource.success(updatedRoom, "Trò chơi đã bắt đầu"));
+            // Cập nhật thông tin phòng hiện tại
+            currentRoom.postValue(updatedRoom);
+
+            // Thông báo sự kiện bắt đầu trò chơi thành công 
+            gameStartEvent.postValue(Resource.success(updatedRoom, "Trò chơi đã bắt đầu"));
+
+            // Ghi log cho mục đích debug
+            Log.d("WaitingRoomViewModel", "Nhận sự kiện bắt đầu trò chơi: " + updatedRoom.getId());
         }
     }
 
