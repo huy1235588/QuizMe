@@ -17,9 +17,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".ui.room.WaitingRoomActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".ui.quiz.QuizGameActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.room.WaitingRoomActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.splash.SplashActivity"
             android:exported="true">

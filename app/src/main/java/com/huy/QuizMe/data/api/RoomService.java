@@ -102,6 +102,7 @@ public interface RoomService {
      * @param roomId ID của phòng
      * @return Thông tin phòng sau khi bắt đầu
      */
+    @RequiresAuth
     @POST("/api/rooms/start/{roomId}")
     Call<ApiResponse<Room>> startGame(@Path("roomId") Long roomId);
 

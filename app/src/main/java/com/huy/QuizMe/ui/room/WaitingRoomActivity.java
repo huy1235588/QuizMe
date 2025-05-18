@@ -1,5 +1,6 @@
 package com.huy.QuizMe.ui.room;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.repository.Resource;
+import com.huy.QuizMe.ui.quiz.QuizGameActivity;
 import com.huy.QuizMe.ui.room.adapter.ChatMessageAdapter;
 import com.huy.QuizMe.ui.room.adapter.ParticipantAdapter;
 import com.huy.QuizMe.utils.KeyboardUtils;
@@ -225,7 +227,17 @@ public class WaitingRoomActivity extends AppCompatActivity {
             if (result != null) {
                 if (result.getStatus() == Resource.Status.SUCCESS) {
                     Toast.makeText(this, "Game started!", Toast.LENGTH_SHORT).show();
-                    // Chuyển hướng sẽ được xử lý bởi observer cho sự kiện bắt đầu trò chơi
+
+                    // Lấy thông tin phòng mới cập nhật
+                    Room room = result.getData();
+                    if (room != null) {
+                        // Chuyển sang màn hình chơi quiz với thông tin phòng
+                        Intent intent = new Intent(this, QuizGameActivity.class);
+                        intent.putExtra("ROOM", room);
+                        startActivity(intent);
+                        finish(); // Đóng màn hình chờ
+                    }
+
                 } else if (result.getStatus() == Resource.Status.ERROR) {
                     Toast.makeText(this, "Error starting game: " + result.getMessage(), Toast.LENGTH_SHORT).show();
                 }
