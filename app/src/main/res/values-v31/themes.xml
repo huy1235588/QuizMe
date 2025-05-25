@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Theme overlay for Android 12+ with dynamic colors -->
+    <style name="Base.Theme.QuizMe" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Material3 Color System with Dynamic Colors -->
+        <item name="colorPrimary">@android:color/system_accent1_600</item>
+        <item name="colorOnPrimary">@android:color/system_accent1_0</item>
+        <item name="colorPrimaryContainer">@android:color/system_accent1_100</item>
+        <item name="colorOnPrimaryContainer">@android:color/system_accent1_900</item>
+        <item name="colorSecondary">@android:color/system_accent3_600</item>
+        <item name="colorOnSecondary">@android:color/system_accent3_0</item>
+        <item name="colorSecondaryContainer">@android:color/system_accent3_100</item>
+        <item name="colorOnSecondaryContainer">@android:color/system_accent3_900</item>
+        <item name="colorTertiary">@android:color/system_accent2_600</item>
+        <item name="colorOnTertiary">@android:color/system_accent2_0</item>
+        <item name="colorTertiaryContainer">@android:color/system_accent2_100</item>
+        <item name="colorOnTertiaryContainer">@android:color/system_accent2_900</item>
+<!--        <item name="colorError">@android:color/system_error_600</item>-->
+<!--        <item name="colorOnError">@android:color/system_error_0</item>-->
+<!--        <item name="colorErrorContainer">@android:color/system_error_100</item>-->
+<!--        <item name="colorOnErrorContainer">@android:color/system_error_900</item>-->
+        <item name="android:colorBackground">@android:color/system_neutral1_50</item>
+        <item name="colorOnBackground">@android:color/system_neutral1_900</item>
+        <item name="colorSurface">@android:color/system_neutral1_50</item>
+        <item name="colorOnSurface">@android:color/system_neutral1_900</item>
+        <item name="colorSurfaceVariant">@android:color/system_neutral2_100</item>
+        <item name="colorOnSurfaceVariant">@android:color/system_neutral2_700</item>
+        <item name="colorOutline">@android:color/system_neutral2_500</item>
+        <item name="colorOutlineVariant">@android:color/system_neutral2_300</item>
+        
+        <!-- System UI -->
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:fontFamily">@font/nunitomedium</item>
+        
+        <!-- Enable dynamic colors -->
+        <item name="dynamicColorThemeOverlay">@style/ThemeOverlay.Material3.DynamicColors.DayNight</item>
+    </style>
+</resources>

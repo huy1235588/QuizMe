@@ -16,26 +16,12 @@
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_nav"
+        style="@style/QuizMe.BottomNavigationView"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:paddingTop="5dp"
-        app:itemIconSize="22sp"
-        app:itemIconTint="@color/item_bottom_nav"
-        app:itemTextColor="@color/item_bottom_nav"
-        app:labelVisibilityMode="labeled"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_menu">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center|top"
-            android:layout_marginTop="5dp"
-            android:background="@color/pp"
-            android:src="@drawable/logo_home1"
-            app:shapeAppearance="@style/CornerShapableImageView" />
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
+        app:menu="@menu/bottom_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

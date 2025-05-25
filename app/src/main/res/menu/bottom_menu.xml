@@ -10,7 +10,7 @@
         android:title="@string/library" />
     <item
         android:id="@+id/nav_join"
-        android:icon="@drawable/logo_home"
+        android:icon="@drawable/logo_home1"
         android:title="@string/join" />
     <item
         android:id="@+id/nav_create"

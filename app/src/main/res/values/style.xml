@@ -1,9 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="ToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+    <!-- Material3 Custom Styles -->
+    <style name="ToolbarTitleTextAppearance" parent="TextAppearance.Material3.TitleLarge">
         <item name="android:textSize">24sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">#000000</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
+
+    <!-- Material3 Button Styles -->
+    <style name="QuizMe.Button" parent="Widget.Material3.Button">
+        <item name="android:fontFamily">@font/nunitomedium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="QuizMe.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:fontFamily">@font/nunitomedium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="QuizMe.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="android:fontFamily">@font/nunitomedium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Material3 TextInputLayout Styles -->
+    <style name="QuizMe.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="android:fontFamily">@font/nunitomedium</item>
+        <item name="boxStrokeColor">?attr/colorPrimary</item>
+        <item name="hintTextColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Material3 Card Styles -->
+    <style name="QuizMe.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">4dp</item>
+    </style>
+
+    <!-- Material3 FAB Styles -->
+    <style name="QuizMe.FloatingActionButton" parent="Widget.Material3.FloatingActionButton.Primary">
+        <item name="android:fontFamily">@font/nunitomedium</item>
+    </style>
+
+    <style name="QuizMe.ExtendedFloatingActionButton" parent="Widget.Material3.ExtendedFloatingActionButton.Primary">
+        <item name="android:fontFamily">@font/nunitomedium</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <!-- Material3 BottomNavigationView Styles -->
+    <style name="QuizMe.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="elevation">8dp</item>
+        <item name="itemTextAppearanceInactive">@style/QuizMe.BottomNavigationView.Text</item>
+        <item name="itemTextAppearanceActive">@style/QuizMe.BottomNavigationView.Text.Active</item>
+        <item name="itemIconTint">@color/item_bottom_nav_material3</item>
+        <item name="itemTextColor">@color/item_bottom_nav_material3</item>
+    </style>
+
+    <style name="QuizMe.BottomNavigationView.Text" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">@font/nunitomedium</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="QuizMe.BottomNavigationView.Text.Active" parent="QuizMe.BottomNavigationView.Text">
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>
