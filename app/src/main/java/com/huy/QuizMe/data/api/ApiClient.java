@@ -101,13 +101,21 @@ public class ApiClient {
     public AuthService getAuthService() {
         return retrofit.create(AuthService.class);
     }
-    
-    /**
+      /**
      * Lấy instance của ChatService
      *
      * @return ChatService
      */
     public ChatService getChatService() {
         return retrofit.create(ChatService.class);
+    }
+    
+    /**
+     * Lấy instance của GameService
+     *
+     * @return GameService
+     */
+    public GameService getGameService() {
+        return retrofit.create(GameService.class);
     }
 }
