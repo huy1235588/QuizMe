@@ -23,6 +23,7 @@ import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.model.game.QuestionGameDTO;
 import com.huy.QuizMe.data.model.game.QuestionResultDTO;
 import com.huy.QuizMe.data.repository.Resource;
+import com.huy.QuizMe.utils.ImageLoader;
 
 import java.util.Arrays;
 
@@ -278,8 +279,15 @@ public class QuizGameActivity extends AppCompatActivity {
 
         // Hiển thị hình ảnh nếu có
         if (question.getImageUrl() != null && !question.getImageUrl().isEmpty()) {
-            // TODO: Load image from URL using Glide or Picasso
-            // For now, just show the image view
+            // Tải hình ảnh bằng ImageLoader
+            ImageLoader.loadImage(this,
+                    ivQuestionImage,
+                    question.getImageUrl(),
+                    R.drawable.bg_quiz,
+                    R.drawable.bg_quiz
+            );
+
+            // Hiển thị hình ảnh câu hỏi
             ivQuestionImage.setVisibility(android.view.View.VISIBLE);
         } else {
             ivQuestionImage.setVisibility(android.view.View.GONE);
