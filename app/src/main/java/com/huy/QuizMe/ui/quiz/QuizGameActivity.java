@@ -1,7 +1,11 @@
 package com.huy.QuizMe.ui.quiz;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,14 +22,13 @@ import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.model.game.QuestionGameDTO;
 import com.huy.QuizMe.data.model.game.QuestionResultDTO;
+import com.huy.QuizMe.data.repository.Resource;
 
 import java.util.Arrays;
 
 public class QuizGameActivity extends AppCompatActivity {
 
-    private QuizGameViewModel viewModel;
-
-    // Các thành phần UI
+    private QuizGameViewModel viewModel;    // Các thành phần UI
     private TextView tvQuizProgress;
     private TextView tvQuizType;
     private LinearProgressIndicator progressBarQuiz;
@@ -35,11 +38,17 @@ public class QuizGameActivity extends AppCompatActivity {
     private MaterialButton btnAnswerWhat;
     private MaterialButton btnAnswerWhich;
     private MaterialButton btnAnswerWhere;
-
-    // Dữ liệu
+    private ProgressBar loadingProgressBar;
+    private View gameContentView;    // Dữ liệu
     private Room currentRoom;
     private int currentQuestionIndex = 0;
     private int totalQuestions = 10;
+    private boolean isWaitingForFirstQuestion = true;
+
+    // Timeout handling
+    private Handler timeoutHandler = new Handler(Looper.getMainLooper());
+    private Runnable timeoutRunnable;
+    private static final long QUESTION_TIMEOUT_MS = 15000; // 15 giây
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +81,16 @@ public class QuizGameActivity extends AppCompatActivity {
         initializeViews();
         setupObservers();
 
-        // Thiết lập game với ViewModel
+        // Hiển thị loading ban đầu
+        showLoadingState(true);
+
+        // Thiết lập game với ViewModel và bắt đầu game
         viewModel.setupGame(currentRoom);
+        // Bắt đầu game để nhận câu hỏi đầu tiên
+        if (currentRoom.getId() != null) {
+            viewModel.startGame(currentRoom.getId());
+            startQuestionTimeout();
+        }
     }
 
     private void initializeViews() {
@@ -88,17 +105,45 @@ public class QuizGameActivity extends AppCompatActivity {
         btnAnswerWhich = findViewById(R.id.btn_answer_which);
         btnAnswerWhere = findViewById(R.id.btn_answer_where);
 
-        // Thiết lập progress ban đầu
-//        updateProgress();
+        // Khởi tạo loading components
+        loadingProgressBar = findViewById(R.id.loading_progress_bar);
+        gameContentView = findViewById(R.id.game_content);
 
         // Thiết lập listeners cho các nút trả lời
         setupAnswerButtonListeners();
     }
 
     private void setupObservers() {
+        // Theo dõi kết quả startGame
+        viewModel.getStartGameResult().observe(this, resource -> {
+            if (resource != null) {
+                switch (resource.getStatus()) {
+                    case SUCCESS:
+                        // Game đã bắt đầu thành công, đợi câu hỏi đầu tiên
+                        break;
+                    case ERROR:
+                        // Lỗi khi bắt đầu game
+                        showLoadingState(false);
+                        Toast.makeText(this, "Lỗi khi bắt đầu game: " + resource.getMessage(), Toast.LENGTH_LONG).show();
+                        finish();
+                        break;
+                    case LOADING:
+                        // Đang bắt đầu game
+                        break;
+                }
+            }
+        });
+
         // Theo dõi câu hỏi hiện tại
         viewModel.getCurrentQuestion().observe(this, question -> {
             if (question != null) {
+                // Ẩn loading và hiển thị câu hỏi đầu tiên
+                if (isWaitingForFirstQuestion) {
+                    showLoadingState(false);
+                    isWaitingForFirstQuestion = false;
+                    cancelQuestionTimeout();
+                }
+
                 displayQuestion(question);
                 currentQuestionIndex = question.getQuestionNumber() - 1; // Chuyển đổi thành chỉ số dựa trên 0
                 updateProgress();
@@ -276,6 +321,49 @@ public class QuizGameActivity extends AppCompatActivity {
         btnAnswerWhere.setEnabled(enabled);
     }
 
+    /**
+     * Hiển thị/ẩn trạng thái loading
+     */
+    private void showLoadingState(boolean isLoading) {
+        if (loadingProgressBar != null && gameContentView != null) {
+            loadingProgressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            gameContentView.setVisibility(isLoading ? View.GONE : View.VISIBLE);
+        }
+    }
+
+    /**
+     * Bắt đầu timeout cho việc đợi câu hỏi đầu tiên
+     */
+    private void startQuestionTimeout() {
+        cancelQuestionTimeout(); // Hủy timeout trước đó nếu có
+
+        timeoutRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isWaitingForFirstQuestion) {
+                    // Timeout - ẩn loading và hiển thị thông báo lỗi
+                    showLoadingState(false);
+                    Toast.makeText(QuizGameActivity.this,
+                            "Không thể tải câu hỏi. Vui lòng thử lại.",
+                            Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            }
+        };
+
+        timeoutHandler.postDelayed(timeoutRunnable, QUESTION_TIMEOUT_MS);
+    }
+
+    /**
+     * Hủy timeout cho việc đợi câu hỏi
+     */
+    private void cancelQuestionTimeout() {
+        if (timeoutRunnable != null) {
+            timeoutHandler.removeCallbacks(timeoutRunnable);
+            timeoutRunnable = null;
+        }
+    }
+
     private void displaySampleQuestion() {
         // Giữ phương thức này để tương thích ngược nhưng không sử dụng nó nữa
         // Các câu hỏi thực tế sẽ đến thông qua các observer của ViewModel
@@ -284,6 +372,9 @@ public class QuizGameActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Hủy timeout handler
+        cancelQuestionTimeout();
+
         // Hủy đăng ký các sự kiện WebSocket thông qua ViewModel
         if (viewModel != null) {
             viewModel.cleanup();

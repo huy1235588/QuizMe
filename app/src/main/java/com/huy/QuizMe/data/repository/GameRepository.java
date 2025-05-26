@@ -1,5 +1,7 @@
 package com.huy.QuizMe.data.repository;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -29,27 +31,20 @@ public class GameRepository {
      * @param roomId ID của phòng
      * @return LiveData với Resource chứa kết quả
      */
-    public LiveData<Resource<String>> startGame(Long roomId) {
-        MutableLiveData<Resource<String>> result = new MutableLiveData<>();
+    public LiveData<Resource<Boolean>> startGame(Long roomId) {
+        MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
 
-        gameService.startGame(roomId).enqueue(new Callback<ApiResponse<String>>() {
+        gameService.startGame(roomId).enqueue(new Callback<ApiResponse<Boolean>>() {
             @Override
-            public void onResponse(@NonNull Call<ApiResponse<String>> call, @NonNull Response<ApiResponse<String>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<String> apiResponse = response.body();
-                    if (apiResponse.isSuccess()) {
-                        result.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
-                    } else {
-                        result.setValue(Resource.error(apiResponse.getMessage(), null));
-                    }
-                } else {
-                    result.setValue(Resource.error("Không thể bắt đầu trò chơi", null));
-                }
+            public void onResponse(@NonNull Call<ApiResponse<Boolean>> call,
+                                   @NonNull Response<ApiResponse<Boolean>> response) {
+                Log.d("GameRepository", "Response: " + response.toString());
+                handleResponse(response, result, "Không thể bắt đầu trò chơi");
             }
 
             @Override
-            public void onFailure(@NonNull Call<ApiResponse<String>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ApiResponse<Boolean>> call, @NonNull Throwable t) {
                 result.setValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
             }
         });
@@ -70,21 +65,12 @@ public class GameRepository {
         gameService.getGameStatus(roomId).enqueue(new Callback<ApiResponse<String>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<String>> call, @NonNull Response<ApiResponse<String>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<String> apiResponse = response.body();
-                    if (apiResponse.isSuccess()) {
-                        result.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
-                    } else {
-                        result.setValue(Resource.error(apiResponse.getMessage(), null));
-                    }
-                } else {
-                    result.setValue(Resource.error("Không thể lấy trạng thái game", null));
-                }
+                handleResponse(response, result, "Không thể lấy trạng thái trò chơi");
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<String>> call, @NonNull Throwable t) {
-                result.setValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
+                handleResponse(null, result, "Lỗi kết nối: " + t.getMessage());
             }
         });
 
@@ -104,24 +90,40 @@ public class GameRepository {
         gameService.getGameResults(roomId).enqueue(new Callback<ApiResponse<GameResultDTO>>() {
             @Override
             public void onResponse(@NonNull Call<ApiResponse<GameResultDTO>> call, @NonNull Response<ApiResponse<GameResultDTO>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    ApiResponse<GameResultDTO> apiResponse = response.body();
-                    if (apiResponse.isSuccess()) {
-                        result.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
-                    } else {
-                        result.setValue(Resource.error(apiResponse.getMessage(), null));
-                    }
-                } else {
-                    result.setValue(Resource.error("Không thể lấy kết quả game", null));
-                }
+                 handleResponse(response, result, "Không thể lấy kết quả trò chơi");
             }
 
             @Override
             public void onFailure(@NonNull Call<ApiResponse<GameResultDTO>> call, @NonNull Throwable t) {
-                result.setValue(Resource.error("Lỗi kết nối: " + t.getMessage(), null));
+               handleResponse(null, result, "Lỗi kết nối: " + t.getMessage());
             }
         });
 
         return result;
+    }
+
+    /**
+     * Xử lý phản hồi chung cho các cuộc gọi API
+     *
+     * @param response            Phản hồi từ API
+     * @param liveData            LiveData để cập nhật
+     * @param defaultErrorMessage Thông báo lỗi mặc định
+     * @param <T>                 Kiểu dữ liệu của phản hồi
+     */
+    private <T> void handleResponse(
+            @NonNull Response<ApiResponse<T>> response,
+            @NonNull MutableLiveData<Resource<T>> liveData,
+            @NonNull String defaultErrorMessage) {
+
+        if (response.isSuccessful() && response.body() != null) {
+            ApiResponse<T> apiResponse = response.body();
+            if (apiResponse.isSuccess()) {
+                liveData.setValue(Resource.success(apiResponse.getData(), apiResponse.getMessage()));
+            } else {
+                liveData.setValue(Resource.error(apiResponse.getMessage(), null));
+            }
+        } else {
+            liveData.setValue(Resource.error(defaultErrorMessage, null));
+        }
     }
 }

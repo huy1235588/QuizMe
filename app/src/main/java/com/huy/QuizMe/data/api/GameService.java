@@ -20,7 +20,7 @@ public interface GameService {
      * @return Response từ server
      */
     @POST("api/game/rooms/{roomId}/start")
-    Call<ApiResponse<String>> startGame(@Path("roomId") Long roomId);
+    Call<ApiResponse<Boolean>> startGame(@Path("roomId") Long roomId);
 
     /**
      * Lấy trạng thái hiện tại của game

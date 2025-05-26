@@ -3,6 +3,7 @@ package com.huy.QuizMe.ui.quiz;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -11,6 +12,8 @@ import com.huy.QuizMe.data.model.game.AnswerRequest;
 import com.huy.QuizMe.data.model.game.LeaderboardDTO;
 import com.huy.QuizMe.data.model.game.QuestionGameDTO;
 import com.huy.QuizMe.data.model.game.QuestionResultDTO;
+import com.huy.QuizMe.data.repository.GameRepository;
+import com.huy.QuizMe.data.repository.Resource;
 import com.huy.QuizMe.data.websocket.GameWebSocketClient;
 import com.huy.QuizMe.data.websocket.WebSocketManager;
 import com.huy.QuizMe.data.websocket.WebSocketService;
@@ -30,6 +33,7 @@ public class QuizGameViewModel extends ViewModel {
     private final WebSocketManager webSocketManager;
     private final GameWebSocketClient gameClient;
     private final SharedPreferencesManager sharedPreferencesManager;
+    private final GameRepository gameRepository;
 
     // LiveData cho trạng thái game
     private final MutableLiveData<Room> currentRoom = new MutableLiveData<>();
@@ -45,7 +49,8 @@ public class QuizGameViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
     private final MutableLiveData<Boolean> gameEnded = new MutableLiveData<>(false);
-    private final MutableLiveData<Boolean> answerSubmitted = new MutableLiveData<>(false);
+    private final MutableLiveData<Boolean> answerSubmitted = new MutableLiveData<>(false);    // LiveData cho startGame
+    private final MediatorLiveData<Resource<Boolean>> startGameResult = new MediatorLiveData<>();
 
     // Game state
     private Long currentQuestionId;
@@ -60,6 +65,7 @@ public class QuizGameViewModel extends ViewModel {
         this.webSocketManager = WebSocketManager.getInstance();
         this.gameClient = GameWebSocketClient.getInstance();
         this.sharedPreferencesManager = SharedPreferencesManager.getInstance();
+        this.gameRepository = new GameRepository();
     }
 
     // ===========================
@@ -84,6 +90,35 @@ public class QuizGameViewModel extends ViewModel {
 
         // Kết nối WebSocket và đăng ký events
         connectAndSubscribeToGameEvents(room.getId());
+    }
+
+    /**
+     * Bắt đầu trò chơi
+     *
+     * @param roomId ID của phòng
+     */
+    public void startGame(Long roomId) {
+        if (roomId == null) {
+            errorMessage.setValue("Room ID không hợp lệ");
+            return;
+        }
+
+        Log.d(TAG, "Starting game for room: " + roomId);
+        LiveData<Resource<Boolean>> result = gameRepository.startGame(roomId);
+
+        // Use MediatorLiveData to properly handle the result
+        startGameResult.addSource(result, resource -> {
+            startGameResult.setValue(resource);
+
+            if (resource != null) {
+                Log.d(TAG, "StartGame result: " + resource.getStatus());
+                if (resource.getStatus() == Resource.Status.ERROR) {
+                    errorMessage.setValue(resource.getMessage());
+                } else if (resource.getStatus() == Resource.Status.SUCCESS) {
+                    Log.d(TAG, "Game started successfully, waiting for first question...");
+                }
+            }
+        });
     }
 
     /**
@@ -380,6 +415,10 @@ public class QuizGameViewModel extends ViewModel {
 
     public LiveData<Boolean> getAnswerSubmitted() {
         return answerSubmitted;
+    }
+
+    public LiveData<Resource<Boolean>> getStartGameResult() {
+        return startGameResult;
     }
 
     // ===========================
