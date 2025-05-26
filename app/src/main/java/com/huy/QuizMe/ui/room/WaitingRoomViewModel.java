@@ -223,7 +223,7 @@ public class WaitingRoomViewModel extends ViewModel {
         Long roomId = room.getId();
 
         // Sử dụng WebSocketManager để hủy tất cả sự kiện của room
-        webSocketManager.unsubscribeAllRoomEvents(roomId);
+        chatClient.unsubscribeAllRoomEvents(roomId);
     }
 
     /**

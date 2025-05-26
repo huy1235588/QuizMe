@@ -44,7 +44,6 @@ public class QuizGameViewModel extends ViewModel {
     private final MutableLiveData<Boolean> isConnected = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> isLoading = new MutableLiveData<>(false);
     private final MutableLiveData<String> errorMessage = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> gameStarted = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> gameEnded = new MutableLiveData<>(false);
     private final MutableLiveData<Boolean> answerSubmitted = new MutableLiveData<>(false);
 
@@ -254,9 +253,6 @@ public class QuizGameViewModel extends ViewModel {
         // Đăng ký nhận sự kiện câu hỏi tiếp theo
         gameClient.subscribeToNextQuestion(roomId, Map.class, this::onNextQuestionEvent);
 
-        // Đăng ký nhận sự kiện bắt đầu trò chơi
-        gameClient.subscribeToGameStart(roomId, Object.class, this::onGameStart);
-
         // Đăng ký nhận sự kiện kết thúc trò chơi
         gameClient.subscribeToGameEnd(roomId, Object.class, this::onGameEnd);
 
@@ -327,14 +323,6 @@ public class QuizGameViewModel extends ViewModel {
     }
 
     /**
-     * Xử lý sự kiện bắt đầu game
-     */
-    private void onGameStart(Object gameStartData) {
-        Log.d(TAG, "Game started");
-        gameStarted.setValue(true);
-    }
-
-    /**
      * Xử lý sự kiện kết thúc game
      */
     private void onGameEnd(Object gameEndData) {
@@ -384,10 +372,6 @@ public class QuizGameViewModel extends ViewModel {
 
     public LiveData<String> getErrorMessage() {
         return errorMessage;
-    }
-
-    public LiveData<Boolean> getGameStarted() {
-        return gameStarted;
     }
 
     public LiveData<Boolean> getGameEnded() {

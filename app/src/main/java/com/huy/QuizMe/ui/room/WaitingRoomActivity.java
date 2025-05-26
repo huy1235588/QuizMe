@@ -243,15 +243,15 @@ public class WaitingRoomActivity extends AppCompatActivity {
                 if (result.getStatus() == Resource.Status.SUCCESS) {
                     Toast.makeText(this, "Game started!", Toast.LENGTH_SHORT).show();
 
-                    // Lấy thông tin phòng mới cập nhật
-                    Room room = result.getData();
-                    if (room != null) {
-                        // Chuyển sang màn hình chơi quiz với thông tin phòng
-                        Intent intent = new Intent(this, QuizGameActivity.class);
-                        intent.putExtra("ROOM", room);
-                        startActivity(intent);
-                        finish(); // Đóng màn hình chờ
-                    }
+//                    // Lấy thông tin phòng mới cập nhật
+//                    Room room = result.getData();
+//                    if (room != null) {
+//                        // Chuyển sang màn hình chơi quiz với thông tin phòng
+//                        Intent intent = new Intent(this, QuizGameActivity.class);
+//                        intent.putExtra("ROOM", room);
+//                        startActivity(intent);
+//                        finish(); // Đóng màn hình chờ
+//                    }
 
                 } else if (result.getStatus() == Resource.Status.ERROR) {
                     Toast.makeText(this, "Error starting game: " + result.getMessage(), Toast.LENGTH_SHORT).show();

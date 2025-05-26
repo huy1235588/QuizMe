@@ -16,12 +16,16 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Room;
+import com.huy.QuizMe.data.model.game.QuestionGameDTO;
+import com.huy.QuizMe.data.model.game.QuestionResultDTO;
+
+import java.util.Arrays;
 
 public class QuizGameActivity extends AppCompatActivity {
 
     private QuizGameViewModel viewModel;
 
-    // UI Components
+    // Các thành phần UI
     private TextView tvQuizProgress;
     private TextView tvQuizType;
     private LinearProgressIndicator progressBarQuiz;
@@ -32,7 +36,7 @@ public class QuizGameActivity extends AppCompatActivity {
     private MaterialButton btnAnswerWhich;
     private MaterialButton btnAnswerWhere;
 
-    // Data
+    // Dữ liệu
     private Room currentRoom;
     private int currentQuestionIndex = 0;
     private int totalQuestions = 10;
@@ -54,7 +58,7 @@ public class QuizGameActivity extends AppCompatActivity {
         // Lấy dữ liệu từ intent
         currentRoom = (Room) getIntent().getSerializableExtra("ROOM");
         if (currentRoom != null) {
-            // Có thông tin phòng - sẽ implement logic sau
+            // Có thông tin phòng - thiết lập game
             if (currentRoom.getQuiz() != null) {
                 totalQuestions = currentRoom.getQuiz().getQuestionCount();
             }
@@ -68,8 +72,8 @@ public class QuizGameActivity extends AppCompatActivity {
         initializeViews();
         setupObservers();
 
-        // Hiển thị dữ liệu mẫu
-        displaySampleQuestion();
+        // Thiết lập game với ViewModel
+        viewModel.setupGame(currentRoom);
     }
 
     private void initializeViews() {
@@ -84,44 +88,124 @@ public class QuizGameActivity extends AppCompatActivity {
         btnAnswerWhich = findViewById(R.id.btn_answer_which);
         btnAnswerWhere = findViewById(R.id.btn_answer_where);
 
-        // Thiết lập thông tin quiz từ room
-        if (currentRoom != null && currentRoom.getQuiz() != null) {
-            tvQuizType.setText(currentRoom.getQuiz().getTitle());
-        }
-
         // Thiết lập progress ban đầu
-        updateProgress();
+//        updateProgress();
 
         // Thiết lập listeners cho các nút trả lời
         setupAnswerButtonListeners();
     }
 
     private void setupObservers() {
-        // TODO: Thiết lập observers cho ViewModel khi có logic game
-        // Hiện tại chỉ là giao diện mẫu
+        // Theo dõi câu hỏi hiện tại
+        viewModel.getCurrentQuestion().observe(this, question -> {
+            if (question != null) {
+                displayQuestion(question);
+                currentQuestionIndex = question.getQuestionNumber() - 1; // Chuyển đổi thành chỉ số dựa trên 0
+                updateProgress();
+            }
+        });
+
+        // Theo dõi bộ đếm thời gian
+        viewModel.getRemainingTime().observe(this, remainingTime -> {
+            if (remainingTime != null) {
+                // Cập nhật giao diện bộ đếm thời gian nếu bạn có
+                // Hiện tại, chỉ ghi log
+                // Log.d("QuizGameActivity", "Remaining time: " + remainingTime);
+            }
+        });
+
+        // Theo dõi kết quả câu hỏi
+        viewModel.getQuestionResult().observe(this, result -> {
+            if (result != null) {
+                // Xử lý kết quả câu hỏi - hiển thị câu trả lời đúng, câu trả lời của người dùng, v.v.
+                showQuestionResult(result);
+            }
+        });
+
+        // Theo dõi bảng xếp hạng
+        viewModel.getLeaderboard().observe(this, leaderboard -> {
+            if (leaderboard != null) {
+                // Cập nhật giao diện bảng xếp hạng nếu bạn có
+                // Hiện tại, chỉ ghi log thứ hạng
+                // Log.d("QuizGameActivity", "Leaderboard updated with " + leaderboard.getRankings().size() + " players");
+            }
+        });
+
+        // Theo dõi trạng thái kết nối
+        viewModel.getIsConnected().observe(this, isConnected -> {
+            if (isConnected != null) {
+                // Cập nhật giao diện trạng thái kết nối
+                // Có thể hiển thị chỉ báo kết nối
+            }
+        });
+
+        // Theo dõi trạng thái đang tải
+        viewModel.getIsLoading().observe(this, isLoading -> {
+            if (isLoading != null) {
+                // Hiển thị/ẩn chỉ báo đang tải
+                // progressBarQuiz.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        // Theo dõi lỗi
+        viewModel.getErrorMessage().observe(this, error -> {
+            if (error != null && !error.isEmpty()) {
+                Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+                viewModel.clearError();
+            }
+        });
+
+        // Theo dõi kết thúc trò chơi
+        viewModel.getGameEnded().observe(this, gameEnded -> {
+            if (gameEnded != null && gameEnded) {
+                Toast.makeText(this, "Trò chơi kết thúc!", Toast.LENGTH_SHORT).show();
+                // Chuyển đến màn hình kết quả hoặc quay lại phòng chờ
+                finish();
+            }
+        });
+
+        // Theo dõi trạng thái gửi câu trả lời
+        viewModel.getAnswerSubmitted().observe(this, answerSubmitted -> {
+            if (answerSubmitted != null) {
+                updateAnswerButtonsState(!answerSubmitted);
+            }
+        });
     }
 
     private void setupAnswerButtonListeners() {
-        btnAnswerHow.setOnClickListener(v -> onAnswerSelected("How"));
-        btnAnswerWhat.setOnClickListener(v -> onAnswerSelected("What"));
-        btnAnswerWhich.setOnClickListener(v -> onAnswerSelected("Which"));
-        btnAnswerWhere.setOnClickListener(v -> onAnswerSelected("Where"));
+        btnAnswerHow.setOnClickListener(v -> onAnswerSelected(0));
+        btnAnswerWhat.setOnClickListener(v -> onAnswerSelected(1));
+        btnAnswerWhich.setOnClickListener(v -> onAnswerSelected(2));
+        btnAnswerWhere.setOnClickListener(v -> onAnswerSelected(3));
     }
 
-    private void onAnswerSelected(String answer) {
-        // Hiển thị thông báo tạm thời
-        Toast.makeText(this, "Đã chọn đáp án: " + answer, Toast.LENGTH_SHORT).show();
-
-        // Tạm thời chuyển sang câu hỏi tiếp theo
-        currentQuestionIndex++;
-        if (currentQuestionIndex < totalQuestions) {
-            updateProgress();
-            displaySampleQuestion();
-        } else {
-            // Kết thúc quiz
-            Toast.makeText(this, "Hoàn thành quiz!", Toast.LENGTH_LONG).show();
-            finish();
+    private void onAnswerSelected(int optionIndex) {
+        // Kiểm tra xem câu trả lời đã được gửi chưa
+        if (viewModel.isAnswerSubmittedForCurrentQuestion()) {
+            Toast.makeText(this, "Bạn đã trả lời câu hỏi này", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        // Lấy câu hỏi hiện tại để tìm ID lựa chọn được chọn
+        QuestionGameDTO currentQuestion = viewModel.getCurrentQuestion().getValue();
+        if (currentQuestion == null || currentQuestion.getOptions() == null) {
+            Toast.makeText(this, "Không tìm thấy thông tin câu hỏi", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (optionIndex >= currentQuestion.getOptions().size()) {
+            Toast.makeText(this, "Lựa chọn không hợp lệ", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Lấy ID của lựa chọn
+        Long selectedOptionId = currentQuestion.getOptions().get(optionIndex).getId();
+
+        // Gửi câu trả lời thông qua ViewModel
+        viewModel.submitAnswer(Arrays.asList(selectedOptionId));
+
+        // Hiển thị phản hồi
+        Toast.makeText(this, "Đã gửi câu trả lời", Toast.LENGTH_SHORT).show();
     }
 
     private void updateProgress() {
@@ -134,52 +218,75 @@ public class QuizGameActivity extends AppCompatActivity {
         progressBarQuiz.setProgress(progressPercent);
     }
 
-    private void displaySampleQuestion() {
-        // Hiển thị câu hỏi mẫu
-        String[] sampleQuestions = {
-                "What is the capital of Vietnam?",
-                "Which programming language is used for Android development?",
-                "How many continents are there?",
-                "Where is the Eiffel Tower located?",
-                "What is the largest ocean on Earth?",
-                "Which planet is known as the Red Planet?",
-                "How many bones are in the human body?",
-                "What is the smallest country in the world?",
-                "Which element has the chemical symbol 'O'?",
-                "Who painted the Mona Lisa?"
-        };
+    /**
+     * Hiển thị câu hỏi từ ViewModel
+     */
+    private void displayQuestion(QuestionGameDTO question) {
+        if (question == null) return;
 
-        String[][] sampleOptions = {
-                {"Hanoi", "Ho Chi Minh City", "Da Nang", "Hue"},
-                {"Java", "Python", "C++", "JavaScript"},
-                {"5", "6", "7", "8"},
-                {"London", "Berlin", "Paris", "Rome"},
-                {"Atlantic", "Pacific", "Indian", "Arctic"},
-                {"Venus", "Mars", "Jupiter", "Saturn"},
-                {"206", "208", "210", "212"},
-                {"Monaco", "Vatican City", "Liechtenstein", "San Marino"},
-                {"Gold", "Oxygen", "Silver", "Iron"},
-                {"Van Gogh", "Picasso", "Da Vinci", "Monet"}
-        };
+        // Hiển thị nội dung câu hỏi
+        tvQuestionText.setText(question.getContent());
 
-        if (currentQuestionIndex < sampleQuestions.length) {
-            tvQuestionText.setText(sampleQuestions[currentQuestionIndex]);
+        // Hiển thị loại câu hỏi
+        String questionType = question.getType() != null ? question.getType() : "Không xác định";
+        tvQuizType.setText(questionType);
 
-            // Cập nhật text cho các nút
-            String[] options = sampleOptions[currentQuestionIndex];
-            btnAnswerHow.setText(options[0]);
-            btnAnswerWhat.setText(options[1]);
-            btnAnswerWhich.setText(options[2]);
-            btnAnswerWhere.setText(options[3]);
+        // Hiển thị hình ảnh nếu có
+        if (question.getImageUrl() != null && !question.getImageUrl().isEmpty()) {
+            // TODO: Load image from URL using Glide or Picasso
+            // For now, just show the image view
+            ivQuestionImage.setVisibility(android.view.View.VISIBLE);
+        } else {
+            ivQuestionImage.setVisibility(android.view.View.GONE);
         }
+
+        // Hiển thị options
+        if (question.getOptions() != null && question.getOptions().size() >= 4) {
+            btnAnswerHow.setText(question.getOptions().get(0).getContent());
+            btnAnswerWhat.setText(question.getOptions().get(1).getContent());
+            btnAnswerWhich.setText(question.getOptions().get(2).getContent());
+            btnAnswerWhere.setText(question.getOptions().get(3).getContent());
+        }
+
+        // Enable answer buttons
+        updateAnswerButtonsState(true);
+    }
+
+    /**
+     * Hiển thị kết quả câu hỏi
+     */
+    private void showQuestionResult(QuestionResultDTO result) {
+        if (result == null) return;
+
+        // TODO: Thực hiện logic hiển thị kết quả
+        // Có thể hiển thị câu trả lời đúng, câu trả lời của người dùng, giải thích, v.v.
+
+        if (result.getExplanations() != null && !result.getExplanations().isEmpty()) {
+            Toast.makeText(this, "Giải thích: " + result.getExplanations(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Cập nhật trạng thái các nút trả lời
+     */
+    private void updateAnswerButtonsState(boolean enabled) {
+        btnAnswerHow.setEnabled(enabled);
+        btnAnswerWhat.setEnabled(enabled);
+        btnAnswerWhich.setEnabled(enabled);
+        btnAnswerWhere.setEnabled(enabled);
+    }
+
+    private void displaySampleQuestion() {
+        // Giữ phương thức này để tương thích ngược nhưng không sử dụng nó nữa
+        // Các câu hỏi thực tế sẽ đến thông qua các observer của ViewModel
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Hủy đăng ký các sự kiện WebSocket
+        // Hủy đăng ký các sự kiện WebSocket thông qua ViewModel
         if (viewModel != null) {
-            // TODO: Implement cleanup when ViewModel has actual functionality
+            viewModel.cleanup();
         }
     }
 }

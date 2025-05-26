@@ -27,7 +27,9 @@ public class WebSocketManager {
             instance = new WebSocketManager();
         }
         return instance;
-    }    /**
+    }
+
+    /**
      * Kết nối WebSocket
      */
     public boolean connect() {
