@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.huy.QuizMe.BuildConfig;
-import com.huy.QuizMe.data.model.ChatMessage;
 import com.huy.QuizMe.utils.GsonUtils;
 import com.huy.QuizMe.utils.SharedPreferencesManager;
 
@@ -33,20 +32,8 @@ import ua.naiksoftware.stomp.dto.StompHeader;
  * của WebSocket mà vẫn có thể gửi và nhận tin nhắn một cách đơn giản
  */
 public class WebSocketService {
-    private static final String TAG = "WebSocketService";
-
-    // Đường dẫn WebSocket
+    private static final String TAG = "WebSocketService";    // Đường dẫn WebSocket
     private static final String WEBSOCKET_URL = BuildConfig.BASE_URL.replace("http", "ws") + "ws/websocket";
-
-    // Constants cho các topic WebSocket (phải khớp với backend)
-    public static final String ROOM_TOPIC_PREFIX = "/topic/room/";
-    public static final String CHAT_EVENT = "/chat";
-    public static final String GAME_START_EVENT = "/start";
-    public static final String GAME_CLOSE_EVENT = "/close";
-    public static final String PLAYER_JOIN_EVENT = "/player-join";
-    public static final String PLAYER_LEAVE_EVENT = "/player-leave";
-    public static final String GAME_PROGRESS_EVENT = "/progress";
-    public static final String GAME_END_EVENT = "/end";
 
     // Client STOMP
     private StompClient stompClient;
@@ -234,124 +221,23 @@ public class WebSocketService {
             }
         }
         topicSubscriptions.clear();
-    }
-
-    /**
-     * Đăng ký lắng nghe tin nhắn trò chuyện trong một phòng
+    }    /**
+     * Đăng ký lắng nghe một topic cụ thể (Generic method)
      *
-     * @param roomId   ID của phòng
-     * @param listener Callback xử lý tin nhắn
-     * @return boolean Trạng thái đã đăng ký thành công hay không
+     * @param topicPath    Đường dẫn đầy đủ đến topic
+     * @param payloadClass Lớp đối tượng dữ liệu
+     * @param listener     Callback xử lý tin nhắn
+     * @return boolean     Trạng thái đã đăng ký thành công hay không
      */
-    public boolean subscribeToChatMessages(Long roomId, MessageListener<ChatMessage> listener) {
-        if (roomId == null) {
-            Log.e(TAG, "Cannot subscribe to chat: roomId is null");
-            return false;
-        }
-        return subscribe(ROOM_TOPIC_PREFIX + roomId + CHAT_EVENT, ChatMessage.class, listener);
+    public <T> boolean subscribeToTopic(String topicPath, Class<T> payloadClass, MessageListener<T> listener) {
+        return subscribe(topicPath, payloadClass, listener);
     }
 
     /**
-     * Đăng ký sự kiện bắt đầu trò chơi
-     *
-     * @param roomId   ID của phòng
-     * @param clazz    Lớp đối tượng dữ liệu
-     * @param listener Callback xử lý sự kiện
-     * @return boolean Trạng thái đăng ký thành công hay không
-     */
-    public <T> boolean subscribeToGameStartEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        if (roomId == null) {
-            Log.e(TAG, "Không thể đăng ký sự kiện bắt đầu: roomId là null");
-            return false;
-        }
-        return subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_START_EVENT, clazz, listener);
-    }
-
-    /**
-     * Đăng ký sự kiện đóng trò chơi
-     *
-     * @param roomId   ID của phòng
-     * @param clazz    Lớp đối tượng dữ liệu
-     * @param listener Callback xử lý sự kiện
-     * @return boolean Trạng thái đăng ký thành công hay không
-     */
-    public <T> boolean subscribeToGameCloseEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        if (roomId == null) {
-            Log.e(TAG, "Không thể đăng ký sự kiện đóng: roomId là null");
-            return false;
-        }
-        return subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_CLOSE_EVENT, clazz, listener);
-    }
-
-    /**
-     * Đăng ký sự kiện người chơi tham gia phòng
-     *
-     * @param roomId   ID của phòng
-     * @param clazz    Lớp đối tượng dữ liệu
-     * @param listener Callback xử lý sự kiện
-     * @return boolean Trạng thái đăng ký thành công hay không
-     */
-    public <T> boolean subscribeToPlayerJoinEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        if (roomId == null) {
-            Log.e(TAG, "Không thể đăng ký sự kiện tham gia: roomId là null");
-            return false;
-        }
-        return subscribe(ROOM_TOPIC_PREFIX + roomId + PLAYER_JOIN_EVENT, clazz, listener);
-    }
-
-    /**
-     * Đăng ký sự kiện người chơi rời phòng
-     *
-     * @param roomId   ID của phòng
-     * @param clazz    Lớp đối tượng dữ liệu
-     * @param listener Callback xử lý sự kiện
-     * @return boolean Trạng thái đăng ký thành công hay không
-     */
-    public <T> boolean subscribeToPlayerLeaveEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        if (roomId == null) {
-            Log.e(TAG, "Không thể đăng ký sự kiện rời phòng: roomId là null");
-            return false;
-        }
-        return subscribe(ROOM_TOPIC_PREFIX + roomId + PLAYER_LEAVE_EVENT, clazz, listener);
-    }
-
-    /**
-     * Đăng ký sự kiện cập nhật tiến trình trò chơi
-     *
-     * @param roomId   ID của phòng
-     * @param clazz    Lớp đối tượng dữ liệu
-     * @param listener Callback xử lý sự kiện
-     * @return boolean Trạng thái đăng ký thành công hay không
-     */
-    public <T> boolean subscribeToGameProgressEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        if (roomId == null) {
-            Log.e(TAG, "Không thể đăng ký sự kiện tiến trình: roomId là null");
-            return false;
-        }
-        return subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_PROGRESS_EVENT, clazz, listener);
-    }
-
-    /**
-     * Đăng ký sự kiện kết thúc trò chơi
-     *
-     * @param roomId   ID của phòng
-     * @param clazz    Lớp đối tượng dữ liệu
-     * @param listener Callback xử lý sự kiện
-     * @return boolean Trạng thái đăng ký thành công hay không
-     */
-    public <T> boolean subscribeToGameEndEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
-        if (roomId == null) {
-            Log.e(TAG, "Không thể đăng ký sự kiện kết thúc: roomId là null");
-            return false;
-        }
-        return subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_END_EVENT, clazz, listener);
-    }
-
-    /**
-     * Đăng ký một topic tùy chỉnh
+     * Đăng ký một topic tùy chỉnh cho room
      *
      * @param roomId    ID của phòng
-     * @param eventType Loại sự kiện
+     * @param eventType Loại sự kiện (ví dụ: "/custom-event")
      * @param clazz     Lớp đối tượng dữ liệu
      * @param listener  Callback xử lý sự kiện
      * @return boolean  Trạng thái đăng ký thành công hay không
@@ -361,7 +247,8 @@ public class WebSocketService {
             Log.e(TAG, "Không thể đăng ký sự kiện tùy chỉnh: roomId hoặc eventType không hợp lệ");
             return false;
         }
-        return subscribe(ROOM_TOPIC_PREFIX + roomId + "/" + eventType, clazz, listener);
+        String topicPath = WebSocketConstants.createRoomTopicPath(roomId, eventType);
+        return subscribe(topicPath, clazz, listener);
     }
 
     /**
@@ -463,32 +350,7 @@ public class WebSocketService {
                 disposable.dispose();
             }
         }
-    }
-
-    /**
-     * Gửi tin nhắn trò chuyện đến một phòng
-     *
-     * @param roomId  ID của phòng
-     * @param message Nội dung tin nhắn
-     * @return boolean Trạng thái đã gửi thành công hay không
-     */
-    public boolean sendChatMessage(Long roomId, String message) {
-        if (roomId == null) {
-            Log.e(TAG, "Cannot send message: roomId is null");
-            return false;
-        }
-
-        // Tạo đúng định dạng request theo ChatMessageRequest trên server
-        Map<String, Object> chatMessage = new HashMap<>();
-        chatMessage.put("roomId", roomId);
-        chatMessage.put("message", message);
-        chatMessage.put("guestName", null);
-
-        // Gửi tin nhắn đến topic chat
-        return sendMessage("/app/chat/" + roomId, chatMessage);
-    }
-
-    /**
+    }    /**
      * Gửi một tin nhắn tới một destination cụ thể
      *
      * @param destination Đích đến của tin nhắn

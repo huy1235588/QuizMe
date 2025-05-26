@@ -14,7 +14,8 @@ import com.huy.QuizMe.data.model.event.RoomEvent;
 import com.huy.QuizMe.data.model.User;
 import com.huy.QuizMe.data.repository.Resource;
 import com.huy.QuizMe.data.repository.RoomRepository;
-import com.huy.QuizMe.data.websocket.WebSocketService;
+import com.huy.QuizMe.data.websocket.WebSocketManager;
+import com.huy.QuizMe.data.websocket.ChatWebSocketClient;
 import com.huy.QuizMe.utils.SharedPreferencesManager;
 
 import java.text.SimpleDateFormat;
@@ -30,7 +31,8 @@ import java.util.Objects;
  */
 public class WaitingRoomViewModel extends ViewModel {
     private final RoomRepository roomRepository;
-    private final WebSocketService webSocketService;
+    private final WebSocketManager webSocketManager;
+    private final ChatWebSocketClient chatClient;
     private final SharedPreferencesManager sharedPreferencesManager;
 
     // Prefix cho tin nhắn hệ thống
@@ -70,7 +72,8 @@ public class WaitingRoomViewModel extends ViewModel {
     public WaitingRoomViewModel() {
         // Khởi tạo với các Singleton service/repository
         this.roomRepository = new RoomRepository();
-        this.webSocketService = WebSocketService.getInstance();
+        this.webSocketManager = WebSocketManager.getInstance();
+        this.chatClient = webSocketManager.getChatClient();
         this.sharedPreferencesManager = SharedPreferencesManager.getInstance();
     }
 
@@ -103,10 +106,8 @@ public class WaitingRoomViewModel extends ViewModel {
         if (roomId == null) {
             errorMessage.postValue("Không tìm thấy thông tin phòng");
             return;
-        }
-
-        // Kiểm tra nếu đã kết nối
-        if (webSocketService.isConnected()) {
+        }        // Kiểm tra nếu đã kết nối
+        if (webSocketManager.isConnected()) {
             // Đã kết nối, đăng ký các sự kiện
             subscribeToWebSocketEvents(roomId);
             isConnected.postValue(true);
@@ -118,7 +119,7 @@ public class WaitingRoomViewModel extends ViewModel {
         isLoading.postValue(true);
 
         // Chưa kết nối, thực hiện kết nối
-        if (!webSocketService.connect()) {
+        if (!webSocketManager.connect()) {
             errorMessage.postValue("Không thể khởi tạo kết nối đến máy chủ");
             isConnected.postValue(false);
             isLoading.postValue(false);
@@ -132,10 +133,9 @@ public class WaitingRoomViewModel extends ViewModel {
                 long startTime = System.currentTimeMillis();
                 long elapsedTime = 0;
                 boolean isConnectedSuccessfully = false;
-
                 while (!isConnectedSuccessfully && elapsedTime < WEBSOCKET_CONNECTION_TIMEOUT) {
                     Thread.sleep(200); // Kiểm tra mỗi 200ms
-                    isConnectedSuccessfully = webSocketService.isConnected();
+                    isConnectedSuccessfully = webSocketManager.isConnected();
                     elapsedTime = System.currentTimeMillis() - startTime;
                 }
 
@@ -169,34 +169,33 @@ public class WaitingRoomViewModel extends ViewModel {
             errorMessage.postValue("ID phòng không hợp lệ");
             return;
         }
-
         try {
             // Đăng ký nhận tin nhắn chat
-            boolean chatSubscribed = webSocketService.subscribeToChatMessages(roomId, this::handleNewChatMessage);
+            boolean chatSubscribed = chatClient.subscribeToChat(roomId, this::handleNewChatMessage);
             if (!chatSubscribed) {
                 errorMessage.postValue("Không thể kết nối đến kênh trò chuyện");
             }
 
             // Đăng ký sự kiện người chơi tham gia phòng
-            boolean joinSubscribed = webSocketService.subscribeToPlayerJoinEvents(roomId, RoomEvent.class, this::handleRoomEvent);
+            boolean joinSubscribed = chatClient.subscribeToPlayerJoin(roomId, RoomEvent.class, this::handleRoomEvent);
             if (!joinSubscribed) {
                 Log.w("WaitingRoomViewModel", "Không thể đăng ký sự kiện tham gia phòng");
             }
 
             // Đăng ký sự kiện người chơi rời phòng
-            boolean leaveSubscribed = webSocketService.subscribeToPlayerLeaveEvents(roomId, RoomEvent.class, this::handleRoomEvent);
+            boolean leaveSubscribed = chatClient.subscribeToPlayerLeave(roomId, RoomEvent.class, this::handleRoomEvent);
             if (!leaveSubscribed) {
                 Log.w("WaitingRoomViewModel", "Không thể đăng ký sự kiện rời phòng");
             }
 
             // Đăng ký sự kiện bắt đầu trò chơi
-            boolean gameStartSubscribed = webSocketService.subscribeToGameStartEvents(roomId, Room.class, this::handleGameStartEvent);
+            boolean gameStartSubscribed = webSocketManager.getGameClient().subscribeToGameStart(roomId, Room.class, this::handleGameStartEvent);
             if (!gameStartSubscribed) {
                 Log.w("WaitingRoomViewModel", "Không thể đăng ký sự kiện bắt đầu trò chơi");
             }
 
             // Đăng ký sự kiện đóng trò chơi
-            boolean gameEndSubscribed = webSocketService.subscribeToGameCloseEvents(roomId, Room.class, this::handleGameCloseEvent);
+            boolean gameEndSubscribed = chatClient.subscribeToGameClose(roomId, Room.class, this::handleGameCloseEvent);
             if (!gameEndSubscribed) {
                 Log.w("WaitingRoomViewModel", "Không thể đăng ký sự kiện kết thúc trò chơi");
             }
@@ -213,7 +212,7 @@ public class WaitingRoomViewModel extends ViewModel {
 
     /**
      * Hủy đăng ký các sự kiện WebSocket khi không cần nữa
-     * Sử dụng các hằng số từ WebSocketService để đảm bảo tính nhất quán
+     * Sử dụng WebSocketManager để hủy tất cả sự kiện của room
      */
     public void unsubscribeFromEvents() {
         Room room = currentRoom.getValue();
@@ -223,19 +222,8 @@ public class WaitingRoomViewModel extends ViewModel {
 
         Long roomId = room.getId();
 
-        // Sử dụng các hằng số từ WebSocketService để tạo topic paths
-        String[] topics = {
-                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.CHAT_EVENT,
-                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.PLAYER_JOIN_EVENT,
-                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.PLAYER_LEAVE_EVENT,
-                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.GAME_START_EVENT,
-                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.GAME_PROGRESS_EVENT,
-                WebSocketService.ROOM_TOPIC_PREFIX + roomId + WebSocketService.GAME_END_EVENT
-        };
-
-        for (String topic : topics) {
-            webSocketService.unsubscribe(topic);
-        }
+        // Sử dụng WebSocketManager để hủy tất cả sự kiện của room
+        webSocketManager.unsubscribeAllRoomEvents(roomId);
     }
 
     /**
@@ -294,7 +282,7 @@ public class WaitingRoomViewModel extends ViewModel {
         if (room == null || room.getId() == null || message == null || message.trim().isEmpty()) {
             return false;
         }
-        return webSocketService.sendChatMessage(room.getId(), message);
+        return chatClient.sendChatMessage(room.getId(), message);
     }
 
     /**
@@ -498,7 +486,7 @@ public class WaitingRoomViewModel extends ViewModel {
 
     /**
      * Xử lý sự kiện đóng trò chơi từ WebSocket
-     *
+     * <p>
      * Cập nhật thông tin phòng hiện tại và thông báo cho UI
      *
      * @param updatedRoom Phòng đã được cập nhật với trạng thái trò chơi đã đóng
@@ -523,7 +511,7 @@ public class WaitingRoomViewModel extends ViewModel {
         Room room = currentRoom.getValue();
         if (room != null && room.getId() != null) {
             // Đảm bảo hủy kết nối hiện tại trước khi kết nối lại
-            webSocketService.disconnect();
+            webSocketManager.disconnect();
             // Kết nối lại và đăng ký sự kiện
             connectAndSubscribe(room.getId());
         } else {
@@ -570,7 +558,7 @@ public class WaitingRoomViewModel extends ViewModel {
      * @return true nếu đã kết nối, false nếu chưa kết nối
      */
     public boolean isWebSocketConnected() {
-        return webSocketService.isConnected();
+        return webSocketManager.isConnected();
     }
 
     @Override
