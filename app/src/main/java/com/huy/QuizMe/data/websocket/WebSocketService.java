@@ -191,6 +191,80 @@ public class WebSocketService {
     }
 
     /**
+     * Kết nối tới WebSocket server với ConnectionListener callback
+     *
+     * @param listener callback để xử lý sự kiện kết nối
+     * @return true nếu thành công, false nếu có lỗi
+     */
+    public boolean connect(ConnectionListener listener) {
+        try {
+            // Clean up existing connection if present
+            disconnect();
+
+            Log.d(TAG, "Connecting to WebSocket server at " + WEBSOCKET_URL);
+
+            // Create new client
+            stompClient = Stomp.over(Stomp.ConnectionProvider.OKHTTP, WEBSOCKET_URL);
+
+            // Set heartbeats for stable connection
+            stompClient.withClientHeartbeat(10000).withServerHeartbeat(10000);
+
+            // Add authentication header matching Spring Security expectations
+            String authToken = prefsManager.getAuthToken();
+            List<StompHeader> headers = new ArrayList<>();
+            if (authToken != null && !authToken.isEmpty()) {
+                headers.add(new StompHeader("Authorization", "Bearer " + authToken));
+            }
+
+            // Listen for connection lifecycle events
+            Disposable lifecycleDisposable = stompClient.lifecycle()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(lifecycleEvent -> {
+                        switch (lifecycleEvent.getType()) {
+                            case OPENED:
+                                Log.d(TAG, "WebSocket connection established");
+                                if (listener != null) {
+                                    listener.onConnected();
+                                }
+                                break;
+                            case ERROR:
+                                Log.e(TAG, "WebSocket connection error", lifecycleEvent.getException());
+                                if (listener != null) {
+                                    String errorMsg = lifecycleEvent.getException() != null
+                                            ? lifecycleEvent.getException().getMessage()
+                                            : "Unknown connection error";
+                                    listener.onError(errorMsg);
+                                }
+                                break;
+                            case CLOSED:
+                                Log.d(TAG, "WebSocket connection closed");
+                                if (listener != null) {
+                                    listener.onDisconnected();
+                                }
+                                break;
+                        }
+                    }, throwable -> {
+                        Log.e(TAG, "WebSocket lifecycle error", throwable);
+                        if (listener != null) {
+                            listener.onError(throwable.getMessage());
+                        }
+                    });
+
+            compositeDisposable.add(lifecycleDisposable);
+            stompClient.connect(headers);
+            return true;
+
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to connect to WebSocket server", e);
+            if (listener != null) {
+                listener.onError(e.getMessage());
+            }
+            return false;
+        }
+    }
+
+    /**
      * Ngắt kết nối khỏi WebSocket server và dọn dẹp tài nguyên
      */
     public void disconnect() {
@@ -221,7 +295,9 @@ public class WebSocketService {
             }
         }
         topicSubscriptions.clear();
-    }    /**
+    }
+
+    /**
      * Đăng ký lắng nghe một topic cụ thể (Generic method)
      *
      * @param topicPath    Đường dẫn đầy đủ đến topic
@@ -350,7 +426,9 @@ public class WebSocketService {
                 disposable.dispose();
             }
         }
-    }    /**
+    }
+
+    /**
      * Gửi một tin nhắn tới một destination cụ thể
      *
      * @param destination Đích đến của tin nhắn
@@ -405,6 +483,17 @@ public class WebSocketService {
      */
     public interface MessageListener<T> {
         void onMessage(T message);
+    }
+
+    /**
+     * Interface cho callback xử lý sự kiện kết nối
+     */
+    public interface ConnectionListener {
+        void onConnected();
+
+        void onDisconnected();
+
+        void onError(String error);
     }
 
     /**

@@ -27,14 +27,20 @@ public class WebSocketManager {
             instance = new WebSocketManager();
         }
         return instance;
-    }
-
-    /**
+    }    /**
      * Kết nối WebSocket
      */
     public boolean connect() {
         Log.d(TAG, "Connecting to WebSocket server");
         return webSocketService.connect();
+    }
+
+    /**
+     * Kết nối WebSocket với ConnectionListener callback
+     */
+    public boolean connect(WebSocketService.ConnectionListener listener) {
+        Log.d(TAG, "Connecting to WebSocket server with callback");
+        return webSocketService.connect(listener);
     }
 
     /**
