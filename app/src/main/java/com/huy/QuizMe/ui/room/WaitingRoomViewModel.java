@@ -60,6 +60,9 @@ public class WaitingRoomViewModel extends ViewModel {
     // LiveData cho sự kiện bắt đầu trò chơi
     private final MediatorLiveData<Resource<Room>> gameStartEvent = new MediatorLiveData<>();
 
+    // LiveData cho sự kiện đóng trò chơi
+    private final MediatorLiveData<Resource<Room>> gameCloseEvent = new MediatorLiveData<>();
+
     /**
      * Constructor - Khởi tạo ViewModel với các thành phần cần thiết
      * Sử dụng Singleton pattern để lấy instance từ các service và repository
@@ -190,6 +193,12 @@ public class WaitingRoomViewModel extends ViewModel {
             boolean gameStartSubscribed = webSocketService.subscribeToGameStartEvents(roomId, Room.class, this::handleGameStartEvent);
             if (!gameStartSubscribed) {
                 Log.w("WaitingRoomViewModel", "Không thể đăng ký sự kiện bắt đầu trò chơi");
+            }
+
+            // Đăng ký sự kiện đóng trò chơi
+            boolean gameEndSubscribed = webSocketService.subscribeToGameCloseEvents(roomId, Room.class, this::handleGameCloseEvent);
+            if (!gameEndSubscribed) {
+                Log.w("WaitingRoomViewModel", "Không thể đăng ký sự kiện kết thúc trò chơi");
             }
 
             // Nếu tất cả đều thất bại, đưa ra thông báo
@@ -479,11 +488,31 @@ public class WaitingRoomViewModel extends ViewModel {
             // Cập nhật thông tin phòng hiện tại
             currentRoom.postValue(updatedRoom);
 
-            // Thông báo sự kiện bắt đầu trò chơi thành công 
+            // Thông báo sự kiện bắt đầu trò chơi thành công
             gameStartEvent.postValue(Resource.success(updatedRoom, "Trò chơi đã bắt đầu"));
 
             // Ghi log cho mục đích debug
             Log.d("WaitingRoomViewModel", "Nhận sự kiện bắt đầu trò chơi: " + updatedRoom.getId());
+        }
+    }
+
+    /**
+     * Xử lý sự kiện đóng trò chơi từ WebSocket
+     *
+     * Cập nhật thông tin phòng hiện tại và thông báo cho UI
+     *
+     * @param updatedRoom Phòng đã được cập nhật với trạng thái trò chơi đã đóng
+     */
+    private void handleGameCloseEvent(Room updatedRoom) {
+        if (updatedRoom != null) {
+            // Cập nhật thông tin phòng hiện tại
+            currentRoom.postValue(updatedRoom);
+
+            // Thông báo sự kiện đóng trò chơi thành công
+            gameCloseEvent.postValue(Resource.success(updatedRoom, "Trò chơi đã kết thúc"));
+
+            // Ghi log cho mục đích debug
+            Log.d("WaitingRoomViewModel", "Nhận sự kiện đóng trò chơi: " + updatedRoom.getId());
         }
     }
 
@@ -529,6 +558,10 @@ public class WaitingRoomViewModel extends ViewModel {
 
     public LiveData<Resource<Room>> getGameStartEvent() {
         return gameStartEvent;
+    }
+
+    public LiveData<Resource<Room>> getGameCloseEvent() {
+        return gameCloseEvent;
     }
 
     /**

@@ -206,6 +206,16 @@ public class WaitingRoomActivity extends AppCompatActivity {
             }
         });
 
+        // Theo dõi sự kiện đóng phòng
+        viewModel.getGameCloseEvent().observe(this, roomResource -> {
+            if (roomResource != null && roomResource.getStatus() == Resource.Status.SUCCESS) {
+                Toast.makeText(this, "Room has been closed", Toast.LENGTH_SHORT).show();
+
+                // Quay lại
+                finish();
+            }
+        });
+
         // Kiểm tra xem người dùng hiện tại có phải là chủ phòng để hiển thị nút bắt đầu
         if (viewModel.isCurrentUserHost()) {
             if (btnStartQuiz != null) {

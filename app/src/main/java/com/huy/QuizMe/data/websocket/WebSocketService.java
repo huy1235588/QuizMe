@@ -42,6 +42,7 @@ public class WebSocketService {
     public static final String ROOM_TOPIC_PREFIX = "/topic/room/";
     public static final String CHAT_EVENT = "/chat";
     public static final String GAME_START_EVENT = "/start";
+    public static final String GAME_CLOSE_EVENT = "/close";
     public static final String PLAYER_JOIN_EVENT = "/player-join";
     public static final String PLAYER_LEAVE_EVENT = "/player-leave";
     public static final String GAME_PROGRESS_EVENT = "/progress";
@@ -264,6 +265,22 @@ public class WebSocketService {
             return false;
         }
         return subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_START_EVENT, clazz, listener);
+    }
+
+    /**
+     * Đăng ký sự kiện đóng trò chơi
+     *
+     * @param roomId   ID của phòng
+     * @param clazz    Lớp đối tượng dữ liệu
+     * @param listener Callback xử lý sự kiện
+     * @return boolean Trạng thái đăng ký thành công hay không
+     */
+    public <T> boolean subscribeToGameCloseEvents(Long roomId, Class<T> clazz, MessageListener<T> listener) {
+        if (roomId == null) {
+            Log.e(TAG, "Không thể đăng ký sự kiện đóng: roomId là null");
+            return false;
+        }
+        return subscribe(ROOM_TOPIC_PREFIX + roomId + GAME_CLOSE_EVENT, clazz, listener);
     }
 
     /**
