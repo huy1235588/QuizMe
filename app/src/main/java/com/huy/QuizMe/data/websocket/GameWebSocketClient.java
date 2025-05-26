@@ -2,6 +2,8 @@ package com.huy.QuizMe.data.websocket;
 
 import android.util.Log;
 
+import com.huy.QuizMe.data.model.game.AnswerRequest;
+
 import java.util.Map;
 
 /**
@@ -210,7 +212,7 @@ public class GameWebSocketClient {
      * @param answerRequest Object chứa thông tin câu trả lời
      * @return true nếu gửi thành công, false nếu thất bại
      */
-    public boolean sendAnswer(Long roomId, Object answerRequest) {
+    public boolean sendAnswer(Long roomId, AnswerRequest answerRequest) {
         if (isValidRoomId(roomId)) {
             logError(roomId, "sendAnswer", "Invalid roomId");
             return false;
