@@ -283,7 +283,7 @@ public class QuizGameActivity extends AppCompatActivity {
 
         // Highlight the selected button
         resetAnswerButtonStyles();
-        button.setBackgroundColor(R.drawable.button_selected_answer);
+        button.setBackgroundColor(ContextCompat.getColor(this, R.color.answer_selected));
         button.setTextColor(ContextCompat.getColor(this, android.R.color.white));
 
         // Gửi câu trả lời thông qua ViewModel
@@ -581,8 +581,8 @@ public class QuizGameActivity extends AppCompatActivity {
 //            int points = result.getPoints() != null ? result.getPoints() : 945;
 //            tvPoints.setText("+" + points);
 
-        // Hiển thị overlay
-        feedbackOverlay.setVisibility(View.VISIBLE);
+        // Hiển thị overlay với hiệu ứng slide từ trên xuống
+        showFeedbackWithSlideAnimation();
     }
 
     /**
@@ -590,7 +590,53 @@ public class QuizGameActivity extends AppCompatActivity {
      */
     private void hideFeedback() {
         if (feedbackOverlay != null) {
-            feedbackOverlay.setVisibility(View.GONE);
+            hideFeedbackWithSlideAnimation();
         }
+    }
+
+    /**
+     * Hiển thị feedback overlay với hiệu ứng slide từ trên xuống
+     */
+    private void showFeedbackWithSlideAnimation() {
+        if (feedbackOverlay == null) return;
+
+        // Hiển thị view trước để có thể đo chiều cao
+        feedbackOverlay.setVisibility(View.VISIBLE);
+        feedbackOverlay.setAlpha(0f); // Bắt đầu với độ trong suốt
+
+        // Đợi view được layout xong rồi mới bắt đầu animation
+        feedbackOverlay.post(() -> {
+            // Đặt vị trí ban đầu ở trên ngoài màn hình
+            feedbackOverlay.setTranslationY(-feedbackOverlay.getHeight());
+
+            // Tạo animation slide từ trên xuống với fade in
+            feedbackOverlay.animate()
+                    .translationY(0)
+                    .alpha(1f)
+                    .setDuration(400)
+                    .setInterpolator(new android.view.animation.DecelerateInterpolator())
+                    .start();
+        });
+    }
+
+    /**
+     * Ẩn feedback overlay với hiệu ứng slide lên trên
+     */
+    private void hideFeedbackWithSlideAnimation() {
+        if (feedbackOverlay == null) return;
+
+        // Tạo animation slide lên trên với fade out
+        feedbackOverlay.animate()
+                .translationY(-feedbackOverlay.getHeight())
+                .alpha(0f)
+                .setDuration(300)
+                .setInterpolator(new android.view.animation.AccelerateInterpolator())
+                .withEndAction(() -> {
+                    // Ẩn view sau khi animation hoàn thành
+                    feedbackOverlay.setVisibility(View.GONE);
+                    feedbackOverlay.setTranslationY(0); // Reset vị trí
+                    feedbackOverlay.setAlpha(1f); // Reset alpha
+                })
+                .start();
     }
 }
