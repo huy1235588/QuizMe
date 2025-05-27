@@ -1,6 +1,7 @@
 package com.huy.QuizMe.ui.quiz.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +33,11 @@ public class LeaderboardOverlayFragment extends Fragment {
     private OnLeaderboardCloseListener closeListener;
     private LeaderboardDTO pendingLeaderboard; // Store leaderboard data if called before view creation
 
+    // Timeout handler để tự động ẩn loading
+    private android.os.Handler timeoutHandler = new android.os.Handler(android.os.Looper.getMainLooper());
+    private Runnable loadingTimeoutRunnable;
+    private static final long LOADING_TIMEOUT_MS = 5000; // 5 giây timeout
+
     public interface OnLeaderboardCloseListener {
         void onLeaderboardClose();
     }
@@ -53,12 +59,13 @@ public class LeaderboardOverlayFragment extends Fragment {
         setupRecyclerView();
         setupClickListeners();
 
-        showLoading(true);
-
         // Nếu có dữ liệu bảng xếp hạng đã được lưu trữ, cập nhật ngay
         if (pendingLeaderboard != null) {
             updateLeaderboard(pendingLeaderboard);
             pendingLeaderboard = null;
+        } else {
+            // Chỉ hiển thị loading nếu không có dữ liệu pending
+            showLoading(true);
         }
     }
 
@@ -99,19 +106,31 @@ public class LeaderboardOverlayFragment extends Fragment {
      * Cập nhật dữ liệu bảng xếp hạng
      */
     public void updateLeaderboard(LeaderboardDTO leaderboard) {
+        Log.d("LeaderboardFragment", "updateLeaderboard called, adapter=" + (adapter != null) +
+                ", leaderboard=" + (leaderboard != null) +
+                ", rankings=" + (leaderboard != null && leaderboard.getRankings() != null ? leaderboard.getRankings().size() : "null"));
+
         // Nếu adapter chưa được khởi tạo, lưu dữ liệu để cập nhật sau
         if (adapter == null) {
+            Log.d("LeaderboardFragment", "Adapter null, storing pending leaderboard");
             pendingLeaderboard = leaderboard;
             return;
         }
 
+        // Luôn ẩn loading khi có dữ liệu (dù là null hay empty)
         showLoading(false);
 
         if (leaderboard != null && leaderboard.getRankings() != null && !leaderboard.getRankings().isEmpty()) {
+            Log.d("LeaderboardFragment", "Updating adapter with " + leaderboard.getRankings().size() + " players");
             adapter.updateLeaderboardWithAnimation(leaderboard.getRankings());
             showEmpty(false);
         } else {
+            Log.d("LeaderboardFragment", "No valid leaderboard data, showing empty state");
+            // Hiển thị empty state thay vì để loading vô hạn
             showEmpty(true);
+            if (tvEmpty != null) {
+                tvEmpty.setText("Chưa có dữ liệu xếp hạng");
+            }
         }
     }
 
@@ -119,11 +138,45 @@ public class LeaderboardOverlayFragment extends Fragment {
      * Hiển thị trạng thái đang tải
      */
     public void showLoading(boolean show) {
+        // Hủy timeout trước đó
+        cancelLoadingTimeout();
+
         if (pbLoading != null) {
             pbLoading.setVisibility(show ? View.VISIBLE : View.GONE);
         }
         if (rvLeaderboard != null) {
             rvLeaderboard.setVisibility(show ? View.GONE : View.VISIBLE);
+        }
+
+        // Bắt đầu timeout nếu đang hiển thị loading
+        if (show) {
+            startLoadingTimeout();
+        }
+    }
+
+    /**
+     * Bắt đầu timeout loading
+     */
+    private void startLoadingTimeout() {
+        loadingTimeoutRunnable = () -> {
+            if (isAdded()) {
+                showLoading(false);
+                showEmpty(true);
+                if (tvEmpty != null) {
+                    tvEmpty.setText("Không thể tải bảng xếp hạng");
+                }
+            }
+        };
+        timeoutHandler.postDelayed(loadingTimeoutRunnable, LOADING_TIMEOUT_MS);
+    }
+
+    /**
+     * Hủy timeout loading
+     */
+    private void cancelLoadingTimeout() {
+        if (timeoutHandler != null && loadingTimeoutRunnable != null) {
+            timeoutHandler.removeCallbacks(loadingTimeoutRunnable);
+            loadingTimeoutRunnable = null;
         }
     }
 
@@ -194,5 +247,12 @@ public class LeaderboardOverlayFragment extends Fragment {
      */
     public void setOnLeaderboardCloseListener(OnLeaderboardCloseListener listener) {
         this.closeListener = listener;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Hủy timeout khi fragment bị destroy
+        cancelLoadingTimeout();
     }
 }

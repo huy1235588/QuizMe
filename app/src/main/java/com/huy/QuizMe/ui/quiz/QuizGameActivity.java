@@ -690,26 +690,35 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
             return;
         }
 
-        Log.d("QuizGameActivity", "Showing leaderboard overlay");
+        // Nếu đang hiển thị leaderboard, chỉ cập nhật dữ liệu
+        if (isLeaderboardShowing && leaderboardFragment != null && leaderboardFragment.isAdded()) {
+            Log.d("QuizGameActivity", "Updating existing leaderboard overlay");
+            leaderboardFragment.updateLeaderboard(leaderboard);
+            // Reset auto hide timer
+            scheduleAutoHideLeaderboard(8000);
+            return;
+        }
+
+        Log.d("QuizGameActivity", "Showing new leaderboard overlay");
         isLeaderboardShowing = true;
 
-        // Tạo fragment leaderboard nếu chưa có
-        if (leaderboardFragment == null) {
-            leaderboardFragment = LeaderboardOverlayFragment.newInstance();
-            leaderboardFragment.setOnLeaderboardCloseListener(this);
-        }
+        // Tạo fragment mới chỉ khi chưa có hoặc fragment cũ đã bị remove
+        leaderboardFragment = LeaderboardOverlayFragment.newInstance();
+        leaderboardFragment.setOnLeaderboardCloseListener(this);
 
         // Hiển thị fragment với animation
         FragmentManager fragmentManager = getSupportFragmentManager();
-        if (!leaderboardFragment.isAdded()) {
-            fragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.slide_up, R.anim.slide_down)
-                    .add(android.R.id.content, leaderboardFragment, LEADERBOARD_FRAGMENT_TAG)
-                    .commitAllowingStateLoss();
-        }
+        fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.slide_up, R.anim.slide_down)
+                .add(android.R.id.content, leaderboardFragment, LEADERBOARD_FRAGMENT_TAG)
+                .commitAllowingStateLoss();
 
-        // Cập nhật dữ liệu leaderboard
-        leaderboardFragment.updateLeaderboard(leaderboard);
+        // Đợi một chút để fragment được add hoàn toàn trước khi cập nhật dữ liệu
+        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+            if (leaderboardFragment != null && leaderboardFragment.isAdded()) {
+                leaderboardFragment.updateLeaderboard(leaderboard);
+            }
+        }, 50);
 
         // Auto hide sau 8 giây (sync với backend SHOWING_LEADERBOARD duration)
         scheduleAutoHideLeaderboard(8000);
@@ -719,7 +728,7 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
      * Ẩn bảng xếp hạng overlay
      */
     private void hideLeaderboard() {
-        if (!isLeaderboardShowing || leaderboardFragment == null) {
+        if (!isLeaderboardShowing) {
             return;
         }
 
@@ -729,13 +738,16 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
         // Hủy auto hide timer
         cancelAutoHideLeaderboard();
 
-        // Ẩn fragment với animation
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        if (leaderboardFragment.isAdded()) {
-            fragmentManager.beginTransaction()
-                    .setCustomAnimations(R.anim.slide_up, R.anim.slide_down)
-                    .remove(leaderboardFragment)
-                    .commitAllowingStateLoss();
+        // Ẩn fragment với animation nếu fragment tồn tại và đã được add
+        if (leaderboardFragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if (leaderboardFragment.isAdded()) {
+                fragmentManager.beginTransaction()
+                        .setCustomAnimations(R.anim.slide_up, R.anim.slide_down)
+                        .remove(leaderboardFragment)
+                        .commitAllowingStateLoss();
+            }
+            leaderboardFragment = null;
         }
     }
 

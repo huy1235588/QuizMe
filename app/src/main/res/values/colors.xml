@@ -94,4 +94,10 @@
     <color name="answer_correct">#4CAF50</color>
     <color name="answer_incorrect">#F44336</color>
     <color name="answer_selected">#2196F3</color>
+
+    <!-- Leaderboard colors -->
+    <color name="leaderboard_background">#FFFFFF</color>
+    <color name="leaderboard_text">#000000</color>
+    <color name="leaderboard_user_background">#0DFFFFFF</color>
+    <color name="leaderboard_current_user_background">#A0FFFFFF</color>
 </resources>

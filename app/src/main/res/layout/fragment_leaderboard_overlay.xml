@@ -6,14 +6,15 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_loading"
     android:elevation="8dp"
-    android:padding="16dp">
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="32dp">
 
     <!-- Header -->
     <TextView
         android:id="@+id/tv_leaderboard_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="🏆 Bảng Xếp Hạng"
+        android:text="🏆 Leaderboard"
         android:textAppearance="?attr/textAppearanceTitleMedium"
         android:textColor="@color/white"
         android:textStyle="bold"

@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -108,6 +110,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
     }
 
     public class LeaderboardViewHolder extends RecyclerView.ViewHolder {
+        final private LinearLayout llPlayerItem;
         final private TextView tvRank;
         final private CircleImageView ivPlayerAvatar;
         final private TextView tvPlayerName;
@@ -116,6 +119,7 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
 
         public LeaderboardViewHolder(@NonNull View itemView) {
             super(itemView);
+            llPlayerItem = itemView.findViewById(R.id.ll_player_item);
             tvRank = itemView.findViewById(R.id.tv_rank);
             ivPlayerAvatar = itemView.findViewById(R.id.iv_player_avatar);
             tvPlayerName = itemView.findViewById(R.id.tv_player_name);
@@ -149,15 +153,9 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
             boolean isCurrentUser = false;
             isCurrentUser = currentUserId != null && currentUserId.equals(player.getUserId());
 
-//            if (isCurrentUser) {
-//                tvPlayerName.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
-//                tvPlayerName.setTextSize(16);
-//                itemView.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.colorAccent));
-//            } else {
-//                tvPlayerName.setTextColor(ContextCompat.getColor(context, android.R.color.black));
-//                tvPlayerName.setTextSize(14);
-//                itemView.setBackgroundTintList(null);
-//            }
+            if (isCurrentUser) {
+                llPlayerItem.setBackgroundColor(ContextCompat.getColor(context, R.color.leaderboard_current_user_background));
+            }
 
             // Đặt điểm số
             String scoreText = String.valueOf(player.getScore() != null ? player.getScore() : 0);
