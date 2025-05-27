@@ -15,30 +15,30 @@ public class QuestionResultDTO implements Serializable {
     @SerializedName("correctOptions")
     private List<Long> correctOptions;
 
-    @SerializedName("correctAnswer")
-    private String correctAnswer; // Dành cho TYPE_ANSWER
+    @SerializedName("explanation")
+    private String explanation;
 
-    @SerializedName("userAnswer")
-    private UserAnswerDTO userAnswer;
+    @SerializedName("funFact")
+    private String funFact;
 
     @SerializedName("optionStats")
     private List<OptionStatDTO> optionStats;
 
-    @SerializedName("explanations")
-    private String explanations;
+    @SerializedName("userAnswer")
+    private UserAnswerDTO userAnswer;
 
     // Constructors
     public QuestionResultDTO() {
     }
 
-    public QuestionResultDTO(Long questionId, List<Long> correctOptions, String correctAnswer,
-                             UserAnswerDTO userAnswer, List<OptionStatDTO> optionStats, String explanations) {
+    public QuestionResultDTO(Long questionId, List<Long> correctOptions, String explanation,
+                             String funFact, UserAnswerDTO userAnswer, List<OptionStatDTO> optionStats) {
         this.questionId = questionId;
         this.correctOptions = correctOptions;
-        this.correctAnswer = correctAnswer;
+        this.explanation = explanation;
+        this.funFact = funFact;
         this.userAnswer = userAnswer;
         this.optionStats = optionStats;
-        this.explanations = explanations;
     }
 
     // Getters and Setters
@@ -58,20 +58,20 @@ public class QuestionResultDTO implements Serializable {
         this.correctOptions = correctOptions;
     }
 
-    public String getCorrectAnswer() {
-        return correctAnswer;
+    public String getExplanation() {
+        return explanation;
     }
 
-    public void setCorrectAnswer(String correctAnswer) {
-        this.correctAnswer = correctAnswer;
+    public void setExplanation(String explanation) {
+        this.explanation = explanation;
     }
 
-    public UserAnswerDTO getUserAnswer() {
-        return userAnswer;
+    public String getFunFact() {
+        return funFact;
     }
 
-    public void setUserAnswer(UserAnswerDTO userAnswer) {
-        this.userAnswer = userAnswer;
+    public void setFunFact(String funFact) {
+        this.funFact = funFact;
     }
 
     public List<OptionStatDTO> getOptionStats() {
@@ -82,62 +82,37 @@ public class QuestionResultDTO implements Serializable {
         this.optionStats = optionStats;
     }
 
-    public String getExplanations() {
-        return explanations;
+    public UserAnswerDTO getUserAnswer() {
+        return userAnswer;
     }
 
-    public void setExplanations(String explanations) {
-        this.explanations = explanations;
+    public void setUserAnswer(UserAnswerDTO userAnswer) {
+        this.userAnswer = userAnswer;
     }
 
     /**
-     * DTO cho câu trả lời của người dùng
+     * DTO cho thông tin câu trả lời của người dùng
      */
     public static class UserAnswerDTO implements Serializable {
-        @SerializedName("selectedOptions")
-        private List<Long> selectedOptions;
-
-        @SerializedName("textAnswer")
-        private String textAnswer;
-
         @SerializedName("isCorrect")
         private Boolean isCorrect;
 
         @SerializedName("score")
         private Integer score;
 
-        @SerializedName("answerTime")
-        private Long answerTime;
+        @SerializedName("timeTaken")
+        private Double timeTaken;
 
         public UserAnswerDTO() {
         }
 
-        public UserAnswerDTO(List<Long> selectedOptions, String textAnswer, Boolean isCorrect,
-                             Integer score, Long answerTime) {
-            this.selectedOptions = selectedOptions;
-            this.textAnswer = textAnswer;
+        public UserAnswerDTO(Boolean isCorrect, Integer score, Double timeTaken) {
             this.isCorrect = isCorrect;
             this.score = score;
-            this.answerTime = answerTime;
+            this.timeTaken = timeTaken;
         }
 
         // Getters and Setters
-        public List<Long> getSelectedOptions() {
-            return selectedOptions;
-        }
-
-        public void setSelectedOptions(List<Long> selectedOptions) {
-            this.selectedOptions = selectedOptions;
-        }
-
-        public String getTextAnswer() {
-            return textAnswer;
-        }
-
-        public void setTextAnswer(String textAnswer) {
-            this.textAnswer = textAnswer;
-        }
-
         public Boolean getIsCorrect() {
             return isCorrect;
         }
@@ -154,12 +129,12 @@ public class QuestionResultDTO implements Serializable {
             this.score = score;
         }
 
-        public Long getAnswerTime() {
-            return answerTime;
+        public Double getTimeTaken() {
+            return timeTaken;
         }
 
-        public void setAnswerTime(Long answerTime) {
-            this.answerTime = answerTime;
+        public void setTimeTaken(Double timeTaken) {
+            this.timeTaken = timeTaken;
         }
     }
 
@@ -170,22 +145,14 @@ public class QuestionResultDTO implements Serializable {
         @SerializedName("optionId")
         private Long optionId;
 
-        @SerializedName("content")
-        private String content;
-
-        @SerializedName("selectedCount")
-        private Integer selectedCount;
-
         @SerializedName("percentage")
         private Double percentage;
 
         public OptionStatDTO() {
         }
 
-        public OptionStatDTO(Long optionId, String content, Integer selectedCount, Double percentage) {
+        public OptionStatDTO(Long optionId, Double percentage) {
             this.optionId = optionId;
-            this.content = content;
-            this.selectedCount = selectedCount;
             this.percentage = percentage;
         }
 
@@ -196,22 +163,6 @@ public class QuestionResultDTO implements Serializable {
 
         public void setOptionId(Long optionId) {
             this.optionId = optionId;
-        }
-
-        public String getContent() {
-            return content;
-        }
-
-        public void setContent(String content) {
-            this.content = content;
-        }
-
-        public Integer getSelectedCount() {
-            return selectedCount;
-        }
-
-        public void setSelectedCount(Integer selectedCount) {
-            this.selectedCount = selectedCount;
         }
 
         public Double getPercentage() {

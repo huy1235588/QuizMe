@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:padding="24dp"
     tools:context=".ui.quiz.QuizGameActivity">
 
     <!-- Loading Progress Bar -->
@@ -28,7 +28,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">        <!-- Connection Status -->
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Connection Status -->
         <TextView
             android:id="@+id/tv_connection_status"
             android:layout_width="wrap_content"
@@ -102,7 +104,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_quiz_type"
-            app:trackColor="@color/material_on_surface_disabled" >
+            app:trackColor="@color/material_on_surface_disabled">
 
         </com.google.android.material.progressindicator.LinearProgressIndicator>
 
@@ -141,6 +143,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_question_image" />
 
+        <!-- Feedback TextView for showing explanations -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_feedback"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/md_theme_light_surfaceVariant"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_question_text">
+
+            <TextView
+                android:id="@+id/tv_feedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:lineSpacingExtra="2dp"
+                android:padding="16dp"
+                android:text="Giải thích sẽ hiển thị ở đây"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/md_theme_light_onSurface" />
+        </com.google.android.material.card.MaterialCardView>
+
         <GridLayout
             android:id="@+id/grid_answers"
             android:layout_width="0dp"
@@ -152,64 +180,72 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_question_text"
+            app:layout_constraintTop_toBottomOf="@id/card_feedback"
             app:layout_constraintVertical_bias="0.0">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_answer_how"
+                android:id="@+id/btn_answer_1"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill_horizontal"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:backgroundTint="#3D8AFF"
+                android:backgroundTint="@color/white"
                 android:minHeight="80dp"
                 android:text="How"
-                android:textColor="?attr/colorOnPrimary"
-                app:cornerRadius="12dp" />
+                android:textColor="@color/black"
+                app:cornerRadius="12dp"
+                app:strokeColor="@color/gray"
+                app:strokeWidth="2dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_answer_what"
+                android:id="@+id/btn_answer_2"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill_horizontal"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="8dp"
-                android:backgroundTint="#FF5A5F"
+                android:backgroundTint="@color/white"
                 android:minHeight="80dp"
                 android:text="What"
-                android:textColor="?attr/colorOnPrimary"
-                app:cornerRadius="12dp" />
+                android:textColor="@color/black"
+                app:cornerRadius="12dp"
+                app:strokeColor="@color/gray"
+                app:strokeWidth="2dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_answer_which"
+                android:id="@+id/btn_answer_3"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill_horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:backgroundTint="#FFB300"
+                android:backgroundTint="@color/white"
                 android:minHeight="80dp"
                 android:text="Which"
-                android:textColor="?attr/colorOnPrimary"
-                app:cornerRadius="12dp" />
+                android:textColor="@color/black"
+                app:cornerRadius="12dp"
+                app:strokeColor="@color/gray"
+                app:strokeWidth="2dp" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_answer_where"
+                android:id="@+id/btn_answer_4"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_columnWeight="1"
                 android:layout_gravity="fill_horizontal"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:backgroundTint="#00C853"
+                android:backgroundTint="@color/white"
                 android:minHeight="80dp"
                 android:text="Where"
-                android:textColor="?attr/colorOnPrimary"
-                app:cornerRadius="12dp" />
+                android:textColor="@color/black"
+                app:cornerRadius="12dp"
+                app:strokeColor="@color/gray"
+                app:strokeWidth="2dp" />
         </GridLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

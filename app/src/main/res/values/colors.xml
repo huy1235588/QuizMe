@@ -85,10 +85,13 @@
     <!-- Difficulty Colors -->
     <color name="difficulty_easy">#4CAF50</color>
     <color name="difficulty_medium">#FF9800</color>
-    <color name="difficulty_hard">#F44336</color>
-
-    <!-- Additional Colors -->
+    <color name="difficulty_hard">#F44336</color>    <!-- Additional Colors -->
     <color name="colorGold">#FFD700</color>
     <color name="colorSilver">#C0C0C0</color>
     <color name="colorBronze">#CD7F32</color>
+    
+    <!-- Answer result colors -->
+    <color name="answer_correct">#4CAF50</color>
+    <color name="answer_incorrect">#F44336</color>
+    <color name="answer_selected">#2196F3</color>
 </resources>

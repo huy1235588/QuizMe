@@ -3,6 +3,7 @@ package com.huy.QuizMe.ui.quiz;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -11,12 +12,14 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Room;
@@ -26,35 +29,33 @@ import com.huy.QuizMe.data.repository.Resource;
 import com.huy.QuizMe.utils.ImageLoader;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class QuizGameActivity extends AppCompatActivity {
 
-    private QuizGameViewModel viewModel;
-
-    // Các thành phần UI
+    private QuizGameViewModel viewModel;    // Các thành phần UI
     private TextView tvQuizProgress;
     private TextView tvQuizType;
     private LinearProgressIndicator progressBarQuiz;
     private ImageView ivQuestionImage;
     private TextView tvQuestionText;
-    private MaterialButton btnAnswerHow;
-    private MaterialButton btnAnswerWhat;
-    private MaterialButton btnAnswerWhich;
-    private MaterialButton btnAnswerWhere;
+    private MaterialButton btnAnswer1, btnAnswer2, btnAnswer3, btnAnswer4;
     private ProgressBar loadingProgressBar;
     private View gameContentView;
+    private TextView tvFeedback;
+    private MaterialCardView cardFeedback;
 
     // Timer UI components
     private com.google.android.material.progressindicator.CircularProgressIndicator timerProgress;
     private TextView tvTimer;
-    private View timerContainer;
-
-    // Dữ liệu
+    private View timerContainer;    // Dữ liệu
     private Room currentRoom;
     private int currentQuestionIndex = 0;
     private int totalQuestions = 10;
     private boolean isWaitingForFirstQuestion = true;
+    private Long userSelectedOptionId = null; // Track user's selected answer
 
     // Timeout handling
     private Handler timeoutHandler = new Handler(Looper.getMainLooper());
@@ -111,12 +112,15 @@ public class QuizGameActivity extends AppCompatActivity {
         progressBarQuiz = findViewById(R.id.progress_bar_quiz);
         ivQuestionImage = findViewById(R.id.iv_question_image);
         tvQuestionText = findViewById(R.id.tv_question_text);
-        btnAnswerHow = findViewById(R.id.btn_answer_how);
-        btnAnswerWhat = findViewById(R.id.btn_answer_what);
-        btnAnswerWhich = findViewById(R.id.btn_answer_which);
-        btnAnswerWhere = findViewById(R.id.btn_answer_where);        // Khởi tạo loading components
+        btnAnswer1 = findViewById(R.id.btn_answer_1);
+        btnAnswer2 = findViewById(R.id.btn_answer_2);
+        btnAnswer3 = findViewById(R.id.btn_answer_3);
+        btnAnswer4 = findViewById(R.id.btn_answer_4);        // Khởi tạo loading components
         loadingProgressBar = findViewById(R.id.loading_progress_bar);
         gameContentView = findViewById(R.id.game_content);
+        // Khởi tạo feedback component
+        tvFeedback = findViewById(R.id.tv_feedback);
+        cardFeedback = findViewById(R.id.card_feedback);
 
         // Khởi tạo timer components
         timerProgress = findViewById(R.id.timer_progress);
@@ -249,39 +253,35 @@ public class QuizGameActivity extends AppCompatActivity {
     }
 
     private void setupAnswerButtonListeners() {
-        btnAnswerHow.setOnClickListener(v -> onAnswerSelected(0));
-        btnAnswerWhat.setOnClickListener(v -> onAnswerSelected(1));
-        btnAnswerWhich.setOnClickListener(v -> onAnswerSelected(2));
-        btnAnswerWhere.setOnClickListener(v -> onAnswerSelected(3));
+        btnAnswer1.setOnClickListener(v -> onAnswerSelected(0, btnAnswer1));
+        btnAnswer2.setOnClickListener(v -> onAnswerSelected(1, btnAnswer2));
+        btnAnswer3.setOnClickListener(v -> onAnswerSelected(2, btnAnswer3));
+        btnAnswer4.setOnClickListener(v -> onAnswerSelected(3, btnAnswer4));
     }
 
-    private void onAnswerSelected(int optionIndex) {
+    private void onAnswerSelected(int optionIndex, MaterialButton button) {
         // Kiểm tra xem câu trả lời đã được gửi chưa
         if (viewModel.isAnswerSubmittedForCurrentQuestion()) {
-            Toast.makeText(this, "Bạn đã trả lời câu hỏi này", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Lấy câu hỏi hiện tại để tìm ID lựa chọn được chọn
         QuestionGameDTO currentQuestion = viewModel.getCurrentQuestion().getValue();
-        if (currentQuestion == null || currentQuestion.getOptions() == null) {
-            Toast.makeText(this, "Không tìm thấy thông tin câu hỏi", Toast.LENGTH_SHORT).show();
+        if (currentQuestion == null || currentQuestion.getOptions() == null ||
+                optionIndex >= currentQuestion.getOptions().size()) {
             return;
         }
 
-        if (optionIndex >= currentQuestion.getOptions().size()) {
-            Toast.makeText(this, "Lựa chọn không hợp lệ", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Lưu lại lựa chọn của người dùng
+        userSelectedOptionId = currentQuestion.getOptions().get(optionIndex).getId();
 
-        // Lấy ID của lựa chọn
-        Long selectedOptionId = currentQuestion.getOptions().get(optionIndex).getId();
+        // Highlight the selected button
+        resetAnswerButtonStyles();
+        button.setBackgroundColor(R.drawable.button_selected_answer);
+        button.setTextColor(ContextCompat.getColor(this, android.R.color.white));
 
         // Gửi câu trả lời thông qua ViewModel
-        viewModel.submitAnswer(Arrays.asList(selectedOptionId));
-
-        // Hiển thị phản hồi
-        Toast.makeText(this, "Đã gửi câu trả lời", Toast.LENGTH_SHORT).show();
+        viewModel.submitAnswer(Collections.singletonList(userSelectedOptionId));
     }
 
     private void updateProgress() {
@@ -325,14 +325,21 @@ public class QuizGameActivity extends AppCompatActivity {
 
         // Hiển thị options
         if (question.getOptions() != null && question.getOptions().size() >= 4) {
-            btnAnswerHow.setText(question.getOptions().get(0).getContent());
-            btnAnswerWhat.setText(question.getOptions().get(1).getContent());
-            btnAnswerWhich.setText(question.getOptions().get(2).getContent());
-            btnAnswerWhere.setText(question.getOptions().get(3).getContent());
+            btnAnswer1.setText(question.getOptions().get(0).getContent());
+            btnAnswer2.setText(question.getOptions().get(1).getContent());
+            btnAnswer3.setText(question.getOptions().get(2).getContent());
+            btnAnswer4.setText(question.getOptions().get(3).getContent());
         }
 
         // Enable answer buttons
         updateAnswerButtonsState(true);
+
+        // Reset button styles and hide feedback
+        resetAnswerButtonStyles();
+        hideFeedback();
+
+        // Reset user selected option
+        userSelectedOptionId = null;
     }
 
     /**
@@ -341,22 +348,30 @@ public class QuizGameActivity extends AppCompatActivity {
     private void showQuestionResult(QuestionResultDTO result) {
         if (result == null) return;
 
-        // TODO: Thực hiện logic hiển thị kết quả
-        // Có thể hiển thị câu trả lời đúng, câu trả lời của người dùng, giải thích, v.v.
+        // Chặn các nút trả lời để không thể chọn nữa
+        updateAnswerButtonsState(false);
 
-        if (result.getExplanations() != null && !result.getExplanations().isEmpty()) {
-            Toast.makeText(this, "Giải thích: " + result.getExplanations(), Toast.LENGTH_LONG).show();
+        // Lấy câu hỏi hiện tại từ ViewModel
+        QuestionGameDTO currentQuestion = viewModel.getCurrentQuestion().getValue();
+        if (currentQuestion == null || currentQuestion.getOptions() == null) {
+            return;
         }
+
+        // Hiển thị câu trả lời đúng và sai
+        highlightAnswerResults(result, currentQuestion);
+
+        // Show feedback/explanation
+        showFeedback(result);
     }
 
     /**
      * Cập nhật trạng thái các nút trả lời
      */
     private void updateAnswerButtonsState(boolean enabled) {
-        btnAnswerHow.setEnabled(enabled);
-        btnAnswerWhat.setEnabled(enabled);
-        btnAnswerWhich.setEnabled(enabled);
-        btnAnswerWhere.setEnabled(enabled);
+        btnAnswer1.setEnabled(enabled);
+        btnAnswer2.setEnabled(enabled);
+        btnAnswer3.setEnabled(enabled);
+        btnAnswer4.setEnabled(enabled);
     }
 
     /**
@@ -489,6 +504,84 @@ public class QuizGameActivity extends AppCompatActivity {
             Integer countdown = nextQuestionData.get("countdown");
             Integer nextQuestionNumber = nextQuestionData.get("nextQuestionNumber");
 
+        }
+    }
+
+    /**
+     * Highlight câu trả lời đúng và sai
+     */
+    private void highlightAnswerResults(QuestionResultDTO result, QuestionGameDTO currentQuestion) {
+        MaterialButton[] buttons = {btnAnswer1, btnAnswer2, btnAnswer3, btnAnswer4};
+
+        for (int i = 0; i < buttons.length && i < currentQuestion.getOptions().size(); i++) {
+            MaterialButton button = buttons[i];
+            Long optionId = currentQuestion.getOptions().get(i).getId();
+
+            // Kiểm tra xem đây có phải là câu trả lời đúng không
+            boolean isCorrect = result.getCorrectOptions() != null &&
+                    result.getCorrectOptions().contains(optionId);
+
+            // Kiểm tra xem đây có phải là lựa chọn của người dùng không
+            boolean isUserSelected = optionId.equals(userSelectedOptionId);
+
+            if (isCorrect) {
+                // Câu trả lời đúng - màu xanh
+                button.setBackgroundColor(ContextCompat.getColor(this, R.color.answer_correct));
+                button.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+
+            } else {
+                // Câu trả lời sai
+                button.setBackgroundColor(ContextCompat.getColor(this, R.color.answer_incorrect));
+                button.setTextColor(ContextCompat.getColor(this, android.R.color.white));
+            }
+            // Các tùy chọn khác giữ nguyên style default
+        }
+    }
+
+    /**
+     * Reset style của các nút trả lời về trạng thái ban đầu
+     */
+    private void resetAnswerButtonStyles() {
+        MaterialButton[] buttons = {btnAnswer1, btnAnswer2, btnAnswer3, btnAnswer4};
+
+        for (MaterialButton button : buttons) {
+            button.setBackgroundColor(getColor(R.color.white));
+            button.setTextColor(ContextCompat.getColor(this, R.color.black));
+            button.setStrokeColorResource(R.color.gray);
+            button.setStrokeWidth(2);
+        }
+    }
+
+    /**
+     * Hiển thị feedback/giải thích
+     */
+    private void showFeedback(QuestionResultDTO result) {
+        if (result.getExplanation() != null && !result.getExplanation().isEmpty()) {
+            tvFeedback.setText(result.getExplanation());
+            cardFeedback.setVisibility(View.VISIBLE);
+        } else {
+            // Danh sách các lựa chọn đúng
+            List<Long> correctOptions = result.getCorrectOptions();
+
+            //
+            boolean isCorrect = correctOptions != null &&
+                    correctOptions.contains(userSelectedOptionId);
+
+            String feedbackText = isCorrect ?
+                    "✅ Chính xác! Bạn đã trả lời đúng." :
+                    "❌ Không chính xác. Hãy xem câu trả lời đúng.";
+
+            tvFeedback.setText(feedbackText);
+            cardFeedback.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Ẩn feedback
+     */
+    private void hideFeedback() {
+        if (cardFeedback != null) {
+            cardFeedback.setVisibility(View.GONE);
         }
     }
 }
