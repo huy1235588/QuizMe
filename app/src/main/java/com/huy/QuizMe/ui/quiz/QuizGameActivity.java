@@ -33,6 +33,8 @@ import com.huy.QuizMe.ui.quiz.fragment.LeaderboardOverlayFragment;
 import com.huy.QuizMe.utils.ImageLoader;
 import com.huy.QuizMe.utils.SharedPreferencesManager;
 
+import android.content.Intent;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -221,7 +223,9 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
                     hideLeaderboard();
                 }
             }
-        });// Theo dõi bảng xếp hạng
+        });
+
+        // Theo dõi bảng xếp hạng
         viewModel.getLeaderboard().observe(this, leaderboard -> {
             if (leaderboard != null) {
                 Log.d("QuizGameActivity", "Leaderboard updated with " + leaderboard.getRankings().size() + " players");
@@ -256,9 +260,7 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
         // Theo dõi kết thúc trò chơi
         viewModel.getGameEnded().observe(this, gameEnded -> {
             if (gameEnded != null && gameEnded) {
-                Toast.makeText(this, "Trò chơi kết thúc!", Toast.LENGTH_SHORT).show();
-                // Chuyển đến màn hình kết quả hoặc quay lại phòng chờ
-                finish();
+                showResultsAndFinishGame();
             }
         });
 
@@ -775,5 +777,26 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
     @Override
     public void onLeaderboardClose() {
         hideLeaderboard();
+    }
+
+    /**
+     * Hiển thị kết quả và kết thúc game
+     */
+    private void showResultsAndFinishGame() {
+        // Lấy leaderboard cuối cùng từ ViewModel
+        LeaderboardDTO finalLeaderboard = viewModel.getLeaderboard().getValue();
+
+        if (finalLeaderboard != null) {
+            // Hiển thị màn hình kết quả cuối cùng với bảng xếp hạng
+            Intent intent = new Intent(this, FinalScoreboardActivity.class);
+            intent.putExtra("LEADERBOARD", finalLeaderboard);
+            startActivity(intent);
+        } else {
+            // Không có dữ liệu bảng xếp hạng
+            Toast.makeText(this, "Không có dữ liệu kết quả cuối cùng.", Toast.LENGTH_SHORT).show();
+        }
+
+        // Kết thúc activity
+        finish();
     }
 }

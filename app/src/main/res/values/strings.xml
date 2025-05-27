@@ -28,6 +28,7 @@
     <string name="phone">SĐT</string>
     <string name="date_of_birth">Ngày sinh</string>
     <string name="city">Thành phố</string>
+    <string name="close">Close</string>
 
     <!-- Waiting Room -->
     <string name="back">Back</string>
