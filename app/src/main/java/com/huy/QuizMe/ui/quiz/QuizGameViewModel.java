@@ -19,6 +19,8 @@ import com.huy.QuizMe.data.websocket.WebSocketManager;
 import com.huy.QuizMe.data.websocket.WebSocketService;
 import com.huy.QuizMe.utils.SharedPreferencesManager;
 
+import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -319,16 +321,46 @@ public class QuizGameViewModel extends ViewModel {
     /**
      * Xử lý cập nhật timer
      */
-    private void onTimerUpdate(Map<String, Integer> timerData) {
+    private void onTimerUpdate(Map<String, Object> timerData) {
+        Log.d(TAG, "Received timer update: " + timerData);
         if (timerData != null) {
-            Integer remaining = timerData.get("remainingTime");
-            Integer total = timerData.get("totalTime");
+            Object remainingObj = timerData.get("remainingTime");
+            Object totalObj = timerData.get("totalTime");
 
-            if (remaining != null) {
-                remainingTime.setValue(remaining);
+            // Chuyển đổi Object sang Integer an toàn
+            if (remainingObj != null) {
+                Integer remaining = convertToInteger(remainingObj);
+                if (remaining != null) {
+                    remainingTime.setValue(remaining);
+                }
             }
-            if (total != null) {
-                totalTime.setValue(total);
+            if (totalObj != null) {
+                Integer total = convertToInteger(totalObj);
+                if (total != null) {
+                    totalTime.setValue(total);
+                }
+            }
+        }
+    }
+
+    /**
+     * Phương thức tiện ích để chuyển đổi Object sang Integer
+     */
+    private Integer convertToInteger(Object value) {
+        if (value == null) return null;
+        
+        if (value instanceof Integer) {
+            return (Integer) value;
+        } else if (value instanceof Double) {
+            return ((Double) value).intValue();
+        } else if (value instanceof Number) {
+            return ((Number) value).intValue();
+        } else {
+            try {
+                return Integer.parseInt(value.toString());
+            } catch (NumberFormatException e) {
+                Log.w(TAG, "Cannot convert to Integer: " + value);
+                return null;
             }
         }
     }
@@ -352,9 +384,19 @@ public class QuizGameViewModel extends ViewModel {
     /**
      * Xử lý sự kiện câu hỏi tiếp theo
      */
-    private void onNextQuestionEvent(Map<String, Integer> nextQuestionData) {
-        Log.d(TAG, "Received next question event");
-        nextQuestionEvent.setValue(nextQuestionData);
+    private void onNextQuestionEvent(Map<String, Object> nextQuestionData) {
+        Log.d(TAG, "Received next question event: " + nextQuestionData);
+        if (nextQuestionData != null) {
+            // Convert Object values to Integer safely
+            Map<String, Integer> convertedData = new HashMap<>();
+            for (Map.Entry<String, Object> entry : nextQuestionData.entrySet()) {
+                Integer convertedValue = convertToInteger(entry.getValue());
+                if (convertedValue != null) {
+                    convertedData.put(entry.getKey(), convertedValue);
+                }
+            }
+            nextQuestionEvent.setValue(convertedData);
+        }
     }
 
     /**

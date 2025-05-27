@@ -106,24 +106,6 @@
 
         </com.google.android.material.progressindicator.LinearProgressIndicator>
 
-        <!-- Next Question Countdown -->
-        <TextView
-            android:id="@+id/tv_next_question_countdown"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@color/colorAccent"
-            android:gravity="center"
-            android:padding="12dp"
-            android:text="Câu hỏi tiếp theo bắt đầu sau: 5s"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/progress_bar_quiz" />
-
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_question_image"
             android:layout_width="0dp"
@@ -135,7 +117,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_max="250dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_next_question_countdown">
+            app:layout_constraintTop_toBottomOf="@id/progress_bar_quiz">
 
             <ImageView
                 android:id="@+id/iv_question_image"

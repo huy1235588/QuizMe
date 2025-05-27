@@ -48,7 +48,6 @@ public class QuizGameActivity extends AppCompatActivity {
     // Timer UI components
     private com.google.android.material.progressindicator.CircularProgressIndicator timerProgress;
     private TextView tvTimer;
-    private TextView tvNextQuestionCountdown;
     private View timerContainer;
 
     // Dữ liệu
@@ -122,7 +121,6 @@ public class QuizGameActivity extends AppCompatActivity {
         // Khởi tạo timer components
         timerProgress = findViewById(R.id.timer_progress);
         tvTimer = findViewById(R.id.tv_timer);
-        tvNextQuestionCountdown = findViewById(R.id.tv_next_question_countdown);
         timerContainer = findViewById(R.id.timer_container);
 
         // Thiết lập listeners cho các nút trả lời
@@ -380,11 +378,6 @@ public class QuizGameActivity extends AppCompatActivity {
             timerContainer.setVisibility(View.GONE);
         }
 
-        // Ẩn countdown text
-        if (tvNextQuestionCountdown != null) {
-            tvNextQuestionCountdown.setVisibility(View.GONE);
-        }
-
         // Thiết lập timer progress initial state
         if (timerProgress != null) {
             timerProgress.setProgress(0);
@@ -439,32 +432,6 @@ public class QuizGameActivity extends AppCompatActivity {
                 // Màu xanh bình thường
                 timerProgress.setIndicatorColor(getResources().getColor(android.R.color.holo_blue_bright, null));
                 tvTimer.setTextColor(getResources().getColor(android.R.color.black, null));
-            }
-        }
-
-        // Hiển thị đếm ngược câu hỏi tiếp theo khi thời gian sắp hết
-        showNextQuestionCountdown(remainingTimeSeconds);
-    }
-
-    /**
-     * Hiển thị đếm ngược cho câu hỏi tiếp theo
-     */
-    private void showNextQuestionCountdown(int remainingTimeSeconds) {
-        if (tvNextQuestionCountdown != null) {
-            if (remainingTimeSeconds <= 5 && remainingTimeSeconds > 0) {
-                tvNextQuestionCountdown.setVisibility(View.VISIBLE);
-                tvNextQuestionCountdown.setText(String.valueOf(remainingTimeSeconds));
-
-                // Animation hiệu ứng đếm ngược
-                tvNextQuestionCountdown.setScaleX(1.5f);
-                tvNextQuestionCountdown.setScaleY(1.5f);
-                tvNextQuestionCountdown.animate()
-                        .scaleX(1.0f)
-                        .scaleY(1.0f)
-                        .setDuration(300)
-                        .start();
-            } else {
-                tvNextQuestionCountdown.setVisibility(View.GONE);
             }
         }
     }
@@ -522,48 +489,6 @@ public class QuizGameActivity extends AppCompatActivity {
             Integer countdown = nextQuestionData.get("countdown");
             Integer nextQuestionNumber = nextQuestionData.get("nextQuestionNumber");
 
-            if (countdown != null) {
-                // Hiển thị đếm ngược giữa các câu hỏi
-                showInterQuestionCountdown(countdown, nextQuestionNumber);
-            }
-        }
-    }
-
-    /**
-     * Hiển thị đếm ngược giữa các câu hỏi
-     */
-    private void showInterQuestionCountdown(int countdown, Integer nextQuestionNumber) {
-        if (tvNextQuestionCountdown != null) {
-            if (countdown > 0) {
-                tvNextQuestionCountdown.setVisibility(View.VISIBLE);
-
-                String countdownText;
-                if (nextQuestionNumber != null) {
-                    countdownText = "Câu hỏi " + nextQuestionNumber + " trong " + countdown + "s";
-                } else {
-                    countdownText = "Câu hỏi tiếp theo trong " + countdown + "s";
-                }
-
-                tvNextQuestionCountdown.setText(countdownText);
-
-                // Animation hiệu ứng đếm ngược
-                tvNextQuestionCountdown.setScaleX(0.8f);
-                tvNextQuestionCountdown.setScaleY(0.8f);
-                tvNextQuestionCountdown.animate()
-                        .scaleX(1.2f)
-                        .scaleY(1.2f)
-                        .setDuration(200)
-                        .withEndAction(() -> {
-                            tvNextQuestionCountdown.animate()
-                                    .scaleX(1.0f)
-                                    .scaleY(1.0f)
-                                    .setDuration(200)
-                                    .start();
-                        })
-                        .start();
-            } else {
-                tvNextQuestionCountdown.setVisibility(View.GONE);
-            }
         }
     }
 }

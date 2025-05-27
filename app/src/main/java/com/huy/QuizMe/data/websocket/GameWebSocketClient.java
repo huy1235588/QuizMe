@@ -64,10 +64,10 @@ public class GameWebSocketClient {
     /**
      * Đăng ký nhận cập nhật timer (mỗi giây)
      * Topic: /topic/room/{roomId}/timer
-     * Payload: Map<String, Integer> (remainingTime, totalTime)
+     * Payload: Map<String, Object> (remainingTime, totalTime) - values can be Integer or Double
      */
     @SuppressWarnings("unchecked")
-    public boolean subscribeToTimer(Long roomId, WebSocketService.MessageListener<Map<String, Integer>> listener) {
+    public boolean subscribeToTimer(Long roomId, WebSocketService.MessageListener<Map<String, Object>> listener) {
         if (isValidRoomId(roomId)) {
             logError(roomId, "subscribeToTimer", "Invalid roomId");
             return false;
@@ -75,7 +75,7 @@ public class GameWebSocketClient {
         String topicPath = WebSocketConstants.createRoomTopicPath(roomId, WebSocketConstants.TIMER_EVENT);
         logDebug(roomId, "subscribeToTimer", "Topic: " + topicPath);
 
-        boolean success = webSocketService.subscribeToTopic(topicPath, (Class<Map<String, Integer>>) (Class<?>) Map.class, listener);
+        boolean success = webSocketService.subscribeToTopic(topicPath, (Class<Map<String, Object>>) (Class<?>) Map.class, listener);
         if (success) {
             logDebug(roomId, "subscribeToTimer", "Success");
         } else {
@@ -273,7 +273,7 @@ public class GameWebSocketClient {
     public boolean subscribeToAllGameEvents(
             Long roomId,
             WebSocketService.MessageListener<Object> questionListener,
-            WebSocketService.MessageListener<Map<String, Integer>> timerListener,
+            WebSocketService.MessageListener<Map<String, Object>> timerListener,
             WebSocketService.MessageListener<Object> resultListener,
             WebSocketService.MessageListener<Object> leaderboardListener,
             WebSocketService.MessageListener<Object> gameStartListener,
@@ -367,7 +367,7 @@ public class GameWebSocketClient {
      * Topic: /topic/room/{roomId}/next-question
      */
     @SuppressWarnings("unchecked")
-    public boolean subscribeToNextQuestionCountdown(Long roomId, WebSocketService.MessageListener<Map<String, Integer>> listener) {
+    public boolean subscribeToNextQuestionCountdown(Long roomId, WebSocketService.MessageListener<Map<String, Object>> listener) {
         if (isValidRoomId(roomId)) {
             logError(roomId, "subscribeToNextQuestionCountdown", "Invalid roomId");
             return false;
@@ -380,7 +380,7 @@ public class GameWebSocketClient {
         String topicPath = WebSocketConstants.createRoomTopicPath(roomId, WebSocketConstants.NEXT_QUESTION_EVENT);
         logDebug(roomId, "subscribeToNextQuestionCountdown", "Topic: " + topicPath);
 
-        boolean success = webSocketService.subscribeToTopic(topicPath, (Class<Map<String, Integer>>) (Class<?>) Map.class, listener);
+        boolean success = webSocketService.subscribeToTopic(topicPath, (Class<Map<String, Object>>) (Class<?>) Map.class, listener);
         if (success) {
             logDebug(roomId, "subscribeToNextQuestionCountdown", "Success");
         } else {

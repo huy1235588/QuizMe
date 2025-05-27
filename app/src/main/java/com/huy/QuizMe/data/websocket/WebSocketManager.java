@@ -138,9 +138,8 @@ public class WebSocketManager {
 
         if (questionListener != null) {
             gameClient.subscribeToQuestions(roomId, Object.class, questionListener);
-        }
-        if (timerListener != null) {
-            gameClient.subscribeToTimer(roomId, timerListener::onMessage);
+        }        if (timerListener != null) {
+            gameClient.subscribeToTimer(roomId, timerData -> timerListener.onMessage(timerData));
         }
         if (resultListener != null) {
             gameClient.subscribeToQuestionResults(roomId, Object.class, resultListener);
