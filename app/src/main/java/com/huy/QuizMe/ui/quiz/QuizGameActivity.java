@@ -16,25 +16,31 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.card.MaterialCardView;
+
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Room;
+import com.huy.QuizMe.data.model.game.LeaderboardDTO;
 import com.huy.QuizMe.data.model.game.QuestionGameDTO;
 import com.huy.QuizMe.data.model.game.QuestionResultDTO;
-import com.huy.QuizMe.data.repository.Resource;
+import com.huy.QuizMe.data.model.game.QuestionResultDTO.UserAnswerDTO;
+import com.huy.QuizMe.ui.quiz.fragment.LeaderboardOverlayFragment;
 import com.huy.QuizMe.utils.ImageLoader;
+import com.huy.QuizMe.utils.SharedPreferencesManager;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class QuizGameActivity extends AppCompatActivity {
+public class QuizGameActivity extends AppCompatActivity implements LeaderboardOverlayFragment.OnLeaderboardCloseListener {
 
+    // Quản lý SharedPreferences
+    private final SharedPreferencesManager sharedPreferencesManager = SharedPreferencesManager.getInstance();
     private QuizGameViewModel viewModel;    // Các thành phần UI
     private TextView tvQuizProgress;
     private TextView tvQuizType;
@@ -49,22 +55,27 @@ public class QuizGameActivity extends AppCompatActivity {
     // New feedback overlay components
     private View feedbackOverlay;
     private TextView tvFeedbackResult;
-    private TextView tvPoints;
-
-    // Timer UI components
-    private com.google.android.material.progressindicator.CircularProgressIndicator timerProgress;
+    private TextView tvPoints;    // Timer UI components
+    private CircularProgressIndicator timerProgress;
     private TextView tvTimer;
-    private View timerContainer;    // Dữ liệu
+    private View timerContainer;
     private Room currentRoom;
     private int currentQuestionIndex = 0;
     private int totalQuestions = 10;
     private boolean isWaitingForFirstQuestion = true;
     private Long userSelectedOptionId = null; // Track user's selected answer
+    private Long currentUserId; // ID của người dùng hiện tại
 
     // Timeout handling
     private Handler timeoutHandler = new Handler(Looper.getMainLooper());
     private Runnable timeoutRunnable;
     private static final long QUESTION_TIMEOUT_MS = 15000; // 15 giây
+
+    // Leaderboard components
+    private LeaderboardOverlayFragment leaderboardFragment;
+    private boolean isLeaderboardShowing = false;
+    private Handler leaderboardHandler = new Handler(Looper.getMainLooper());
+    private static final String LEADERBOARD_FRAGMENT_TAG = "LeaderboardFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +87,12 @@ public class QuizGameActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Thiết lập chế độ full screen
+        getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.white));
+
+        // Lấy ID người dùng hiện tại từ SharedPreferences
+        currentUserId = sharedPreferencesManager.getUser().getId();
 
         // Khởi tạo ViewModel
         viewModel = new ViewModelProvider(this).get(QuizGameViewModel.class);
@@ -198,15 +215,17 @@ public class QuizGameActivity extends AppCompatActivity {
             if (result != null) {
                 // Xử lý kết quả câu hỏi - hiển thị câu trả lời đúng, câu trả lời của người dùng, v.v.
                 showQuestionResult(result);
-            }
-        });
 
-        // Theo dõi bảng xếp hạng
+                // Hide leaderboard when showing question results (if showing)
+                if (isLeaderboardShowing) {
+                    hideLeaderboard();
+                }
+            }
+        });// Theo dõi bảng xếp hạng
         viewModel.getLeaderboard().observe(this, leaderboard -> {
             if (leaderboard != null) {
-                // Cập nhật giao diện bảng xếp hạng nếu bạn có
-                // Hiện tại, chỉ ghi log thứ hạng
-                // Log.d("QuizGameActivity", "Leaderboard updated with " + leaderboard.getRankings().size() + " players");
+                Log.d("QuizGameActivity", "Leaderboard updated with " + leaderboard.getRankings().size() + " players");
+                showLeaderboard(leaderboard);
             }
         });
 
@@ -493,12 +512,30 @@ public class QuizGameActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Hủy timeout handler
-        cancelQuestionTimeout();
 
-        // Hủy đăng ký các sự kiện WebSocket thông qua ViewModel
+        // Hủy các callback và messages của ViewModel
+        if (leaderboardHandler != null) {
+            leaderboardHandler.removeCallbacksAndMessages(null);
+        }
+
+        // Hủy các callback và messages của ViewModel
         if (viewModel != null) {
             viewModel.cleanup();
+        }
+
+        // Hủy các callback và messages của timeout handler
+        if (timeoutHandler != null) {
+            timeoutHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // Hide leaderboard when activity is paused
+        if (isLeaderboardShowing) {
+            hideLeaderboard();
         }
     }
 
@@ -577,9 +614,13 @@ public class QuizGameActivity extends AppCompatActivity {
             feedbackOverlay.setBackgroundColor(ContextCompat.getColor(this, R.color.answer_incorrect));
         }
 
-        // Hiển thị điểm (nếu có từ kết quả, nếu không thì mặc định)
-//            int points = result.getPoints() != null ? result.getPoints() : 945;
-//            tvPoints.setText("+" + points);
+        // Lấy user hiện tại
+        UserAnswerDTO userAnswer = result.getUserAnswerByUserId(currentUserId);
+
+        // Lấy điểm số từ kết quả
+        int points = userAnswer != null ? userAnswer.getScore() : 0;
+
+        tvPoints.setText("+" + points);
 
         // Hiển thị overlay với hiệu ứng slide từ trên xuống
         showFeedbackWithSlideAnimation();
@@ -638,5 +679,89 @@ public class QuizGameActivity extends AppCompatActivity {
                     feedbackOverlay.setAlpha(1f); // Reset alpha
                 })
                 .start();
+    }
+
+    /**
+     * Hiển thị bảng xếp hạng overlay
+     */
+    private void showLeaderboard(LeaderboardDTO leaderboard) {
+        if (leaderboard == null || leaderboard.getRankings() == null || leaderboard.getRankings().isEmpty()) {
+            Toast.makeText(this, "Không có dữ liệu bảng xếp hạng", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Log.d("QuizGameActivity", "Showing leaderboard overlay");
+        isLeaderboardShowing = true;
+
+        // Tạo fragment leaderboard nếu chưa có
+        if (leaderboardFragment == null) {
+            leaderboardFragment = LeaderboardOverlayFragment.newInstance();
+            leaderboardFragment.setOnLeaderboardCloseListener(this);
+        }
+
+        // Hiển thị fragment với animation
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (!leaderboardFragment.isAdded()) {
+            fragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.slide_up, R.anim.slide_down)
+                    .add(android.R.id.content, leaderboardFragment, LEADERBOARD_FRAGMENT_TAG)
+                    .commitAllowingStateLoss();
+        }
+
+        // Cập nhật dữ liệu leaderboard
+        leaderboardFragment.updateLeaderboard(leaderboard);
+
+        // Auto hide sau 8 giây (sync với backend SHOWING_LEADERBOARD duration)
+        scheduleAutoHideLeaderboard(8000);
+    }
+
+    /**
+     * Ẩn bảng xếp hạng overlay
+     */
+    private void hideLeaderboard() {
+        if (!isLeaderboardShowing || leaderboardFragment == null) {
+            return;
+        }
+
+        Log.d("QuizGameActivity", "Hiding leaderboard overlay");
+        isLeaderboardShowing = false;
+
+        // Hủy auto hide timer
+        cancelAutoHideLeaderboard();
+
+        // Ẩn fragment với animation
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        if (leaderboardFragment.isAdded()) {
+            fragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.slide_up, R.anim.slide_down)
+                    .remove(leaderboardFragment)
+                    .commitAllowingStateLoss();
+        }
+    }
+
+    /**
+     * Lên lịch tự động ẩn leaderboard
+     */
+    private void scheduleAutoHideLeaderboard(long delayMs) {
+        cancelAutoHideLeaderboard();
+        leaderboardHandler.postDelayed(() -> {
+            if (isLeaderboardShowing) {
+                hideLeaderboard();
+            }
+        }, delayMs);
+    }
+
+    /**
+     * Hủy lịch tự động ẩn leaderboard
+     */
+    private void cancelAutoHideLeaderboard() {
+        if (leaderboardHandler != null) {
+            leaderboardHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
+    @Override
+    public void onLeaderboardClose() {
+        hideLeaderboard();
     }
 }

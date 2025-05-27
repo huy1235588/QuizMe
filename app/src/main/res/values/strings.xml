@@ -44,4 +44,5 @@
     <string name="start_quiz">Bắt đầu</string>
     <string name="room_settings">Cài đặt phòng</string>
     <string name="host_badge">Chủ phòng</string>
+    <string name="leaderboard">Bảng xếp hạng</string>
 </resources>

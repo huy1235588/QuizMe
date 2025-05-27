@@ -39,39 +39,22 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Player Info -->
-        <LinearLayout
-            android:id="@+id/layout_player_info"
+        <TextView
+            android:id="@+id/tv_player_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp"
-            android:orientation="vertical"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Player Name"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@id/iv_player_avatar"
             app:layout_constraintEnd_toStartOf="@id/tv_score"
             app:layout_constraintStart_toEndOf="@id/iv_player_avatar"
-            app:layout_constraintTop_toTopOf="@id/iv_player_avatar">
-
-            <TextView
-                android:id="@+id/tv_player_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Player Name"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textStyle="bold"
-                tools:text="Player Name" />
-
-            <TextView
-                android:id="@+id/tv_player_status"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Đang trả lời..."
-                android:textAppearance="?attr/textAppearanceCaption"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                tools:text="Đã trả lời" />
-
-        </LinearLayout>
+            app:layout_constraintTop_toTopOf="@id/iv_player_avatar"
+            tools:text="Player Name" />
 
         <!-- Score -->
         <TextView

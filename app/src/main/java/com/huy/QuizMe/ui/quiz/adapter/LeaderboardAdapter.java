@@ -111,7 +111,6 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
         final private TextView tvRank;
         final private CircleImageView ivPlayerAvatar;
         final private TextView tvPlayerName;
-        final private TextView tvPlayerStatus;
         final private TextView tvScore;
         final private ImageView ivCrown;
 
@@ -120,7 +119,6 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
             tvRank = itemView.findViewById(R.id.tv_rank);
             ivPlayerAvatar = itemView.findViewById(R.id.iv_player_avatar);
             tvPlayerName = itemView.findViewById(R.id.tv_player_name);
-            tvPlayerStatus = itemView.findViewById(R.id.tv_player_status);
             tvScore = itemView.findViewById(R.id.tv_score);
             ivCrown = itemView.findViewById(R.id.iv_crown);
         }
@@ -151,24 +149,19 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
             boolean isCurrentUser = false;
             isCurrentUser = currentUserId != null && currentUserId.equals(player.getUserId());
 
-            if (isCurrentUser) {
-                tvPlayerName.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
-                tvPlayerName.setTextSize(16);
-                itemView.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.colorAccent));
-            } else {
-                tvPlayerName.setTextColor(ContextCompat.getColor(context, android.R.color.black));
-                tvPlayerName.setTextSize(14);
-                itemView.setBackgroundTintList(null);
-            }
+//            if (isCurrentUser) {
+//                tvPlayerName.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+//                tvPlayerName.setTextSize(16);
+//                itemView.setBackgroundTintList(ContextCompat.getColorStateList(context, R.color.colorAccent));
+//            } else {
+//                tvPlayerName.setTextColor(ContextCompat.getColor(context, android.R.color.black));
+//                tvPlayerName.setTextSize(14);
+//                itemView.setBackgroundTintList(null);
+//            }
 
             // Đặt điểm số
             String scoreText = String.valueOf(player.getScore() != null ? player.getScore() : 0);
             tvScore.setText(scoreText);
-
-            // Đặt trạng thái người chơi dựa trên kết nối và trạng thái trả lời
-            String status = getPlayerStatus(player);
-            tvPlayerStatus.setText(status);
-            tvPlayerStatus.setTextColor(getStatusColor(player));
 
             // Tải avatar nếu có sẵn
             if (player.getAvatar() != null && !player.getAvatar().isEmpty()) {
@@ -196,27 +189,6 @@ public class LeaderboardAdapter extends RecyclerView.Adapter<LeaderboardAdapter.
                     return R.color.colorBronze;
                 default:
                     return R.color.colorPrimary;
-            }
-        }
-
-        private String getPlayerStatus(PlayerRankingDTO player) {
-            // Tận dụng thuộc tính correctCount nếu có
-            if (player.getCorrectCount() != null && player.getCorrectCount() > 0) {
-                return player.getCorrectCount() + " câu đúng";
-            } else if (player.getScore() != null && player.getScore() > 0) {
-                return "Điểm: " + player.getScore();
-            } else {
-                return "Chưa trả lời";
-            }
-        }
-
-        private int getStatusColor(PlayerRankingDTO player) {
-            if (player.getCorrectCount() != null && player.getCorrectCount() > 0) {
-                return ContextCompat.getColor(context, android.R.color.holo_green_dark);
-            } else if (player.getScore() != null && player.getScore() > 0) {
-                return ContextCompat.getColor(context, android.R.color.holo_blue_dark);
-            } else {
-                return ContextCompat.getColor(context, android.R.color.holo_orange_dark);
             }
         }
     }

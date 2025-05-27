@@ -28,9 +28,9 @@ public class LeaderboardOverlayFragment extends Fragment {
     private ProgressBar pbLoading;
     private TextView tvEmpty;
     private ImageButton btnClose;
-
     private LeaderboardAdapter adapter;
     private OnLeaderboardCloseListener closeListener;
+    private LeaderboardDTO pendingLeaderboard; // Store leaderboard data if called before view creation
 
     public interface OnLeaderboardCloseListener {
         void onLeaderboardClose();
@@ -54,6 +54,12 @@ public class LeaderboardOverlayFragment extends Fragment {
         setupClickListeners();
 
         showLoading(true);
+
+        // Nếu có dữ liệu bảng xếp hạng đã được lưu trữ, cập nhật ngay
+        if (pendingLeaderboard != null) {
+            updateLeaderboard(pendingLeaderboard);
+            pendingLeaderboard = null;
+        }
     }
 
     private void initViews(View view) {
@@ -93,6 +99,12 @@ public class LeaderboardOverlayFragment extends Fragment {
      * Cập nhật dữ liệu bảng xếp hạng
      */
     public void updateLeaderboard(LeaderboardDTO leaderboard) {
+        // Nếu adapter chưa được khởi tạo, lưu dữ liệu để cập nhật sau
+        if (adapter == null) {
+            pendingLeaderboard = leaderboard;
+            return;
+        }
+
         showLoading(false);
 
         if (leaderboard != null && leaderboard.getRankings() != null && !leaderboard.getRankings().isEmpty()) {
@@ -145,6 +157,8 @@ public class LeaderboardOverlayFragment extends Fragment {
     public void refreshLeaderboard() {
         showLoading(true);
         showEmpty(false);
+        // Clear any pending data when refreshing
+        pendingLeaderboard = null;
         // Trigger refresh từ activity/viewmodel
     }
 
@@ -152,14 +166,27 @@ public class LeaderboardOverlayFragment extends Fragment {
      * Kiểm tra xem có dữ liệu hay không
      */
     public boolean hasData() {
-        return adapter != null && adapter.getItemCount() > 0;
+        if (adapter != null) {
+            return adapter.getItemCount() > 0;
+        }
+        // If adapter is null but we have pending data, consider it as having data
+        return pendingLeaderboard != null &&
+                pendingLeaderboard.getRankings() != null &&
+                !pendingLeaderboard.getRankings().isEmpty();
     }
 
     /**
      * Lấy số lượng người chơi hiện tại
      */
     public int getPlayerCount() {
-        return adapter != null ? adapter.getItemCount() : 0;
+        if (adapter != null) {
+            return adapter.getItemCount();
+        }
+        // If adapter is null but we have pending data, return pending count
+        if (pendingLeaderboard != null && pendingLeaderboard.getRankings() != null) {
+            return pendingLeaderboard.getRankings().size();
+        }
+        return 0;
     }
 
     /**

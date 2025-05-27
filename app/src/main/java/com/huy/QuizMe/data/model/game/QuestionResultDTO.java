@@ -1,5 +1,7 @@
 package com.huy.QuizMe.data.model.game;
 
+import android.util.Log;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -25,20 +27,32 @@ public class QuestionResultDTO implements Serializable {
     private List<OptionStatDTO> optionStats;
 
     @SerializedName("userAnswer")
-    private UserAnswerDTO userAnswer;
+    private List<UserAnswerDTO> userAnswer;
 
     // Constructors
     public QuestionResultDTO() {
     }
 
     public QuestionResultDTO(Long questionId, List<Long> correctOptions, String explanation,
-                             String funFact, UserAnswerDTO userAnswer, List<OptionStatDTO> optionStats) {
+                             String funFact, List<UserAnswerDTO> userAnswer, List<OptionStatDTO> optionStats) {
         this.questionId = questionId;
         this.correctOptions = correctOptions;
         this.explanation = explanation;
         this.funFact = funFact;
         this.userAnswer = userAnswer;
         this.optionStats = optionStats;
+    }
+
+    // Lấy userAnswerDTO từ userId
+    public UserAnswerDTO getUserAnswerByUserId(Long userId) {
+        if (userAnswer != null) {
+            for (UserAnswerDTO answer : userAnswer) {
+                if (answer.getUserId().equals(userId)) {
+                    return answer;
+                }
+            }
+        }
+        return null; // Không tìm thấy
     }
 
     // Getters and Setters
@@ -82,11 +96,11 @@ public class QuestionResultDTO implements Serializable {
         this.optionStats = optionStats;
     }
 
-    public UserAnswerDTO getUserAnswer() {
+    public List<UserAnswerDTO> getUserAnswer() {
         return userAnswer;
     }
 
-    public void setUserAnswer(UserAnswerDTO userAnswer) {
+    public void setUserAnswer(List<UserAnswerDTO> userAnswer) {
         this.userAnswer = userAnswer;
     }
 
@@ -94,6 +108,8 @@ public class QuestionResultDTO implements Serializable {
      * DTO cho thông tin câu trả lời của người dùng
      */
     public static class UserAnswerDTO implements Serializable {
+        @SerializedName("userId")
+        private Long userId;
         @SerializedName("isCorrect")
         private Boolean isCorrect;
 
@@ -113,6 +129,14 @@ public class QuestionResultDTO implements Serializable {
         }
 
         // Getters and Setters
+        public Long getUserId() {
+            return userId;
+        }
+
+        public void setUserId(Long userId) {
+            this.userId = userId;
+        }
+
         public Boolean getIsCorrect() {
             return isCorrect;
         }
