@@ -5,7 +5,6 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
     tools:context=".ui.quiz.QuizGameActivity">
 
     <!-- Loading Progress Bar -->
@@ -25,6 +24,7 @@
         android:id="@+id/game_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -134,7 +134,7 @@
             android:id="@+id/tv_question_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
             android:lineSpacingExtra="4dp"
             android:text="quiz"
@@ -142,32 +142,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card_question_image" />
-
-        <!-- Feedback TextView for showing explanations -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card_feedback"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:visibility="gone"
-            app:cardBackgroundColor="@color/md_theme_light_surfaceVariant"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_question_text">
-
-            <TextView
-                android:id="@+id/tv_feedback"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:lineSpacingExtra="2dp"
-                android:padding="16dp"
-                android:text="Giải thích sẽ hiển thị ở đây"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="@color/md_theme_light_onSurface" />
-        </com.google.android.material.card.MaterialCardView>
 
         <GridLayout
             android:id="@+id/grid_answers"
@@ -180,7 +154,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_feedback"
+            app:layout_constraintTop_toBottomOf="@id/tv_question_text"
             app:layout_constraintVertical_bias="0.0">
 
             <com.google.android.material.button.MaterialButton
@@ -247,6 +221,62 @@
                 app:strokeColor="@color/gray"
                 app:strokeWidth="2dp" />
         </GridLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Feedback Overlay -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/feedback_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@color/answer_correct"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Feedback Text -->
+        <TextView
+            android:id="@+id/tv_feedback_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Correct!"
+            android:textAppearance="?attr/textAppearanceHeadlineLarge"
+            android:textColor="@color/white"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Points Badge -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/points_badge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_feedback_result">
+
+            <TextView
+                android:id="@+id/tv_points"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="24dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="24dp"
+                android:paddingBottom="8dp"
+                android:text="+945"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="@color/answer_correct"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

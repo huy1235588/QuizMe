@@ -45,7 +45,11 @@ public class QuizGameActivity extends AppCompatActivity {
     private ProgressBar loadingProgressBar;
     private View gameContentView;
     private TextView tvFeedback;
-    private MaterialCardView cardFeedback;
+
+    // New feedback overlay components
+    private View feedbackOverlay;
+    private TextView tvFeedbackResult;
+    private TextView tvPoints;
 
     // Timer UI components
     private com.google.android.material.progressindicator.CircularProgressIndicator timerProgress;
@@ -117,10 +121,12 @@ public class QuizGameActivity extends AppCompatActivity {
         btnAnswer3 = findViewById(R.id.btn_answer_3);
         btnAnswer4 = findViewById(R.id.btn_answer_4);        // Khởi tạo loading components
         loadingProgressBar = findViewById(R.id.loading_progress_bar);
-        gameContentView = findViewById(R.id.game_content);
-        // Khởi tạo feedback component
-        tvFeedback = findViewById(R.id.tv_feedback);
-        cardFeedback = findViewById(R.id.card_feedback);
+        gameContentView = findViewById(R.id.game_content);        // Khởi tạo feedback component
+
+        // Khởi tạo new feedback overlay components
+        feedbackOverlay = findViewById(R.id.feedback_overlay);
+        tvFeedbackResult = findViewById(R.id.tv_feedback_result);
+        tvPoints = findViewById(R.id.tv_points);
 
         // Khởi tạo timer components
         timerProgress = findViewById(R.id.timer_progress);
@@ -556,32 +562,35 @@ public class QuizGameActivity extends AppCompatActivity {
      * Hiển thị feedback/giải thích
      */
     private void showFeedback(QuestionResultDTO result) {
-        if (result.getExplanation() != null && !result.getExplanation().isEmpty()) {
-            tvFeedback.setText(result.getExplanation());
-            cardFeedback.setVisibility(View.VISIBLE);
+        // Danh sách các lựa chọn đúng
+        List<Long> correctOptions = result.getCorrectOptions();
+        boolean isCorrect = correctOptions != null && correctOptions.contains(userSelectedOptionId);
+
+        if (isCorrect) {
+            // Hiển thị overlay với kết quả đúng
+            tvFeedbackResult.setText("Correct!");
+            feedbackOverlay.setBackgroundColor(ContextCompat.getColor(this, R.color.answer_correct));
+
         } else {
-            // Danh sách các lựa chọn đúng
-            List<Long> correctOptions = result.getCorrectOptions();
-
-            //
-            boolean isCorrect = correctOptions != null &&
-                    correctOptions.contains(userSelectedOptionId);
-
-            String feedbackText = isCorrect ?
-                    "✅ Chính xác! Bạn đã trả lời đúng." :
-                    "❌ Không chính xác. Hãy xem câu trả lời đúng.";
-
-            tvFeedback.setText(feedbackText);
-            cardFeedback.setVisibility(View.VISIBLE);
+            // Hiển thị overlay với kết quả sai
+            tvFeedbackResult.setText("Incorrect!");
+            feedbackOverlay.setBackgroundColor(ContextCompat.getColor(this, R.color.answer_incorrect));
         }
+
+        // Hiển thị điểm (nếu có từ kết quả, nếu không thì mặc định)
+//            int points = result.getPoints() != null ? result.getPoints() : 945;
+//            tvPoints.setText("+" + points);
+
+        // Hiển thị overlay
+        feedbackOverlay.setVisibility(View.VISIBLE);
     }
 
     /**
      * Ẩn feedback
      */
     private void hideFeedback() {
-        if (cardFeedback != null) {
-            cardFeedback.setVisibility(View.GONE);
+        if (feedbackOverlay != null) {
+            feedbackOverlay.setVisibility(View.GONE);
         }
     }
 }
