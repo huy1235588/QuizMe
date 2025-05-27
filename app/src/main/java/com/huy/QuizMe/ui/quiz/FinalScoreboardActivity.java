@@ -26,16 +26,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FinalScoreboardActivity extends AppCompatActivity {
 
-    // Top 3 players UI components
+    // Các thành phần UI cho 3 người chơi hàng đầu
     private CircleImageView ivFirstAvatar, ivSecondAvatar, ivThirdAvatar;
     private TextView tvFirstName, tvSecondName, tvThirdName;
     private TextView tvFirstScore, tvSecondScore, tvThirdScore;
 
-    // Other players
+    // Những người chơi khác
     private RecyclerView rvOtherPlayers;
     private OtherPlayersAdapter otherPlayersAdapter;
 
-    // Close button
+    // Nút đóng
     private ImageButton btnClose;
 
     @Override
@@ -46,7 +46,7 @@ public class FinalScoreboardActivity extends AppCompatActivity {
         initializeViews();
         setupClickListeners();
 
-        // Get leaderboard data from intent
+        // Lấy dữ liệu bảng xếp hạng từ intent
         LeaderboardDTO leaderboard = (LeaderboardDTO) getIntent().getSerializableExtra("LEADERBOARD");
         if (leaderboard != null) {
             displayLeaderboard(leaderboard);
@@ -57,7 +57,7 @@ public class FinalScoreboardActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        // Initialize top 3 players UI
+        // Khởi tạo UI cho 3 người chơi hàng đầu
         ivFirstAvatar = findViewById(R.id.iv_first_avatar);
         ivSecondAvatar = findViewById(R.id.iv_second_avatar);
         ivThirdAvatar = findViewById(R.id.iv_third_avatar);
@@ -70,19 +70,19 @@ public class FinalScoreboardActivity extends AppCompatActivity {
         tvSecondScore = findViewById(R.id.tv_second_score);
         tvThirdScore = findViewById(R.id.tv_third_score);
 
-        // Initialize RecyclerView for other players
+        // Khởi tạo RecyclerView cho những người chơi khác
         rvOtherPlayers = findViewById(R.id.rv_other_players);
         otherPlayersAdapter = new OtherPlayersAdapter();
         rvOtherPlayers.setLayoutManager(new LinearLayoutManager(this));
         rvOtherPlayers.setAdapter(otherPlayersAdapter);
 
-        // Initialize close button
+        // Khởi tạo nút đóng
         btnClose = findViewById(R.id.btn_close);
     }
 
     private void setupClickListeners() {
         btnClose.setOnClickListener(v -> {
-            // Return to MainActivity
+            // Quay lại MainActivity
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
@@ -97,7 +97,7 @@ public class FinalScoreboardActivity extends AppCompatActivity {
             return;
         }
 
-        // Display top 3 players
+        // Hiển thị 3 người chơi hàng đầu
         if (rankings.size() >= 1) {
             displayPlayerInPosition(rankings.get(0), 1);
         }
@@ -109,7 +109,7 @@ public class FinalScoreboardActivity extends AppCompatActivity {
             displayPlayerInPosition(rankings.get(2), 3);
         }
 
-        // Display other players (4th position and below)
+        // Hiển thị những người chơi khác (vị trí thứ 4 trở xuống)
         List<PlayerRankingDTO> otherPlayers = new ArrayList<>();
         if (rankings.size() > 3) {
             for (int i = 3; i < rankings.size(); i++) {
@@ -121,19 +121,19 @@ public class FinalScoreboardActivity extends AppCompatActivity {
 
     private void displayPlayerInPosition(PlayerRankingDTO player, int position) {
         switch (position) {
-            case 1: // First place
+            case 1: // Vị trí thứ nhất
                 tvFirstName.setText(player.getUsername());
                 tvFirstScore.setText(formatScore(player.getScore()));
                 loadPlayerAvatar(player.getAvatar(), ivFirstAvatar);
                 break;
 
-            case 2: // Second place
+            case 2: // Vị trí thứ hai
                 tvSecondName.setText(player.getUsername());
                 tvSecondScore.setText(formatScore(player.getScore()));
                 loadPlayerAvatar(player.getAvatar(), ivSecondAvatar);
                 break;
 
-            case 3: // Third place
+            case 3: // Vị trí thứ ba
                 tvThirdName.setText(player.getUsername());
                 tvThirdScore.setText(formatScore(player.getScore()));
                 loadPlayerAvatar(player.getAvatar(), ivThirdAvatar);
@@ -161,7 +161,7 @@ public class FinalScoreboardActivity extends AppCompatActivity {
     }
 
     /**
-     * Adapter for displaying players ranked 4th and below
+     * Adapter để hiển thị người chơi xếp hạng thứ 4 trở xuống
      */
     private class OtherPlayersAdapter extends RecyclerView.Adapter<OtherPlayersAdapter.OtherPlayerViewHolder> {
 
