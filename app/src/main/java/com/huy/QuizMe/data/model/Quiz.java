@@ -131,9 +131,27 @@ public class Quiz implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public void setQuestionCount(int questionCount) {
+    }    public void setQuestionCount(int questionCount) {
         this.questionCount = questionCount;
+    }
+    
+    public void setQuizThumbnails(String quizThumbnails) {
+        this.quizThumbnails = quizThumbnails;
+    }
+    
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+    
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+    
+    public void setDifficulty(String difficulty) {
+        this.difficulty = difficulty;
+    }
+    
+    public void setIsPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
     }
 }

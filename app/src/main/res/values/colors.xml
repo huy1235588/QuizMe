@@ -93,11 +93,16 @@
     <!-- Answer result colors -->
     <color name="answer_correct">#4CAF50</color>
     <color name="answer_incorrect">#F44336</color>
-    <color name="answer_selected">#2196F3</color>
-
-    <!-- Leaderboard colors -->
+    <color name="answer_selected">#2196F3</color>    <!-- Leaderboard colors -->
     <color name="leaderboard_background">#FFFFFF</color>
     <color name="leaderboard_text">#000000</color>
     <color name="leaderboard_user_background">#0DFFFFFF</color>
     <color name="leaderboard_current_user_background">#A0FFFFFF</color>
+    
+    <!-- Create Quiz Screen Colors -->
+    <color name="background_light">#F5F5F5</color>
+    <color name="purple_primary">#6949FF</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="divider">#DDDDDD</color>
 </resources>

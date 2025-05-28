@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.huy.QuizMe.databinding.ActivityMainBinding;
+import com.huy.QuizMe.ui.main.createquiz.CreateQuizFragment;
 import com.huy.QuizMe.ui.main.home.HomeFragment;
 import com.huy.QuizMe.ui.main.join.JoinRoomFragment;
 import com.huy.QuizMe.ui.main.library.LibraryFragment;
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
                 replaceFragment(new ProfileFragment());
             } else if (itemId == R.id.nav_join) {
                 replaceFragment(new JoinRoomFragment());
+            } else if (itemId == R.id.nav_create) {
+                replaceFragment(new CreateQuizFragment());
             } else {
                 return false;
             }
