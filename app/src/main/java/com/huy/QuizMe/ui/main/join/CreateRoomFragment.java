@@ -8,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -28,6 +31,7 @@ import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.model.request.RoomRequest;
 import com.huy.QuizMe.ui.room.WaitingRoomActivity;
 import com.huy.QuizMe.utils.ApiUtils;
+import com.huy.QuizMe.utils.ImageLoader;
 
 public class CreateRoomFragment extends Fragment {
     private CreateRoomViewModel viewModel;
@@ -45,12 +49,17 @@ public class CreateRoomFragment extends Fragment {
     private SwitchMaterial switchPassword;
     private TextInputLayout tilPassword;
     private TextInputEditText etPassword;
-    private RecyclerView rvQuizzes;
     private Button btnCreateRoom;
     private ProgressBar progressBar;
 
-    // Adapter
-    private QuizAdapter quizAdapter;
+    // Quiz selection components
+    private MaterialCardView cardQuizSelection;
+    private ImageView ivSelectedQuizThumbnail;
+    private TextView tvSelectedQuizTitle;
+    private TextView tvSelectedQuizDescription;
+
+    // Dialog
+    private QuizSelectionDialog quizSelectionDialog;
 
     private static final int MAX_PARTICIPANTS_LIMIT = 100;
     private static final int DEFAULT_PAGE_SIZE = 10;
@@ -64,12 +73,10 @@ public class CreateRoomFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_create_room, container, false);
-
-        // Khởi tạo các thành phần UI
+        View view = inflater.inflate(R.layout.fragment_create_room, container, false);        // Khởi tạo các thành phần UI
         initializeViews(view);
         setupListeners();
-        loadQuizzes();
+        setupQuizSelectionDialog();
 
         return view;
     }
@@ -85,31 +92,26 @@ public class CreateRoomFragment extends Fragment {
         switchPassword = view.findViewById(R.id.switch_password);
         tilPassword = view.findViewById(R.id.til_password);
         etPassword = view.findViewById(R.id.et_password);
-        rvQuizzes = view.findViewById(R.id.rv_quizzes);
         btnCreateRoom = view.findViewById(R.id.btn_create_room);
         progressBar = view.findViewById(R.id.progress_bar);
 
-        // Thiết lập RecyclerView
-        setupRecyclerView();
-    }
-
-    private void setupRecyclerView() {
-        quizAdapter = new QuizAdapter(requireContext());
-        rvQuizzes.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvQuizzes.setAdapter(quizAdapter);
-        rvQuizzes.setHasFixedSize(true);
+        // Quiz selection components
+        cardQuizSelection = view.findViewById(R.id.card_quiz_selection);
+        ivSelectedQuizThumbnail = view.findViewById(R.id.iv_selected_quiz_thumbnail);
+        tvSelectedQuizTitle = view.findViewById(R.id.tv_selected_quiz_title);
+        tvSelectedQuizDescription = view.findViewById(R.id.tv_selected_quiz_description);
     }
 
     private void setupListeners() {
         // Chuyển đổi hiển thị trường mật khẩu dựa trên trạng thái công tắc
-        switchPassword.setOnCheckedChangeListener((buttonView, isChecked) -> 
-            tilPassword.setVisibility(isChecked ? View.VISIBLE : View.GONE));
+        switchPassword.setOnCheckedChangeListener((buttonView, isChecked) ->
+                tilPassword.setVisibility(isChecked ? View.VISIBLE : View.GONE));
 
         // Thiết lập người lắng nghe sự kiện chọn quiz
-        quizAdapter.setOnQuizClickListener(quiz -> {
-            // Xử lý khi chọn quiz
-            viewModel.setSelectedQuiz(quiz);
-            quizAdapter.notifyDataSetChanged();
+        cardQuizSelection.setOnClickListener(v -> {
+            if (quizSelectionDialog != null) {
+                quizSelectionDialog.show();
+            }
         });
 
         // Thiết lập người lắng nghe sự kiện nút tạo phòng
@@ -120,23 +122,51 @@ public class CreateRoomFragment extends Fragment {
         });
     }
 
-    private void loadQuizzes() {
-        // Thiết lập người quan sát cho các quiz
-        viewModel.loadTrendingQuizzes(0, DEFAULT_PAGE_SIZE, null, null, null, true)
-                .observe(getViewLifecycleOwner(), resource -> {
-                    toggleLoading(ApiUtils.isLoading(resource));
-                    
-                    if (ApiUtils.isSuccess(resource)) {
-                        PagedResponse<Quiz> quizzes = resource.getData();
-                        if (quizzes != null && quizzes.getContent() != null) {
-                            quizAdapter.updateItems(quizzes);
-                        } else {
-                            showToast("No quizzes available");
-                        }
-                    } else if (!ApiUtils.isLoading(resource)) {
-                        showToast(resource.getMessage());
-                    }
-                });
+    private void setupQuizSelectionDialog() {
+        quizSelectionDialog = new QuizSelectionDialog(
+                requireContext(),
+                viewModel,
+                getViewLifecycleOwner(),
+                this::onQuizSelected
+        );
+    }
+
+    private void onQuizSelected(Quiz quiz) {
+        viewModel.setSelectedQuiz(quiz);
+        updateSelectedQuizDisplay(quiz);
+    }
+
+    private void updateSelectedQuizDisplay(Quiz quiz) {
+        if (quiz != null) {
+            tvSelectedQuizTitle.setText(quiz.getTitle());
+            tvSelectedQuizTitle.setTextColor(getResources().getColor(R.color.black));
+
+            String description = quiz.getDescription();
+            if (description != null && !description.isEmpty()) {
+                tvSelectedQuizDescription.setText(description);
+            } else {
+                tvSelectedQuizDescription.setText(quiz.getQuestionCount() + " questions");
+            }
+            tvSelectedQuizDescription.setTextColor(getResources().getColor(R.color.gray));
+
+            // Load quiz thumbnail
+            if (quiz.getQuizThumbnails() != null && !quiz.getQuizThumbnails().isEmpty()) {
+                ImageLoader.loadImageWithTransformations(requireContext(),
+                        ivSelectedQuizThumbnail,
+                        quiz.getQuizThumbnails(),
+                        R.drawable.placeholder_quiz,
+                        R.drawable.placeholder_quiz);
+            } else {
+                ivSelectedQuizThumbnail.setImageResource(R.drawable.placeholder_quiz);
+            }
+        } else {
+            // Reset to default state
+            tvSelectedQuizTitle.setText("Tap to select a quiz");
+            tvSelectedQuizTitle.setTextColor(getResources().getColor(R.color.gray));
+            tvSelectedQuizDescription.setText("Choose from available quizzes");
+            tvSelectedQuizDescription.setTextColor(getResources().getColor(R.color.gray));
+            ivSelectedQuizThumbnail.setImageResource(R.drawable.placeholder_quiz);
+        }
     }
 
     private boolean validateInputs() {
@@ -210,12 +240,12 @@ public class CreateRoomFragment extends Fragment {
                             Intent intent = new Intent(getContext(), WaitingRoomActivity.class);
                             intent.putExtra("ROOM", room);
                             startActivity(intent);
-                        }                        
+                        }
 
                     } else {
                         toggleLoading(false);
-                        showToast(resource.getMessage() != null ? 
-                            resource.getMessage() : "Failed to create room");
+                        showToast(resource.getMessage() != null ?
+                                resource.getMessage() : "Failed to create room");
                     }
                 });
     }
@@ -241,6 +271,14 @@ public class CreateRoomFragment extends Fragment {
                 switchPassword.isChecked() ? getTextFromEditText(etPassword) : null,
                 room.isPublic()
         );
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (quizSelectionDialog != null) {
+            quizSelectionDialog.dismiss();
+        }
     }
 
     private String getTextFromEditText(TextInputEditText editText) {

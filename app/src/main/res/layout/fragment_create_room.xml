@@ -131,9 +131,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
                     android:maxLines="1" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <!-- Quiz selection area -->
+            </com.google.android.material.textfield.TextInputLayout>            <!-- Quiz selection area -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -143,13 +141,73 @@
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 android:textStyle="bold" />
 
-            <!-- Quiz selection will be implemented here -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_quizzes"
+            <!-- Quiz selection card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_quiz_selection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:minHeight="100dp" />
+                android:layout_marginBottom="28dp"
+                android:clickable="true"
+                android:focusable="true"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/colorPrimary"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/iv_selected_quiz_thumbnail"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/bg_image_placeholder"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/placeholder_quiz" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tv_selected_quiz_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Tap to select a quiz"
+                            android:textAppearance="?attr/textAppearanceBody1"
+                            android:textColor="@color/gray"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_selected_quiz_description"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ellipsize="end"
+                            android:maxLines="2"
+                            android:text="Choose from available quizzes"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:textColor="@color/gray" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:contentDescription="Search quiz"
+                        android:src="@drawable/ic_search" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
@@ -162,8 +220,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="10dp"
         android:backgroundTint="@color/colorAccent"
-        android:textColor="@color/white"
-        android:text="Create room" />
+        android:text="Create room"
+        android:textColor="@color/white" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
