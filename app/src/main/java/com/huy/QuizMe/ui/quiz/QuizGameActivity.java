@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -48,6 +49,7 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
     private TextView tvQuizType;
     private LinearProgressIndicator progressBarQuiz;
     private ImageView ivQuestionImage;
+    private View cardQuestionImage; // Add reference to the card container
     private TextView tvQuestionText;
     private MaterialButton btnAnswer1, btnAnswer2, btnAnswer3, btnAnswer4;
     private ProgressBar loadingProgressBar;
@@ -134,6 +136,7 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
         tvQuizType = findViewById(R.id.tv_quiz_type);
         progressBarQuiz = findViewById(R.id.progress_bar_quiz);
         ivQuestionImage = findViewById(R.id.iv_question_image);
+        cardQuestionImage = findViewById(R.id.card_question_image); // Initialize card reference
         tvQuestionText = findViewById(R.id.tv_question_text);
         btnAnswer1 = findViewById(R.id.btn_answer_1);
         btnAnswer2 = findViewById(R.id.btn_answer_2);
@@ -332,9 +335,7 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
 
         // Hiển thị loại câu hỏi
         String questionType = question.getType() != null ? question.getType() : "Không xác định";
-        tvQuizType.setText(questionType);
-
-        // Hiển thị hình ảnh nếu có
+        tvQuizType.setText(questionType);        // Hiển thị hình ảnh nếu có
         if (question.getImageUrl() != null && !question.getImageUrl().isEmpty()) {
             // Tải hình ảnh bằng ImageLoader
             ImageLoader.loadImage(this,
@@ -344,10 +345,23 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
                     R.drawable.bg_quiz
             );
 
-            // Hiển thị hình ảnh câu hỏi
+            // Hiển thị hình ảnh câu hỏi và card container
+            cardQuestionImage.setVisibility(android.view.View.VISIBLE);
             ivQuestionImage.setVisibility(android.view.View.VISIBLE);
+
+            // Reset style và height của tvQuestionText khi có hình ảnh
+            resetQuestionTextStyle();
         } else {
+            // Ẩn cả card container khi không có hình ảnh
+            cardQuestionImage.setVisibility(android.view.View.GONE);
             ivQuestionImage.setVisibility(android.view.View.GONE);
+
+            // Thêm border và phóng to cỡ chữ
+            tvQuestionText.setBackgroundResource(R.drawable.bg_question_text);
+            tvQuestionText.setTextSize(20); // Tăng cỡ chữ cho câu hỏi
+
+            // Đặt chiều cao của tvQuestionText bằng với ivQuestionImage
+            setQuestionTextHeightToMatchImage();
         }
 
         // Hiển thị options
@@ -794,9 +808,60 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
         } else {
             // Không có dữ liệu bảng xếp hạng
             Toast.makeText(this, "Không có dữ liệu kết quả cuối cùng.", Toast.LENGTH_SHORT).show();
-        }
+        }        // Kết thúc activity        finish();
+    }
 
-        // Kết thúc activity
-        finish();
+    /**
+     * Reset style của tvQuestionText về trạng thái ban đầu khi có hình ảnh
+     */
+    private void resetQuestionTextStyle() {
+        if (tvQuestionText != null) {
+            // Reset background
+            tvQuestionText.setBackgroundResource(0); // Remove background
+
+            // Reset text size về mặc định
+            tvQuestionText.setTextSize(16); // Size mặc định
+
+            // Reset layout params height về WRAP_CONTENT
+            ViewGroup.LayoutParams layoutParams = tvQuestionText.getLayoutParams();
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            tvQuestionText.setLayoutParams(layoutParams);
+
+            // Reset gravity về default
+            tvQuestionText.setGravity(android.view.Gravity.START | android.view.Gravity.CENTER_VERTICAL);
+
+            // Reset padding
+            int padding = (int) (8 * getResources().getDisplayMetrics().density); // 8dp padding mặc định
+            tvQuestionText.setPadding(padding, padding, padding, padding);
+        }
+    }
+
+    /**
+     * Đặt chiều cao của tvQuestionText bằng với ivQuestionImage
+     */
+    private void setQuestionTextHeightToMatchImage() {
+        if (ivQuestionImage != null && tvQuestionText != null) {
+            // Phương pháp 1: Thử lấy chiều cao từ layout params của ivQuestionImage
+            ViewGroup.LayoutParams imageLayoutParams = ivQuestionImage.getLayoutParams();
+            int targetHeight = 0;
+
+            if (imageLayoutParams != null && imageLayoutParams.height > 0) {
+                targetHeight = imageLayoutParams.height;
+            } else {
+                // Phương pháp 2: Sử dụng chiều cao mặc định dựa trên density
+                float density = getResources().getDisplayMetrics().density;
+                targetHeight = (int) (200 * density + 0.5f); // 200dp mặc định
+            }
+
+            // Đặt chiều cao cho tvQuestionText
+            ViewGroup.LayoutParams layoutParams = tvQuestionText.getLayoutParams();
+            layoutParams.height = targetHeight;
+            tvQuestionText.setLayoutParams(layoutParams);
+
+            // Căn giữa text trong TextView và thêm padding
+            tvQuestionText.setGravity(android.view.Gravity.CENTER);
+            int padding = (int) (16 * getResources().getDisplayMetrics().density); // 16dp padding
+            tvQuestionText.setPadding(padding, padding, padding, padding);
+        }
     }
 }

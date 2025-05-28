@@ -104,9 +104,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_quiz_type"
-            app:trackColor="@color/material_on_surface_disabled">
+            app:trackColor="@color/material_on_surface_disabled" />
 
-        </com.google.android.material.progressindicator.LinearProgressIndicator>
+        <!-- Barrier for dynamic positioning of question text -->
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier_after_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="progress_bar_quiz,card_question_image" />
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_question_image"
@@ -141,7 +147,7 @@
             android:textAppearance="?attr/textAppearanceTitleMedium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_question_image" />
+            app:layout_constraintTop_toBottomOf="@id/barrier_after_image" />
 
         <GridLayout
             android:id="@+id/grid_answers"
@@ -161,8 +167,8 @@
                 android:id="@+id/btn_answer_1"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
                 android:layout_gravity="fill"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
@@ -178,8 +184,8 @@
                 android:id="@+id/btn_answer_2"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
                 android:layout_gravity="fill"
                 android:layout_marginStart="8dp"
                 android:layout_marginBottom="8dp"
@@ -195,8 +201,8 @@
                 android:id="@+id/btn_answer_3"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
                 android:layout_gravity="fill"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
@@ -212,8 +218,8 @@
                 android:id="@+id/btn_answer_4"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
                 android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
                 android:layout_gravity="fill"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
