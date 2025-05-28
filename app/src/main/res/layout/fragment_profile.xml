@@ -23,20 +23,32 @@
                 android:layout_height="280dp"
                 android:background="@drawable/profile_header_gradient">
 
-                <!-- Back button -->
+                <!-- Logo -->
                 <ImageView
-                    android:id="@+id/btn_back"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:id="@+id/img_logo"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="@string/app_name"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_back"
+                    android:src="@drawable/logo_home1"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:tint="@android:color/white" />
+
+                <!-- App name text -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="QuizMe"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="@id/img_logo"
+                    app:layout_constraintStart_toEndOf="@id/img_logo"
+                    app:layout_constraintTop_toTopOf="@id/img_logo" />
 
                 <!-- Edit profile button -->
                 <ImageView
@@ -58,13 +70,27 @@
                     android:id="@+id/img_profile"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginTop="45dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/default_avatar"
                     app:civ_border_color="@android:color/white"
                     app:civ_border_width="3dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Camera icon overlay for profile photo -->
+                <ImageView
+                    android:id="@+id/ic_camera_overlay"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/circle_background_dark"
+                    android:contentDescription="@string/change_profile_picture"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_camera"
+                    app:layout_constraintBottom_toBottomOf="@id/img_profile"
+                    app:layout_constraintEnd_toEndOf="@id/img_profile"
+                    app:tint="@android:color/white" />
 
                 <!-- Full name -->
                 <TextView
@@ -100,7 +126,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="-40dp"
+                android:layout_marginTop="-30dp"
                 android:layout_marginEnd="16dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="4dp">
@@ -380,3 +406,4 @@
         android:visibility="gone" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+

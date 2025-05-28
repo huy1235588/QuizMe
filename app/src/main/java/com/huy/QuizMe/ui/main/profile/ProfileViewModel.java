@@ -11,6 +11,8 @@ import com.huy.QuizMe.data.repository.Resource;
 import com.huy.QuizMe.data.repository.UserRepository;
 import com.huy.QuizMe.utils.SharedPreferencesManager;
 
+import okhttp3.MultipartBody;
+
 public class ProfileViewModel extends ViewModel {
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
@@ -23,7 +25,7 @@ public class ProfileViewModel extends ViewModel {
         profileData = new MediatorLiveData<>();
         profileData.setValue(Resource.loading(null));
         sharedPreferencesManager = SharedPreferencesManager.getInstance();
-        
+
         loadProfileData();
     }
 
@@ -32,10 +34,10 @@ public class ProfileViewModel extends ViewModel {
      */
     private void loadProfileData() {
         LiveData<Resource<UserProfile>> userProfileLiveData = userRepository.getCurrentUserProfile();
-        
+
         // Lấy dữ liệu User từ SharedPreferences
         User cachedUser = sharedPreferencesManager.getUser();
-        
+
         // Theo dõi và kết hợp dữ liệu từ các nguồn khác nhau
         profileData.addSource(userProfileLiveData, userProfileResource -> {
             if (userProfileResource != null && userProfileResource.getData() != null) {
@@ -69,10 +71,21 @@ public class ProfileViewModel extends ViewModel {
 
     /**
      * Đăng xuất khỏi tài khoản hiện tại
-     * @return LiveData<Resource<Void>> kết quả đăng xuất
+     *
+     * @return LiveData<Resource < Void>> kết quả đăng xuất
      */
     public LiveData<Resource<Void>> logout() {
         return authRepository.logout();
+    }
+
+    /**
+     * Upload avatar cho người dùng hiện tại
+     *
+     * @param avatarFile File ảnh avatar để upload
+     * @return LiveData<Resource < UserProfile>> kết quả upload
+     */
+    public LiveData<Resource<UserProfile>> uploadAvatar(MultipartBody.Part avatarFile) {
+        return userRepository.uploadAvatar(avatarFile);
     }
 
     /**

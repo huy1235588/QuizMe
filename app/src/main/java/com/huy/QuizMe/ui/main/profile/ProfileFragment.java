@@ -1,8 +1,9 @@
 package com.huy.QuizMe.ui.main.profile;
 
 import android.content.Intent;
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -21,25 +24,48 @@ import com.bumptech.glide.Glide;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.User;
 import com.huy.QuizMe.data.model.UserProfile;
+import com.huy.QuizMe.utils.FileUtils;
+
+import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class ProfileFragment extends Fragment {
 
     private ProfileViewModel viewModel;
     private CircleImageView imgProfile;
+    private ImageView icCameraOverlay;
     private TextView tvFullName, tvUsername;
     private TextView tvTotalScore, tvQuizzesPlayed, tvQuizzesCreated;
     private TextView tvEmail, tvPhone, tvBirthday;
     private TextView tvRecentActivity;
     private Button btnLogout;
     private ProgressBar progressBar;
-    private ImageView btnBack, btnEditProfile;
+    private ImageView btnEditProfile;
+
+    // Activity result launcher for image selection
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+
+        // Initialize image picker launcher
+        imagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == getActivity().RESULT_OK && result.getData() != null) {
+                        Uri selectedImageUri = result.getData().getData();
+                        if (selectedImageUri != null) {
+                            uploadAvatar(selectedImageUri);
+                        }
+                    }
+                }
+        );
     }
 
     @Override
@@ -59,38 +85,38 @@ public class ProfileFragment extends Fragment {
     private void initViews(View view) {
         // Find all views
         imgProfile = view.findViewById(R.id.img_profile);
+        icCameraOverlay = view.findViewById(R.id.ic_camera_overlay);
         tvFullName = view.findViewById(R.id.tv_full_name);
         tvUsername = view.findViewById(R.id.tv_username);
 
         tvTotalScore = view.findViewById(R.id.tv_total_score);
         tvQuizzesPlayed = view.findViewById(R.id.tv_quizzes_played);
         tvQuizzesCreated = view.findViewById(R.id.tv_quizzes_created);
-        
+
         tvEmail = view.findViewById(R.id.tv_email);
         tvPhone = view.findViewById(R.id.tv_phone);
         tvBirthday = view.findViewById(R.id.tv_birthday);
-        
+
         tvRecentActivity = view.findViewById(R.id.tv_recent_activity);
-        
+
         btnLogout = view.findViewById(R.id.btn_logout);
         progressBar = view.findViewById(R.id.progress_bar);
-        
-        btnBack = view.findViewById(R.id.btn_back);
+
         btnEditProfile = view.findViewById(R.id.btn_edit_profile);
     }
 
     private void setupListeners() {
-        btnBack.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                getActivity().onBackPressed();
-            }
-        });
-        
         btnEditProfile.setOnClickListener(v -> {
             // TODO: Navigate to Edit Profile screen
             Toast.makeText(getContext(), "Edit Profile (Coming Soon)", Toast.LENGTH_SHORT).show();
         });
-          btnLogout.setOnClickListener(v -> {
+        // Avatar click listener to change profile picture
+        imgProfile.setOnClickListener(v -> openImagePicker());
+
+        // Camera icon click listener to change profile picture
+        icCameraOverlay.setOnClickListener(v -> openImagePicker());
+
+        btnLogout.setOnClickListener(v -> {
             // Show loading toast
             Toast.makeText(getContext(), "Logging out...", Toast.LENGTH_SHORT).show();
             // Call logout from ViewModel
@@ -138,13 +164,13 @@ public class ProfileFragment extends Fragment {
     private void updateUI(ProfileViewModel.ProfileData profileData) {
         User user = profileData.getUser();
         UserProfile userProfile = profileData.getUserProfile();
-        
+
         if (user != null) {
             // Set user details
             tvFullName.setText(user.getFullName() != null ? user.getFullName() : "");
             tvUsername.setText("@" + user.getUsername());
             tvEmail.setText(user.getEmail() != null ? user.getEmail() : "");
-            
+
             // Load profile image
             if (user.getProfileImage() != null && !user.getProfileImage().isEmpty()) {
                 Glide.with(this)
@@ -154,13 +180,13 @@ public class ProfileFragment extends Fragment {
                         .into(imgProfile);
             }
         }
-        
+
         if (userProfile != null) {
             // Set statistics
             tvTotalScore.setText(String.valueOf(userProfile.getTotalScore() != null ? userProfile.getTotalScore() : 0));
             tvQuizzesPlayed.setText(String.valueOf(userProfile.getQuizzesPlayed() != null ? userProfile.getQuizzesPlayed() : 0));
             tvQuizzesCreated.setText(String.valueOf(userProfile.getQuizzesCreated() != null ? userProfile.getQuizzesCreated() : 0));
-            
+
             // Set personal info
             tvPhone.setText(userProfile.getPhoneNumber() != null ? userProfile.getPhoneNumber() : "");
             tvBirthday.setText(userProfile.getDateOfBirth() != null ? userProfile.getDateOfBirth() : "");
@@ -174,7 +200,7 @@ public class ProfileFragment extends Fragment {
     private void hideLoading() {
         progressBar.setVisibility(View.GONE);
     }
-    
+
     /**
      * Chuyển đến màn hình đăng nhập sau khi đăng xuất
      */
@@ -184,6 +210,78 @@ public class ProfileFragment extends Fragment {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             getActivity().finish();
+        }
+    }
+
+    /**
+     * Mở gallery để chọn ảnh
+     */
+    private void openImagePicker() {
+        // Hiển thị dialog để chọn nguồn ảnh
+        new androidx.appcompat.app.AlertDialog.Builder(getContext())
+                .setTitle("Chọn ảnh đại diện")
+                .setMessage("Bạn muốn chọn ảnh từ đâu?")
+                .setPositiveButton("Thư viện", (dialog, which) -> {
+                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    intent.setType("image/*");
+                    imagePickerLauncher.launch(intent);
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
+    }
+
+    /**
+     * Upload avatar mới
+     *
+     * @param imageUri URI của ảnh được chọn
+     */
+    private void uploadAvatar(Uri imageUri) {
+        try {
+            // Hiển thị ảnh preview ngay lập tức
+            Glide.with(this)
+                    .load(imageUri)
+                    .placeholder(R.drawable.default_avatar)
+                    .error(R.drawable.default_avatar)
+                    .into(imgProfile);
+
+            // Convert URI to File
+            File imageFile = FileUtils.getFileFromUri(getContext(), imageUri);
+            if (imageFile == null) {
+                Toast.makeText(getContext(), "Không thể đọc file ảnh", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Tạo MultipartBody.Part cho ảnh
+            RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), imageFile);
+            MultipartBody.Part imagePart = MultipartBody.Part.createFormData("avatar", imageFile.getName(), requestBody);
+
+            // Hiển thị loading và thông báo
+            showLoading();
+            Toast.makeText(getContext(), "Đang upload ảnh...", Toast.LENGTH_SHORT).show();
+
+            // Gọi ViewModel để upload ảnh
+            viewModel.uploadAvatar(imagePart).observe(getViewLifecycleOwner(), resource -> {
+                switch (resource.getStatus()) {
+                    case LOADING:
+                        // Already showing loading
+                        break;
+                    case SUCCESS:
+                        hideLoading();
+                        Toast.makeText(getContext(), "Cập nhật ảnh đại diện thành công!", Toast.LENGTH_SHORT).show();
+                        // Refresh profile data để cập nhật UI
+                        viewModel.refreshProfileData();
+                        break;
+                    case ERROR:
+                        hideLoading();
+                        Toast.makeText(getContext(), "Lỗi upload ảnh: " + resource.getMessage(), Toast.LENGTH_SHORT).show();
+                        // Refresh profile data để cập nhật UI
+                        viewModel.refreshProfileData();
+                        break;
+                }
+            });
+
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Lỗi xử lý ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 }

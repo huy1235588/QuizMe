@@ -16,6 +16,7 @@
 
     <!-- Profile Fragment -->
     <string name="edit_profile">Edit Profile</string>
+    <string name="change_profile_picture">Thay đổi ảnh đại diện</string>
     <string name="personal_info">Thông tin cá nhân</string>
     <string name="total_score">Total Score</string>
     <string name="quizzes_played">Quizzes Played</string>

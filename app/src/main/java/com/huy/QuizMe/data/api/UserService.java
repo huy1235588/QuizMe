@@ -6,8 +6,12 @@ import com.huy.QuizMe.data.model.UserProfile;
 
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import retrofit2.http.GET;
 import retrofit2.Call;
+import retrofit2.http.Multipart;
+import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface UserService {
@@ -19,7 +23,7 @@ public interface UserService {
     @GET("/api/users/top")
     Call<ApiResponse<List<User>>> getTopUsers();
 
-   /**
+    /**
      * Lấy thông tin người dùng hiện tại
      *
      * @return Thông tin người dùng
@@ -36,4 +40,15 @@ public interface UserService {
      */
     @GET("/api/users/profile/{userId}")
     Call<ApiResponse<UserProfile>> getUserProfileById(@Path("userId") Long userId);
+
+    /**
+     * Upload avatar cho người dùng
+     *
+     * @param avatarFile Tập tin ảnh đại diện
+     * @return Thông tin người dùng sau khi cập nhật
+     */
+    @RequiresAuth
+    @POST("/api/users/avatar/upload")
+    @Multipart
+    Call<ApiResponse<UserProfile>> uploadAvatar(@Part MultipartBody.Part avatarFile);
 }
