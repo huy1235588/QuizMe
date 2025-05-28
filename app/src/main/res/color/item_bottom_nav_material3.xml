@@ -3,5 +3,5 @@
     <!-- Màu khi item được chọn -->
     <item android:color="?attr/colorPrimary" android:state_checked="true" />
     <!-- Màu khi item không được chọn -->
-    <item android:color="@color/light_gray" />
+    <item android:color="@color/defaultIconColor" />
 </selector>
