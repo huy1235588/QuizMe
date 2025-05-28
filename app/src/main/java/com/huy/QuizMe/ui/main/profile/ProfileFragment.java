@@ -253,7 +253,7 @@ public class ProfileFragment extends Fragment {
 
             // Tạo MultipartBody.Part cho ảnh
             RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), imageFile);
-            MultipartBody.Part imagePart = MultipartBody.Part.createFormData("avatar", imageFile.getName(), requestBody);
+            MultipartBody.Part imagePart = MultipartBody.Part.createFormData("avatarFile", imageFile.getName(), requestBody);
 
             // Hiển thị loading và thông báo
             showLoading();

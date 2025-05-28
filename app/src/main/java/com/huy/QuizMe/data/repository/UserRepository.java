@@ -50,6 +50,32 @@ public class UserRepository {
     }
 
     /**
+     * Lấy người dùng theo ID
+     *
+     * @param userId ID của người dùng
+     * @return Thông tin người dùng
+     */
+    public LiveData<Resource<User>> getUserById(Long userId) {
+        MutableLiveData<Resource<User>> userData = new MutableLiveData<>();
+        userData.setValue(Resource.loading(null));
+
+        userService.getUserById(userId).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<ApiResponse<User>> call,
+                                   @NonNull Response<ApiResponse<User>> response) {
+                handleApiResponse(response, userData, "Failed to fetch user by ID");
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ApiResponse<User>> call, @NonNull Throwable t) {
+                handleApiFailure(userData, t);
+            }
+        });
+
+        return userData;
+    }
+
+    /**
      * Lấy thông tin người dùng hiện tại
      *
      * @return Thông tin người dùng

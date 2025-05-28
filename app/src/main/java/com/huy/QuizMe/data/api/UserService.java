@@ -24,6 +24,15 @@ public interface UserService {
     Call<ApiResponse<List<User>>> getTopUsers();
 
     /**
+     * Lấy người dùng theo id
+     *
+     * @param userId ID của người dùng
+     * @return Thông tin người dùng
+     */
+    @GET("/api/users/{userId}")
+    Call<ApiResponse<User>> getUserById(@Path("userId") Long userId);
+
+    /**
      * Lấy thông tin người dùng hiện tại
      *
      * @return Thông tin người dùng

@@ -17,6 +17,7 @@ public class ProfileViewModel extends ViewModel {
     private final UserRepository userRepository;
     private final AuthRepository authRepository;
     private final MediatorLiveData<Resource<ProfileData>> profileData;
+
     private final SharedPreferencesManager sharedPreferencesManager;
 
     public ProfileViewModel() {
@@ -38,17 +39,32 @@ public class ProfileViewModel extends ViewModel {
         // Lấy dữ liệu User từ SharedPreferences
         User cachedUser = sharedPreferencesManager.getUser();
 
+        // Lấy dữ liệu User từ repository
+        LiveData<Resource<User>> userLiveData = userRepository.getUserById(cachedUser.getId());
+
+        // Theo dõi và kết hợp dữ liệu từ các nguồn khác nhau
         // Theo dõi và kết hợp dữ liệu từ các nguồn khác nhau
         profileData.addSource(userProfileLiveData, userProfileResource -> {
             if (userProfileResource != null && userProfileResource.getData() != null) {
-                // Tạo đối tượng ProfileData với thông tin UserProfile và User
-                ProfileData data = new ProfileData();
-                data.setUserProfile(userProfileResource.getData());
-                data.setUser(cachedUser); // Thêm dữ liệu User từ SharedPreferences
-                profileData.setValue(Resource.success(data, userProfileResource.getMessage()));
+                profileData.addSource(userLiveData, userResource -> {
+                    // Kiểm tra trạng thái của UserProfile
+                    if (userResource != null && userResource.getStatus() == Resource.Status.SUCCESS) {
+                        User user = userResource.getData();
+
+                        // Cập nhật User vào SharedPreferences
+                        ProfileData data = new ProfileData();
+                        data.setUserProfile(userProfileResource.getData());
+                        data.setUser(user);
+                        profileData.setValue(Resource.success(data, userProfileResource.getMessage()));
+                    } else if (userResource != null && userResource.getStatus() == Resource.Status.ERROR) {
+                        ProfileData data = new ProfileData();
+                        data.setUser(null); // Fix: Explicitly set user to null in case of error
+                        profileData.setValue(Resource.error(userResource.getMessage(), data));
+                    }
+                });
             } else if (userProfileResource != null && userProfileResource.getStatus() == Resource.Status.ERROR) {
                 ProfileData data = new ProfileData();
-                data.setUser(cachedUser); // Thêm dữ liệu User từ SharedPreferences ngay cả khi có lỗi
+                data.setUser(null); // Fix: Explicitly set user to null in case of error
                 profileData.setValue(Resource.error(userProfileResource.getMessage(), data));
             }
         });
