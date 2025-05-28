@@ -85,7 +85,7 @@ public class QuizRepository {
      * @param quizId ID của quiz cần lấy
      * @return Đối tượng LiveData với quiz
      */
-    public LiveData<Resource<Quiz>> getQuizById(int quizId) {
+    public LiveData<Resource<Quiz>> getQuizById(Long quizId) {
         MutableLiveData<Resource<Quiz>> quizData = new MutableLiveData<>();
         quizData.setValue(Resource.loading(null));
 

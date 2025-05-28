@@ -82,7 +82,7 @@ public class QuizDetailActivity extends AppCompatActivity {
     }
 
     private void loadQuizData() {
-        int quizId = getIntent().getIntExtra(EXTRA_QUIZ_ID, -1);
+        Long quizId = getIntent().getLongExtra(EXTRA_QUIZ_ID, -1);
         if (quizId != -1) {
             viewModel.loadQuizDetail(quizId);
         } else {

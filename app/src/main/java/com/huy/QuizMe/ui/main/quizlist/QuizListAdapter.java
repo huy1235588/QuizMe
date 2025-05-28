@@ -106,13 +106,9 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.QuizVi
                 ivQuizBg.setImageResource(R.drawable.bg_quiz);
             }
 
-            // Load author avatar
-            if (quiz.getCreatorAvatar() != null && !quiz.getCreatorAvatar().isEmpty()) {
-                ImageLoader.loadImage(
-                        context, ivAuthor, quiz.getCreatorAvatar(), R.drawable.placeholder_quiz, R.drawable.placeholder_quiz);
-            } else {
-                ivAuthor.setImageResource(R.drawable.avatar_1);
-            }
+            ImageLoader.loadImageWithTransformations(context, ivAuthor, quiz.getQuizThumbnails(),
+                    R.drawable.placeholder_quiz, R.drawable.placeholder_quiz);
+
         }
     }
 

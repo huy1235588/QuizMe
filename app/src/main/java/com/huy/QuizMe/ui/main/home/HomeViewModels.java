@@ -245,7 +245,7 @@ public class HomeViewModels {
          * @param quizId ID của quiz cần tải
          * @return LiveData với Resource của quiz
          */
-        public LiveData<Resource<Quiz>> loadQuizById(int quizId) {
+        public LiveData<Resource<Quiz>> loadQuizById(Long quizId) {
             if (isNetworkConnected()) {
                 quiz.setValue(createNetworkError());
                 return quiz;

@@ -18,7 +18,7 @@ public class QuizDetailViewModel extends ViewModel {
         this.quizRepository = new QuizRepository();
     }
 
-    public void loadQuizDetail(int quizId) {
+    public void loadQuizDetail(Long quizId) {
         isLoading.setValue(true);
 
         // Khởi tạo loading state
