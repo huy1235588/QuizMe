@@ -82,7 +82,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.QuizVi
             ivQuizBg = itemView.findViewById(R.id.iv_quiz_thumbnail);
             tvQuizCount = itemView.findViewById(R.id.tv_question_count);
             tvQuizTitle = itemView.findViewById(R.id.tv_quiz_title);
-            ivAuthor = itemView.findViewById(R.id.iv_author);
+            ivAuthor = itemView.findViewById(R.id.iv_author_avatar);
             tvAuthorName = itemView.findViewById(R.id.tv_author_name);
 
             itemView.setOnClickListener(v -> {
@@ -106,7 +106,7 @@ public class QuizListAdapter extends RecyclerView.Adapter<QuizListAdapter.QuizVi
                 ivQuizBg.setImageResource(R.drawable.bg_quiz);
             }
 
-            ImageLoader.loadImageWithTransformations(context, ivAuthor, quiz.getQuizThumbnails(),
+            ImageLoader.loadImageWithTransformations(context, ivAuthor, quiz.getCreatorAvatar(),
                     R.drawable.placeholder_quiz, R.drawable.placeholder_quiz);
 
         }
