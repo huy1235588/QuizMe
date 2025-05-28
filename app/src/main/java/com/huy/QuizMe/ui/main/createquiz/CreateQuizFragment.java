@@ -207,21 +207,23 @@ public class CreateQuizFragment extends Fragment {
         }
 
         Toast.makeText(requireContext(), "Quiz saved successfully", Toast.LENGTH_SHORT).show();
-    }
-
-    private void navigateToAddQuestion() {
+    }    private void navigateToAddQuestion() {
         if (etTitle.getText().toString().trim().isEmpty()) {
             etTitle.setError("Title is required");
             return;
         }
 
-        // Navigate to add question screen with the current quiz info
-        // For example:
-        // Bundle bundle = new Bundle();
-        // bundle.putSerializable("quiz", newQuiz);
-        // Navigation.findNavController(requireView()).navigate(R.id.action_to_add_question, bundle);
-
-        Toast.makeText(requireContext(), "Navigate to add question", Toast.LENGTH_SHORT).show();
+        // Save current quiz data
+        String title = etTitle.getText().toString().trim();
+        String description = etDescription.getText().toString().trim();
+        newQuiz.setTitle(title);
+        newQuiz.setDescription(description);        // Navigate to AddQuestionFragment
+        AddQuestionFragment addQuestionFragment = AddQuestionFragment.newInstance(newQuiz);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.frm_container, addQuestionFragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override
