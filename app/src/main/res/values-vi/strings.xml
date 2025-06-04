@@ -1,0 +1,120 @@
+<resources>
+    <string name="app_name">QuizMe</string>
+
+    <!-- MainActivity -->
+    <string name="home">Trang chủ</string>
+    <string name="library">Thư viện</string>
+    <string name="join">Tham gia</string>
+    <string name="create">Tạo mới</string>
+    <string name="profile">Hồ sơ</string>
+
+    <string name="quiz_results">Kết quả Quiz</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Xin chào fragment trống</string>
+
+    <string name="player_count_format">%1$d/%2$d người chơi</string>
+
+    <!-- Profile Fragment -->
+    <string name="edit_profile">Chỉnh sửa hồ sơ</string>
+    <string name="change_profile_picture">Thay đổi ảnh đại diện</string>
+    <string name="personal_info">Thông tin cá nhân</string>
+    <string name="total_score">Tổng điểm</string>
+    <string name="quizzes_played">Quiz đã chơi</string>
+    <string name="quizzes_created">Quiz đã tạo</string>
+    <string name="recent_activity">Hoạt động gần đây</string>
+    <string name="view_all">Xem tất cả</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="no_recent_activity">Hiện không có hoạt động nào</string>
+    <string name="email">Email</string>
+    <string name="phone">Số điện thoại</string>
+    <string name="date_of_birth">Ngày sinh</string>
+    <string name="city">Thành phố</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="change_language">Thay đổi ngôn ngữ</string>
+    <string name="english">Tiếng Anh</string>
+    <string name="vietnamese">Tiếng Việt</string>
+    <string name="select_language">Chọn ngôn ngữ</string>
+    <string name="language_changed">Ngôn ngữ đã được thay đổi. Vui lòng khởi động lại ứng dụng để áp dụng thay đổi.</string>
+    <string name="close">Đóng</string>
+
+    <!-- Waiting Room -->
+    <string name="back">Quay lại</string>
+    <string name="users">Người dùng</string>
+    <string name="settings">Cài đặt</string>
+    <string name="waiting_room">Phòng chờ</string>
+    <string name="waiting_for_host">Đang chờ chủ phòng bắt đầu...</string>
+    <string name="participants">Người tham gia</string>
+    <string name="participants_count">%1$d người tham gia</string>
+    <string name="emoji">Biểu cảm</string>
+    <string name="send_message">Gửi tin nhắn</string>
+    <string name="type_message">Nhập tin nhắn...</string>
+    <string name="leave_room">Thoát phòng</string>
+    <string name="start_quiz">Bắt đầu Quiz</string>
+    <string name="room_settings">Cài đặt phòng</string>
+    <string name="host_badge">Chủ phòng</string>
+    <string name="leaderboard">Bảng xếp hạng</string>
+
+    <!-- Language Settings -->
+    <string name="language">Ngôn ngữ</string>
+    <string name="english">Tiếng Anh</string>
+    <string name="vietnamese">Tiếng Việt</string>
+    <string name="language_changed">Thay đổi ngôn ngữ thành công</string>
+    <string name="restart_app">Vui lòng khởi động lại ứng dụng để áp dụng thay đổi</string>
+
+    <!-- Common Actions -->
+    <string name="ok">Đồng ý</string>
+    <string name="cancel">Hủy</string>
+    <string name="save">Lưu</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="delete">Xóa</string>
+    <string name="share">Chia sẻ</string>
+    <string name="favorite">Yêu thích</string>
+    <string name="more">Thêm</string>
+
+    <!-- Quiz Game -->
+    <string name="question">Câu hỏi</string>
+    <string name="answer">Câu trả lời</string>
+    <string name="score">Điểm số</string>
+    <string name="time_left">Thời gian còn lại</string>
+    <string name="correct">Đúng rồi!</string>
+    <string name="incorrect">Sai rồi!</string>
+    <string name="final_score">Điểm cuối cùng</string>
+    <string name="play_again">Chơi lại</string>
+    <string name="next_question">Câu hỏi tiếp theo</string>
+
+    <!-- Room Creation -->
+    <string name="create_room">Tạo phòng</string>
+    <string name="room_name">Tên phòng</string>
+    <string name="max_players">Số người chơi tối đa</string>
+    <string name="room_password">Mật khẩu phòng</string>
+    <string name="public_room">Phòng công khai</string>
+    <string name="private_room">Phòng riêng tư</string>
+    <string name="select_quiz">Chọn Quiz</string>
+    <string name="tap_to_select_quiz">Nhấn để chọn quiz</string>
+    <string name="choose_from_available_quizzes">Chọn từ các quiz có sẵn</string>
+
+    <!-- Quiz Creation -->
+    <string name="create_quiz">Tạo Quiz</string>
+    <string name="quiz_title">Tiêu đề Quiz</string>
+    <string name="quiz_description">Mô tả Quiz</string>
+    <string name="add_question">Thêm câu hỏi</string>
+    <string name="question_count">Số câu hỏi</string>
+    <string name="difficulty">Độ khó</string>
+    <string name="category">Danh mục</string>
+    <string name="public_quiz">Công khai</string>
+    <string name="private_quiz">Riêng tư</string>
+
+    <!-- Error Messages -->
+    <string name="error_network">Lỗi mạng. Vui lòng kiểm tra kết nối của bạn.</string>
+    <string name="error_invalid_room_code">Mã phòng không hợp lệ</string>
+    <string name="error_room_full">Phòng đã đầy</string>
+    <string name="error_wrong_password">Mật khẩu sai</string>
+    <string name="error_general">Đã xảy ra lỗi. Vui lòng thử lại.</string>
+    <string name="no_internet_connection">Không có kết nối internet</string>
+    <string name="loading">Đang tải...</string>
+
+    <!-- Success Messages -->
+    <string name="room_created_successfully">Tạo phòng thành công</string>
+    <string name="joined_room_successfully">Tham gia phòng thành công</string>
+    <string name="quiz_saved_successfully">Lưu quiz thành công</string>
+</resources>

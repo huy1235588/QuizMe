@@ -112,7 +112,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@username"
+                    android:text="#username"
                     android:textColor="@android:color/white"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -319,7 +319,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
-                            android:text="Ngày sinh"
+                            android:text="@string/date_of_birth"
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
@@ -330,6 +330,52 @@
                             android:layout_marginStart="8dp"
                             android:text="01/01/1990"
                             android:textSize="16sp" />
+                    </LinearLayout>
+
+                    <!-- Language Settings -->
+                    <LinearLayout
+                        android:id="@+id/layout_language_setting"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="4dp">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:contentDescription="@string/language"
+                            android:src="@drawable/ic_language"
+                            app:tint="@color/colorAccent" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:text="@string/language"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tv_current_language"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/english"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="16sp" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:contentDescription="@string/change_language"
+                            android:src="@drawable/ic_arrow_forward"
+                            app:tint="@color/colorAccent" />
                     </LinearLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

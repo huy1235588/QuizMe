@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.ViewCompat;
@@ -19,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.Room;
 import com.huy.QuizMe.data.repository.Resource;
+import com.huy.QuizMe.ui.base.BaseActivity;
 import com.huy.QuizMe.ui.quiz.QuizGameActivity;
 import com.huy.QuizMe.ui.room.adapter.ChatMessageAdapter;
 import com.huy.QuizMe.ui.room.adapter.ParticipantAdapter;
@@ -31,7 +31,7 @@ import android.widget.Button;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class WaitingRoomActivity extends AppCompatActivity {
+public class WaitingRoomActivity extends BaseActivity {
     private WaitingRoomViewModel viewModel;
     private DrawerLayout drawerLayout;
     private RecyclerView rvChatMessages, rvParticipants;

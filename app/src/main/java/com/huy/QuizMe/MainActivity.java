@@ -2,10 +2,10 @@ package com.huy.QuizMe;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.huy.QuizMe.databinding.ActivityMainBinding;
+import com.huy.QuizMe.ui.base.BaseActivity;
 import com.huy.QuizMe.ui.main.createquiz.CreateQuizFragment;
 import com.huy.QuizMe.ui.main.home.HomeFragment;
 import com.huy.QuizMe.ui.main.join.JoinRoomFragment;
@@ -17,7 +17,7 @@ import com.huy.QuizMe.utils.SharedPreferencesManager;
  * MainActivity - màn hình chính của ứng dụng QuizMe
  * Quản lý điều hướng giữa các màn hình chính thông qua bottom navigation
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     // ViewBinding cho activity main
     private ActivityMainBinding binding;

@@ -2,16 +2,16 @@ package com.huy.QuizMe.ui.auth;
 
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.huy.QuizMe.R;
 import com.huy.QuizMe.databinding.ActivityAuthBinding;
+import com.huy.QuizMe.ui.base.BaseActivity;
 
 /**
- * AuthActivity - Màn hình container cho các fragment xác thực (đăng nhập, đăng ký)
+ * AuthActivity - Authentication container for login and register fragments
  */
-public class AuthActivity extends AppCompatActivity {
+public class AuthActivity extends BaseActivity {
 
     private ActivityAuthBinding binding;
 

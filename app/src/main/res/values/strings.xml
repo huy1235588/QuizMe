@@ -16,35 +16,105 @@
 
     <!-- Profile Fragment -->
     <string name="edit_profile">Edit Profile</string>
-    <string name="change_profile_picture">Thay đổi ảnh đại diện</string>
-    <string name="personal_info">Thông tin cá nhân</string>
+    <string name="change_profile_picture">Change Profile Picture</string>
+    <string name="personal_info">Personal Information</string>
     <string name="total_score">Total Score</string>
     <string name="quizzes_played">Quizzes Played</string>
     <string name="quizzes_created">Quizzes Created</string>
-    <string name="recent_activity">Hoạt động gần đây</string>
-    <string name="view_all">Xem tất cả</string>
-    <string name="logout">Đăng xuất</string>
-    <string name="no_recent_activity">Hiện không có hoạt động nào</string>
+    <string name="recent_activity">Recent Activity</string>
+    <string name="view_all">View All</string>
+    <string name="logout">Logout</string>
+    <string name="no_recent_activity">No recent activity</string>
     <string name="email">Email</string>
-    <string name="phone">SĐT</string>
-    <string name="date_of_birth">Ngày sinh</string>
-    <string name="city">Thành phố</string>
+    <string name="phone">Phone</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="city">City</string>
+    <string name="language">Language</string>
+    <string name="change_language">Change Language</string>
+    <string name="english">English</string>
+    <string name="vietnamese">Vietnamese</string>
+    <string name="select_language">Select Language</string>
+    <string name="language_changed">Language changed. Please restart the app for changes to take effect.</string>
     <string name="close">Close</string>
 
     <!-- Waiting Room -->
     <string name="back">Back</string>
     <string name="users">Users</string>
     <string name="settings">Settings</string>
-    <string name="waiting_room">Phòng đợi</string>
-    <string name="waiting_for_host">Đang chờ chủ phòng bắt đầu...</string>
-    <string name="participants">Người tham gia</string>
-    <string name="participants_count">%1$d người tham gia</string>
+    <string name="waiting_room">Waiting Room</string>
+    <string name="waiting_for_host">Waiting for host to start...</string>
+    <string name="participants">Participants</string>
+    <string name="participants_count">%1$d participants</string>
     <string name="emoji">Emoji</string>
-    <string name="send_message">Gửi tin nhắn</string>
-    <string name="type_message">Nhập tin nhắn...</string>
-    <string name="leave_room">Thoát phòng</string>
-    <string name="start_quiz">Bắt đầu</string>
-    <string name="room_settings">Cài đặt phòng</string>
-    <string name="host_badge">Chủ phòng</string>
-    <string name="leaderboard">Bảng xếp hạng</string>
+    <string name="send_message">Send Message</string>
+    <string name="type_message">Type message...</string>
+    <string name="leave_room">Leave Room</string>
+    <string name="start_quiz">Start Quiz</string>
+    <string name="room_settings">Room Settings</string>
+    <string name="host_badge">Host</string>
+    <string name="leaderboard">Leaderboard</string>
+
+    <!-- Language Settings -->
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="vietnamese">Vietnamese</string>
+    <string name="language_changed">Language changed successfully</string>
+    <string name="restart_app">Please restart the app to apply changes</string>
+
+    <!-- Common Actions -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="share">Share</string>
+    <string name="favorite">Favorite</string>
+    <string name="more">More</string>
+
+    <!-- Quiz Game -->
+    <string name="question">Question</string>
+    <string name="answer">Answer</string>
+    <string name="score">Score</string>
+    <string name="time_left">Time Left</string>
+    <string name="correct">Correct!</string>
+    <string name="incorrect">Incorrect!</string>
+    <string name="final_score">Final Score</string>
+    <string name="play_again">Play Again</string>
+    <string name="next_question">Next Question</string>
+
+    <!-- Room Creation -->
+    <string name="create_room">Create Room</string>
+    <string name="room_name">Room Name</string>
+    <string name="max_players">Max Players</string>
+    <string name="room_password">Room Password</string>
+    <string name="public_room">Public Room</string>
+    <string name="private_room">Private Room</string>
+    <string name="select_quiz">Select Quiz</string>
+    <string name="tap_to_select_quiz">Tap to select a quiz</string>
+    <string name="choose_from_available_quizzes">Choose from available quizzes</string>
+
+    <!-- Quiz Creation -->
+    <string name="create_quiz">Create Quiz</string>
+    <string name="quiz_title">Quiz Title</string>
+    <string name="quiz_description">Quiz Description</string>
+    <string name="add_question">Add Question</string>
+    <string name="question_count">Questions</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="category">Category</string>
+    <string name="public_quiz">Public</string>
+    <string name="private_quiz">Private</string>
+
+    <!-- Error Messages -->
+    <string name="error_network">Network error. Please check your connection.</string>
+    <string name="error_invalid_room_code">Invalid room code</string>
+    <string name="error_room_full">Room is full</string>
+    <string name="error_wrong_password">Wrong password</string>
+    <string name="error_general">Something went wrong. Please try again.</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="loading">Loading...</string>
+
+    <!-- Success Messages -->
+    <string name="room_created_successfully">Room created successfully</string>
+    <string name="joined_room_successfully">Joined room successfully</string>
+    <string name="quiz_saved_successfully">Quiz saved successfully</string>
 </resources>

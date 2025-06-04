@@ -13,24 +13,29 @@ import com.huy.QuizMe.data.model.User;
 public class SharedPreferencesManager {
     private static final String TAG = "SharedPrefsManager";
     private static final String PREF_NAME = "quiz_me_prefs";
-    
+
     // Keys for SharedPreferences
     private static final String KEY_AUTH_TOKEN = "auth_token";
     private static final String KEY_REFRESH_TOKEN = "refresh_token";
     private static final String KEY_USER = "user";
-    
+
+    // Language keys
+    public static final String LANGUAGE_ENGLISH = "en";
+    public static final String LANGUAGE_VIETNAMESE = "vi";
+    public static final String LANGUAGE_KEY = "app_language";
+
     private static SharedPreferencesManager instance;
     private final SharedPreferences prefs;
     private final Gson gson;
-    
+
     private SharedPreferencesManager(Context context) {
         prefs = context.getApplicationContext().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         gson = new Gson();
     }
-    
+
     /**
      * Khởi tạo SharedPreferencesManager (phải gọi trong Application class)
-     * 
+     *
      * @param context Application context
      */
     public static void init(Context context) {
@@ -42,10 +47,10 @@ public class SharedPreferencesManager {
             }
         }
     }
-    
+
     /**
      * Trả về instance của SharedPreferencesManager
-     * 
+     *
      * @return SharedPreferencesManager instance
      */
     public static SharedPreferencesManager getInstance() {
@@ -54,10 +59,10 @@ public class SharedPreferencesManager {
         }
         return instance;
     }
-    
+
     /**
      * Lưu access token vào SharedPreferences
-     * 
+     *
      * @param token JWT access token
      */
     public void saveAuthToken(String token) {
@@ -65,16 +70,16 @@ public class SharedPreferencesManager {
         editor.putString(KEY_AUTH_TOKEN, token);
         editor.apply();
     }
-    
+
     /**
      * Lấy access token từ SharedPreferences
-     * 
+     *
      * @return JWT access token hoặc null nếu chưa đăng nhập
      */
     public String getAuthToken() {
         return prefs.getString(KEY_AUTH_TOKEN, null);
     }
-    
+
     /**
      * Xóa access token khỏi SharedPreferences
      */
@@ -83,10 +88,10 @@ public class SharedPreferencesManager {
         editor.remove(KEY_AUTH_TOKEN);
         editor.apply();
     }
-    
+
     /**
      * Lưu refresh token vào SharedPreferences
-     * 
+     *
      * @param token JWT refresh token
      */
     public void saveRefreshToken(String token) {
@@ -94,16 +99,16 @@ public class SharedPreferencesManager {
         editor.putString(KEY_REFRESH_TOKEN, token);
         editor.apply();
     }
-    
+
     /**
      * Lấy refresh token từ SharedPreferences
-     * 
+     *
      * @return JWT refresh token hoặc null nếu chưa đăng nhập
      */
     public String getRefreshToken() {
         return prefs.getString(KEY_REFRESH_TOKEN, null);
     }
-    
+
     /**
      * Xóa refresh token khỏi SharedPreferences
      */
@@ -112,17 +117,17 @@ public class SharedPreferencesManager {
         editor.remove(KEY_REFRESH_TOKEN);
         editor.apply();
     }
-    
+
     /**
      * Lưu thông tin người dùng vào SharedPreferences (dạng JSON)
-     * 
+     *
      * @param user Đối tượng người dùng cần lưu
      */
     public void saveUser(User user) {
         if (user == null) {
             return;
         }
-        
+
         SharedPreferences.Editor editor = prefs.edit();
         try {
             String userJson = gson.toJson(user);
@@ -132,10 +137,10 @@ public class SharedPreferencesManager {
         }
         editor.apply();
     }
-    
+
     /**
      * Lấy thông tin người dùng từ SharedPreferences
-     * 
+     *
      * @return Đối tượng User hoặc null nếu chưa đăng nhập
      */
     public User getUser() {
@@ -143,7 +148,7 @@ public class SharedPreferencesManager {
         if (userJson == null) {
             return null;
         }
-        
+
         try {
             return gson.fromJson(userJson, User.class);
         } catch (Exception e) {
@@ -151,7 +156,7 @@ public class SharedPreferencesManager {
             return null;
         }
     }
-    
+
     /**
      * Xóa thông tin người dùng khỏi SharedPreferences
      */
@@ -160,7 +165,27 @@ public class SharedPreferencesManager {
         editor.remove(KEY_USER);
         editor.apply();
     }
-    
+
+    /**
+     * Lưu ngôn ngữ ứng dụng vào SharedPreferences
+     *
+     * @param languageCode Mã ngôn ngữ (ví dụ: "en", "vi")
+     */
+    public void saveLanguage(String languageCode) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(LANGUAGE_KEY, languageCode);
+        editor.apply();
+    }
+
+    /**
+     * Lấy ngôn ngữ ứng dụng từ SharedPreferences
+     *
+     * @return Mã ngôn ngữ hiện tại hoặc "vi" nếu chưa được thiết lập
+     */
+    public String getLanguage() {
+        return prefs.getString(LANGUAGE_KEY, LANGUAGE_VIETNAMESE);
+    }
+
     /**
      * Xóa tất cả dữ liệu trong SharedPreferences
      */

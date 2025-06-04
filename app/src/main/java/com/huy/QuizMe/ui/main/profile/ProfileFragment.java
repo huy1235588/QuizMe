@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +26,9 @@ import com.huy.QuizMe.R;
 import com.huy.QuizMe.data.model.User;
 import com.huy.QuizMe.data.model.UserProfile;
 import com.huy.QuizMe.utils.FileUtils;
+import com.huy.QuizMe.utils.LanguageUtils;
+import com.huy.QuizMe.ui.dialog.LanguageSelectionDialog;
+import com.huy.QuizMe.utils.SharedPreferencesManager;
 
 import java.io.File;
 
@@ -34,7 +38,8 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 public class ProfileFragment extends Fragment {
-
+    LanguageUtils languageUtils;
+    SharedPreferencesManager prefsManager;
     private ProfileViewModel viewModel;
     private CircleImageView imgProfile;
     private ImageView icCameraOverlay;
@@ -46,6 +51,10 @@ public class ProfileFragment extends Fragment {
     private ProgressBar progressBar;
     private ImageView btnEditProfile;
 
+    // Language setting views
+    private LinearLayout layoutLanguageSetting;
+    private TextView tvCurrentLanguage;
+
     // Activity result launcher for image selection
     private ActivityResultLauncher<Intent> imagePickerLauncher;
 
@@ -53,6 +62,10 @@ public class ProfileFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+
+        // Initialize SharedPreferencesManager
+        prefsManager = SharedPreferencesManager.getInstance();
+        languageUtils = new LanguageUtils(prefsManager);
 
         // Initialize image picker launcher
         imagePickerLauncher = registerForActivityResult(
@@ -103,6 +116,13 @@ public class ProfileFragment extends Fragment {
         progressBar = view.findViewById(R.id.progress_bar);
 
         btnEditProfile = view.findViewById(R.id.btn_edit_profile);
+
+        // Language setting views
+        layoutLanguageSetting = view.findViewById(R.id.layout_language_setting);
+        tvCurrentLanguage = view.findViewById(R.id.tv_current_language);
+
+        // Update current language display
+        updateLanguageDisplay();
     }
 
     private void setupListeners() {
@@ -115,6 +135,9 @@ public class ProfileFragment extends Fragment {
 
         // Camera icon click listener to change profile picture
         icCameraOverlay.setOnClickListener(v -> openImagePicker());
+
+        // Language setting click listener
+        layoutLanguageSetting.setOnClickListener(v -> showLanguageSelectionDialog());
 
         btnLogout.setOnClickListener(v -> {
             // Show loading toast
@@ -191,6 +214,9 @@ public class ProfileFragment extends Fragment {
             tvPhone.setText(userProfile.getPhoneNumber() != null ? userProfile.getPhoneNumber() : "");
             tvBirthday.setText(userProfile.getDateOfBirth() != null ? userProfile.getDateOfBirth() : "");
         }
+
+        // Update current language display
+        tvCurrentLanguage.setText(languageUtils.getCurrentLanguage());
     }
 
     private void showLoading() {
@@ -282,6 +308,48 @@ public class ProfileFragment extends Fragment {
 
         } catch (Exception e) {
             Toast.makeText(getContext(), "Lỗi xử lý ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Show language selection dialog
+     */
+    private void showLanguageSelectionDialog() {
+        LanguageSelectionDialog dialog = new LanguageSelectionDialog(getContext(),
+                (languageCode) -> {
+                    // Apply the new language
+                    languageUtils.saveLanguage(languageCode);
+                    languageUtils.applyLanguage(getContext(), languageCode);
+
+                    // Update the display
+                    updateLanguageDisplay();
+
+                    // Show confirmation message
+                    Toast.makeText(getContext(), getString(R.string.language_changed), Toast.LENGTH_LONG).show();
+
+                    // Restart activity to apply language changes completely
+                    if (getActivity() != null) {
+                        getActivity().recreate();
+                    }
+                });
+        dialog.show();
+    }
+
+    /**
+     * Update language display based on current setting
+     */
+    private void updateLanguageDisplay() {
+        if (tvCurrentLanguage != null) {
+            String currentLanguage = languageUtils.getCurrentLanguage();
+            switch (currentLanguage) {
+                case "vi":
+                    tvCurrentLanguage.setText(getString(R.string.vietnamese));
+                    break;
+                case "en":
+                default:
+                    tvCurrentLanguage.setText(getString(R.string.english));
+                    break;
+            }
         }
     }
 }
