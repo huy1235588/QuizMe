@@ -23,7 +23,7 @@
                 android:id="@+id/tv_quiz_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Quiz Title"
+                android:text="@string/quiz_title_placeholder"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="Quiz description text goes here"
+                android:text="@string/quiz_description_placeholder"
                 android:textAppearance="?attr/textAppearanceBody2" />
 
             <TextView
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="10 questions"
+                android:text="@string/question_count_placeholder"
                 android:textAppearance="?attr/textAppearanceCaption" />
 
         </LinearLayout>

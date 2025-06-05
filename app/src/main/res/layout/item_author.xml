@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Ha"
+        android:text="@string/sample_author_name_ha"
         android:textColor="@android:color/black"
         android:textSize="14sp" />
 </LinearLayout>

@@ -15,15 +15,13 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="12dp">
-
-        <!-- Rank Badge -->
+        android:padding="12dp">        <!-- Rank Badge -->
         <TextView
             android:id="@+id/tv_rank"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:gravity="center"
-            android:text="1"
+            android:text="@string/rank_placeholder"
             android:textAppearance="?attr/textAppearanceLabelMedium"
             android:textColor="@color/white"
             android:textStyle="bold" />
@@ -46,9 +44,7 @@
             android:layout_marginStart="12dp"
             android:src="@drawable/avatar_1"
             app:civ_border_color="@color/colorPrimary"
-            app:civ_border_width="2dp" />
-
-        <!-- Player Info -->
+            app:civ_border_width="2dp" />        <!-- Player Info -->
         <TextView
             android:id="@+id/tv_player_name"
             android:layout_width="0dp"
@@ -58,10 +54,10 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="Player Name"
+            android:text="@string/player_name_placeholder"
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="@color/white"
-            tools:text="Player Name" />
+            tools:text="@string/player_name_placeholder" />
 
         <!-- Score -->
         <TextView
@@ -71,11 +67,11 @@
             android:background="@drawable/bg_score_rounded"
             android:paddingHorizontal="12dp"
             android:paddingVertical="4dp"
-            android:text="1250"
+            android:text="@string/score_placeholder"
             android:textAppearance="?attr/textAppearanceLabelLarge"
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
-            tools:text="1250" />
+            tools:text="@string/score_placeholder" />
 
     </LinearLayout>
 

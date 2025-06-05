@@ -17,7 +17,7 @@
             android:id="@+id/iv_room_quiz_thumbnail"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:contentDescription=""
+            android:contentDescription="@string/quiz_image_desc"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -39,7 +39,7 @@
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="ĐANG CHỜ" />
+            tools:text="@string/room_status_waiting" />
 
         <!-- Phần thông tin phòng -->
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -64,7 +64,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/iv_lock"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="Phòng Thử Thách Vật Lý" />
+                tools:text="@string/sample_room_name" />
 
             <!-- Nhãn khoá -->
             <ImageView
@@ -72,7 +72,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginStart="4dp"
-                android:contentDescription="Password Icon"
+                android:contentDescription="@string/password_icon_desc"
                 android:src="@drawable/ic_lock"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_room_name"
@@ -93,7 +93,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_room_name"
-                tools:text="Quiz Vật Lý Nâng Cao" />
+                tools:text="@string/sample_quiz_name_physics" />
 
             <!-- Avatar người tạo -->
             <ImageView
@@ -101,7 +101,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginTop="12dp"
-                android:contentDescription="Host Avatar"
+                android:contentDescription="@string/host_avatar_desc"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_quiz_name"
                 tools:src="@drawable/placeholder_avatar" />
@@ -120,7 +120,7 @@
                 app:layout_constraintEnd_toStartOf="@id/iv_players_icon"
                 app:layout_constraintStart_toEndOf="@id/iv_host_avatar"
                 app:layout_constraintTop_toTopOf="@id/iv_host_avatar"
-                tools:text="Nguyễn Văn A" />
+                tools:text="@string/sample_host_name" />
 
             <!-- Biểu tượng người chơi -->
             <ImageView
@@ -128,7 +128,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="4dp"
-                android:contentDescription="Players Icon"
+                android:contentDescription="@string/players_icon_desc"
                 android:src="@drawable/default_avatar"
                 app:layout_constraintBottom_toBottomOf="@id/tv_host_name"
                 app:layout_constraintEnd_toStartOf="@id/tv_players_count"
@@ -144,7 +144,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/iv_players_icon"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/iv_players_icon"
-                tools:text="3/10" />
+                tools:text="@string/sample_players_count" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

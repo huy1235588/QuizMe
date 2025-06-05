@@ -30,9 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="16dp">
-
-            <!-- Question Type & Number -->
+            android:layout_marginStart="16dp">            <!-- Question Type & Number -->
             <TextView
                 android:id="@+id/tv_question_number_and_type"
                 android:layout_width="match_parent"
@@ -40,7 +38,7 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                tools:text="1 - Quiz" />
+                tools:text="@string/sample_question_type_quiz" />
 
             <!-- Question Preview -->
             <TextView
@@ -52,7 +50,7 @@
                 android:textSize="14sp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                tools:text="....... do you get to school? by bus?" />
+                tools:text="@string/sample_question_preview" />
                 
         </LinearLayout>
     </LinearLayout>

@@ -20,24 +20,24 @@
                 android:id="@+id/iv_quiz_image"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:scaleType="centerCrop"
-                android:contentDescription="Quiz Image" />
+                android:contentDescription="@string/quiz_image_desc"
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:id="@+id/tv_question_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="12 Questions"
-                android:textSize="14sp"
-                android:textColor="@android:color/white"
-                android:background="@drawable/bg_quiz_count"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="12dp"
+                android:background="@drawable/bg_quiz_count"
                 android:gravity="center"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp"
+                android:text="@string/sample_quiz_question_count"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
@@ -50,22 +50,22 @@
                 android:id="@+id/tv_quiz_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Let's Memorize the Names of Flowers"
+                android:height="42dp"
+                android:ellipsize="end"
+                android:gravity="top"
+                android:lines="2"
+                android:text="@string/sample_quiz_title_flowers"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:lines="2"
-                android:height="42dp"
-                android:gravity="top"
-                android:ellipsize="end" />
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_below="@id/tv_quiz_title"
                 android:layout_marginTop="8dp"
-                android:gravity="center_vertical">
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_author_avatar"
@@ -77,10 +77,10 @@
                     android:id="@+id/tv_author_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cyndy Lillibridge"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/sample_author_cyndy"
                     android:textColor="#666666"
-                    android:textSize="14sp"
-                    android:layout_marginStart="8dp" />
+                    android:textSize="14sp" />
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

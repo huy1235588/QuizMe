@@ -196,8 +196,20 @@
     <string name="quiz_saved_success">Quiz saved successfully</string>
     <string name="search_quiz">Search Quiz</string>
 
+    <!-- Chat Messages -->
+    <string name="user_avatar">User avatar</string>
+    <string name="user_name">User name</string>
+    <string name="you">You</string>
+    <string name="sample_message_received">This is a sample message that was received.</string>
+    <string name="sample_message_sent">This is a sample message that I sent.</string>
+    <string name="sample_timestamp">12:34 PM</string>
+
     <!-- Content Descriptions -->
     <string name="dropdown_icon">Dropdown icon</string>
+    <string name="category_image">Category Image</string>
+
+    <!-- Category -->
+    <string name="category_name">Category Name</string>
 
     <!-- Question Input -->
     <string name="questions">questions</string>
@@ -250,5 +262,44 @@
     <string name="sample_phone_number">+1 234 567 8900</string>
     <string name="sample_birthday">January 1, 1990</string>
     <string name="default_stat_value">0</string>
+
+    <!-- Item Layout Strings -->
+    <!-- Quiz Selection -->
+    <string name="quiz_title_placeholder">Quiz Title</string>
+    <string name="quiz_description_placeholder">Quiz description text goes here</string>
+    <string name="question_count_placeholder">10 questions</string>
+
+    <!-- Quiz Item -->
+    <string name="sample_quiz_question_count">12 Questions</string>
+    <string name="sample_quiz_title_flowers">Let\'s Memorize the Names of Flowers</string>
+    <string name="sample_author_cyndy">Cyndy Lillibridge</string>
+
+    <!-- Question Item -->
+    <string name="sample_question_type_quiz">1 - Quiz</string>
+    <string name="sample_question_preview">....... do you get to school? by bus?</string>
+
+    <!-- Participant Item -->
+    <string name="user_name_placeholder">User Name</string>
+
+    <!-- Leaderboard -->
+    <string name="rank_placeholder">1</string>
+    <string name="player_name_placeholder">Player Name</string>
+    <string name="score_placeholder">1250</string>
+
+    <!-- Author Item -->
+    <string name="sample_author_name_ha">Ha</string>
+
+    <!-- Room Item -->
+    <string name="room_status_waiting">ĐANG CHỜ</string>
+    <string name="sample_room_name">Phòng Thử Thách Vật Lý</string>
+    <string name="sample_quiz_name_physics">Quiz Vật Lý Nâng Cao</string>
+    <string name="sample_host_name">Nguyễn Văn A</string>
+    <string name="sample_players_count">3/10</string>
+
+    <!-- Content Descriptions -->
+    <string name="quiz_image_desc">Quiz Image</string>
+    <string name="password_icon_desc">Password Icon</string>
+    <string name="host_avatar_desc">Host Avatar</string>
+    <string name="players_icon_desc">Players Icon</string>
 
 </resources>
