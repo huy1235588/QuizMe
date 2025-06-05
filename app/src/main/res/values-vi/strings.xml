@@ -29,12 +29,8 @@
     <string name="phone">Số điện thoại</string>
     <string name="date_of_birth">Ngày sinh</string>
     <string name="city">Thành phố</string>
-    <string name="language">Ngôn ngữ</string>
     <string name="change_language">Thay đổi ngôn ngữ</string>
-    <string name="english">Tiếng Anh</string>
-    <string name="vietnamese">Tiếng Việt</string>
     <string name="select_language">Chọn ngôn ngữ</string>
-    <string name="language_changed">Ngôn ngữ đã được thay đổi. Vui lòng khởi động lại ứng dụng để áp dụng thay đổi.</string>
     <string name="close">Đóng</string>
 
     <!-- Waiting Room -->
@@ -42,12 +38,12 @@
     <string name="users">Người dùng</string>
     <string name="settings">Cài đặt</string>
     <string name="waiting_room">Phòng chờ</string>
-    <string name="waiting_for_host">Đang chờ chủ phòng bắt đầu...</string>
+    <string name="waiting_for_host">Đang chờ chủ phòng bắt đầu…</string>
     <string name="participants">Người tham gia</string>
     <string name="participants_count">%1$d người tham gia</string>
     <string name="emoji">Biểu cảm</string>
     <string name="send_message">Gửi tin nhắn</string>
-    <string name="type_message">Nhập tin nhắn...</string>
+    <string name="type_message">Nhập tin nhắn…</string>
     <string name="leave_room">Thoát phòng</string>
     <string name="start_quiz">Bắt đầu Quiz</string>
     <string name="room_settings">Cài đặt phòng</string>
@@ -111,7 +107,7 @@
     <string name="error_wrong_password">Mật khẩu sai</string>
     <string name="error_general">Đã xảy ra lỗi. Vui lòng thử lại.</string>
     <string name="no_internet_connection">Không có kết nối internet</string>
-    <string name="loading">Đang tải...</string>
+    <string name="loading">Đang tải…</string>
 
     <!-- Success Messages -->
     <string name="room_created_successfully">Tạo phòng thành công</string>

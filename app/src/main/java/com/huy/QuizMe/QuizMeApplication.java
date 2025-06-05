@@ -15,15 +15,6 @@ public class QuizMeApplication extends Application {
         SharedPreferencesManager.init(this);
 
         // Áp dụng ngôn ngữ đã được lưu
-        LanguageUtils.setAppLanguage(this);
-    }
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        // Khởi tạo SharedPreferencesManager trước khi áp dụng ngôn ngữ
-        SharedPreferencesManager.init(base);
-
-        // Áp dụng ngôn ngữ đã được lưu
-        super.attachBaseContext(LanguageUtils.setAppLanguage(base));
+        new LanguageUtils(SharedPreferencesManager.getInstance());
     }
 }
