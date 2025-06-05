@@ -145,7 +145,7 @@ public class CreateRoomFragment extends Fragment {
             if (description != null && !description.isEmpty()) {
                 tvSelectedQuizDescription.setText(description);
             } else {
-                tvSelectedQuizDescription.setText(quiz.getQuestionCount() + " questions");
+                tvSelectedQuizDescription.setText(getString(R.string.questions_format, quiz.getQuestionCount()));
             }
             tvSelectedQuizDescription.setTextColor(getResources().getColor(R.color.gray));
 
@@ -161,21 +161,19 @@ public class CreateRoomFragment extends Fragment {
             }
         } else {
             // Reset to default state
-            tvSelectedQuizTitle.setText("Tap to select a quiz");
+            tvSelectedQuizTitle.setText(getString(R.string.tap_to_select_quiz_hint));
             tvSelectedQuizTitle.setTextColor(getResources().getColor(R.color.gray));
-            tvSelectedQuizDescription.setText("Choose from available quizzes");
+            tvSelectedQuizDescription.setText(getString(R.string.choose_from_available_quizzes_hint));
             tvSelectedQuizDescription.setTextColor(getResources().getColor(R.color.gray));
             ivSelectedQuizThumbnail.setImageResource(R.drawable.placeholder_quiz);
         }
     }
 
     private boolean validateInputs() {
-        boolean isValid = true;
-
-        // Xác thực tên phòng
+        boolean isValid = true;        // Xác thực tên phòng
         String roomName = getTextFromEditText(etRoomName);
         if (TextUtils.isEmpty(roomName)) {
-            tilRoomName.setError("Room name cannot be empty");
+            tilRoomName.setError(getString(R.string.room_name_cannot_be_empty));
             isValid = false;
         } else {
             tilRoomName.setError(null);
@@ -184,26 +182,24 @@ public class CreateRoomFragment extends Fragment {
         // Xác thực số người tham gia tối đa
         String maxParticipantsStr = getTextFromEditText(etMaxParticipants);
         if (TextUtils.isEmpty(maxParticipantsStr)) {
-            tilMaxParticipants.setError("Maximum participants cannot be empty");
+            tilMaxParticipants.setError(getString(R.string.max_participants_cannot_be_empty));
             isValid = false;
         } else {
             try {
                 int maxParticipants = Integer.parseInt(maxParticipantsStr);
                 if (maxParticipants <= 0 || maxParticipants > MAX_PARTICIPANTS_LIMIT) {
-                    tilMaxParticipants.setError("Please enter a number between 1 and " + MAX_PARTICIPANTS_LIMIT);
+                    tilMaxParticipants.setError(getString(R.string.enter_number_between, MAX_PARTICIPANTS_LIMIT));
                     isValid = false;
                 } else {
                     tilMaxParticipants.setError(null);
                 }
             } catch (NumberFormatException e) {
-                tilMaxParticipants.setError("Please enter a valid number");
+                tilMaxParticipants.setError(getString(R.string.enter_valid_number));
                 isValid = false;
             }
-        }
-
-        // Xác thực mật khẩu nếu được yêu cầu
+        }        // Xác thực mật khẩu nếu được yêu cầu
         if (switchPassword.isChecked() && TextUtils.isEmpty(getTextFromEditText(etPassword))) {
-            tilPassword.setError("Password cannot be empty");
+            tilPassword.setError(getString(R.string.password_cannot_be_empty));
             isValid = false;
         } else {
             tilPassword.setError(null);
@@ -211,7 +207,7 @@ public class CreateRoomFragment extends Fragment {
 
         // Xác thực lựa chọn quiz
         if (viewModel.getSelectedQuiz() == null) {
-            showToast("Please select a quiz");
+            showToast(getString(R.string.please_select_quiz));
             isValid = false;
         }
 
@@ -231,7 +227,7 @@ public class CreateRoomFragment extends Fragment {
                         toggleLoading(true);
                     } else if (ApiUtils.isSuccess(resource)) {
                         toggleLoading(false);
-                        showToast("Room created successfully");
+                        showToast(getString(R.string.room_created_success));
 
                         // Điều hướng đến activity phòng chờ
                         Room room = resource.getData();
@@ -245,7 +241,7 @@ public class CreateRoomFragment extends Fragment {
                     } else {
                         toggleLoading(false);
                         showToast(resource.getMessage() != null ?
-                                resource.getMessage() : "Failed to create room");
+                                resource.getMessage() : getString(R.string.failed_to_create_room));
                     }
                 });
     }

@@ -125,11 +125,10 @@ public class LeaderboardOverlayFragment extends Fragment {
             adapter.updateLeaderboardWithAnimation(leaderboard.getRankings());
             showEmpty(false);
         } else {
-            Log.d("LeaderboardFragment", "No valid leaderboard data, showing empty state");
-            // Hiển thị empty state thay vì để loading vô hạn
+            Log.d("LeaderboardFragment", "No valid leaderboard data, showing empty state");            // Hiển thị empty state thay vì để loading vô hạn
             showEmpty(true);
             if (tvEmpty != null) {
-                tvEmpty.setText("Chưa có dữ liệu xếp hạng");
+                tvEmpty.setText(getString(R.string.no_leaderboard_data));
             }
         }
     }
@@ -163,7 +162,7 @@ public class LeaderboardOverlayFragment extends Fragment {
                 showLoading(false);
                 showEmpty(true);
                 if (tvEmpty != null) {
-                    tvEmpty.setText("Không thể tải bảng xếp hạng");
+                    tvEmpty.setText(getString(R.string.cannot_load_leaderboard));
                 }
             }
         };
@@ -198,9 +197,8 @@ public class LeaderboardOverlayFragment extends Fragment {
     public void showError(String errorMessage) {
         showLoading(false);
         showEmpty(true);
-
         if (tvEmpty != null) {
-            tvEmpty.setText(errorMessage != null ? errorMessage : "Không thể tải bảng xếp hạng");
+            tvEmpty.setText(errorMessage != null ? errorMessage : getString(R.string.cannot_load_leaderboard));
         }
     }
 

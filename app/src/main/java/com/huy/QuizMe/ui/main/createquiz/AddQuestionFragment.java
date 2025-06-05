@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -223,19 +224,17 @@ public class AddQuestionFragment extends Fragment {
         // Cập nhật số câu hỏi
         if (tvQuestionNumberDisplay != null) {
             tvQuestionNumberDisplay.setText(String.valueOf(currentQuestionNumber));
-        }
-
-        // Cập nhật text các dropdown
-        tvPoints.setText(points + " points");
-        tvTime.setText(timeLimit + " seconds");
+        }        // Cập nhật text các dropdown
+        tvPoints.setText(getString(R.string.points_format, points));
+        tvTime.setText(getString(R.string.seconds_format, timeLimit));
 
         // Cập nhật hiển thị question
         if (currentQuestionText.isEmpty()) {
-            tvQuestionHint.setText("Tap to add question");
-            tvQuestionHint.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            tvQuestionHint.setText(getString(R.string.tap_to_add_question));
+            tvQuestionHint.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.darker_gray));
         } else {
             tvQuestionHint.setText(currentQuestionText);
-            tvQuestionHint.setTextColor(getResources().getColor(android.R.color.black));
+            tvQuestionHint.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black));
         }
 
         // Cập nhật hiển thị answers
@@ -253,11 +252,11 @@ public class AddQuestionFragment extends Fragment {
      */
     private void updateAnswerDisplay(int index, TextView textView) {
         if (answerTexts[index].isEmpty()) {
-            textView.setText("Tap to add answer");
-            textView.setTextColor(getResources().getColor(android.R.color.darker_gray));
+            textView.setText(getString(R.string.tap_to_add_answer));
+            textView.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.darker_gray));
         } else {
             textView.setText(answerTexts[index]);
-            textView.setTextColor(getResources().getColor(android.R.color.black));
+            textView.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.black));
         }
     }
 
@@ -266,10 +265,10 @@ public class AddQuestionFragment extends Fragment {
      */
     private void updateCorrectAnswerHighlight() {
         // Reset tất cả cards về màu mặc định
-        cardAnswer1.setCardBackgroundColor(getResources().getColor(R.color.light_gray, null));
-        cardAnswer2.setCardBackgroundColor(getResources().getColor(R.color.light_gray, null));
-        cardAnswer3.setCardBackgroundColor(getResources().getColor(R.color.light_gray, null));
-        cardAnswer4.setCardBackgroundColor(getResources().getColor(R.color.light_gray, null));
+        cardAnswer1.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_gray));
+        cardAnswer2.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_gray));
+        cardAnswer3.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_gray));
+        cardAnswer4.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_gray));
 
         // Highlight đáp án đúng
         CardView correctCard = null;
@@ -289,7 +288,7 @@ public class AddQuestionFragment extends Fragment {
         }
 
         if (correctCard != null && !answerTexts[correctAnswerIndex].isEmpty()) {
-            correctCard.setCardBackgroundColor(getResources().getColor(R.color.light_green, null));
+            correctCard.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.light_green));
         }
     }
 
@@ -297,11 +296,18 @@ public class AddQuestionFragment extends Fragment {
      * Hiển thị dialog chọn thời gian
      */
     private void showTimeOptions() {
-        final String[] timeOptions = {"5 giây", "10 giây", "15 giây", "20 giây", "30 giây", "60 giây"};
+        final String[] timeOptions = {
+                getString(R.string.time_5_seconds),
+                getString(R.string.time_10_seconds),
+                getString(R.string.time_15_seconds),
+                getString(R.string.time_20_seconds),
+                getString(R.string.time_30_seconds),
+                getString(R.string.time_60_seconds)
+        };
         final int[] timeValues = {5, 10, 15, 20, 30, 60};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Chọn thời gian trả lời")
+        builder.setTitle(getString(R.string.select_time))
                 .setItems(timeOptions, (dialog, which) -> {
                     timeLimit = timeValues[which];
                     updateUI();
@@ -313,11 +319,18 @@ public class AddQuestionFragment extends Fragment {
      * Hiển thị dialog chọn điểm số
      */
     private void showPointsOptions() {
-        final String[] pointOptions = {"50 điểm", "100 điểm", "200 điểm", "300 điểm", "400 điểm", "500 điểm"};
+        final String[] pointOptions = {
+                getString(R.string.points_50),
+                getString(R.string.points_100_vn),
+                getString(R.string.points_200),
+                getString(R.string.points_300),
+                getString(R.string.points_400),
+                getString(R.string.points_500)
+        };
         final int[] pointValues = {50, 100, 200, 300, 400, 500};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Chọn điểm số")
+        builder.setTitle(getString(R.string.select_points))
                 .setItems(pointOptions, (dialog, which) -> {
                     points = pointValues[which];
                     updateUI();
@@ -329,17 +342,21 @@ public class AddQuestionFragment extends Fragment {
      * Hiển thị dialog chọn loại quiz
      */
     private void showQuizTypeOptions() {
-        final String[] quizTypes = {"Quiz", "Đúng/Sai", "Bỏ phiếu"};
+        final String[] quizTypes = {
+                getString(R.string.quiz_type_quiz),
+                getString(R.string.quiz_type_true_false),
+                getString(R.string.quiz_type_poll)
+        };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Chọn loại câu hỏi")
+        builder.setTitle(getString(R.string.select_question_type))
                 .setItems(quizTypes, (dialog, which) -> {
                     tvQuiz.setText(quizTypes[which]);
                     // Điều chỉnh UI dựa trên loại quiz nếu cần
                     if (which == 1) { // Đúng/Sai
                         // Ẩn answer 3 và 4, chỉ hiển thị 2 đáp án
-                        answerTexts[0] = "Đúng";
-                        answerTexts[1] = "Sai";
+                        answerTexts[0] = getString(R.string.answer_true);
+                        answerTexts[1] = getString(R.string.answer_false);
                         answerTexts[2] = "";
                         answerTexts[3] = "";
                         updateUI();
@@ -352,10 +369,14 @@ public class AddQuestionFragment extends Fragment {
      * Hiển thị menu thêm tùy chọn
      */
     private void showMoreOptionsMenu() {
-        final String[] options = {"Lưu và kết thúc", "Xem trước", "Cài đặt nâng cao"};
+        final String[] options = {
+                getString(R.string.save_and_finish),
+                getString(R.string.preview),
+                getString(R.string.advanced_settings)
+        };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Tùy chọn thêm")
+        builder.setTitle(getString(R.string.additional_options))
                 .setItems(options, (dialog, which) -> {
                     switch (which) {
                         case 0: // Lưu và kết thúc
@@ -386,20 +407,20 @@ public class AddQuestionFragment extends Fragment {
      */
     private void showQuestionInputDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Nhập câu hỏi");
+        builder.setTitle(getString(R.string.enter_question));
 
         // Tạo EditText
         final android.widget.EditText input = new android.widget.EditText(requireContext());
         input.setText(currentQuestionText);
-        input.setHint("Nhập câu hỏi của bạn...");
+        input.setHint(getString(R.string.question_hint));
         builder.setView(input);
 
-        builder.setPositiveButton("OK", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> {
             currentQuestionText = input.getText().toString().trim();
             updateUI();
         });
 
-        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
         builder.show();
     }
 
@@ -408,24 +429,24 @@ public class AddQuestionFragment extends Fragment {
      */
     private void showAnswerInputDialog(int answerIndex) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Nhập đáp án " + (answerIndex + 1));
+        builder.setTitle(getString(R.string.enter_answer_number, answerIndex + 1));
 
         // Tạo EditText
         final android.widget.EditText input = new android.widget.EditText(requireContext());
         input.setText(answerTexts[answerIndex]);
-        input.setHint("Nhập đáp án...");
+        input.setHint(getString(R.string.answer_hint));
         builder.setView(input);
 
-        builder.setPositiveButton("OK", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.ok), (dialog, which) -> {
             answerTexts[answerIndex] = input.getText().toString().trim();
             updateUI();
         });
 
-        builder.setNegativeButton("Hủy", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
 
         // Nếu đáp án đã có nội dung, thêm nút xóa
         if (!answerTexts[answerIndex].isEmpty()) {
-            builder.setNeutralButton("Xóa", (dialog, which) -> {
+            builder.setNeutralButton(getString(R.string.delete), (dialog, which) -> {
                 answerTexts[answerIndex] = "";
                 updateUI();
             });
@@ -441,9 +462,9 @@ public class AddQuestionFragment extends Fragment {
         if (!answerTexts[answerIndex].isEmpty()) {
             correctAnswerIndex = answerIndex;
             updateUI();
-            Toast.makeText(requireContext(), "Đã đặt làm đáp án đúng", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.set_as_correct_answer), Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(requireContext(), "Vui lòng nhập nội dung đáp án trước", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.please_enter_answer_content), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -464,10 +485,10 @@ public class AddQuestionFragment extends Fragment {
      */
     private void showExitConfirmationDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Xác nhận thoát")
-                .setMessage("Bạn có thay đổi chưa lưu. Bạn có muốn thoát không?")
-                .setPositiveButton("Thoát", (dialog, which) -> requireActivity().onBackPressed())
-                .setNegativeButton("Hủy", (dialog, which) -> dialog.dismiss())
+        builder.setTitle(getString(R.string.confirm_exit))
+                .setMessage(getString(R.string.unsaved_changes_message))
+                .setPositiveButton(getString(R.string.exit), (dialog, which) -> requireActivity().onBackPressed())
+                .setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.dismiss())
                 .show();
     }
 
@@ -477,7 +498,7 @@ public class AddQuestionFragment extends Fragment {
     private void saveCurrentAndAddNew() {
         // Kiểm tra tính hợp lệ của câu hỏi và đáp án
         if (currentQuestionText.isEmpty()) {
-            Toast.makeText(requireContext(), "Vui lòng nhập câu hỏi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.please_enter_question), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -490,13 +511,13 @@ public class AddQuestionFragment extends Fragment {
         }
 
         if (answersWithContent < 2) {
-            Toast.makeText(requireContext(), "Cần ít nhất 2 đáp án", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.need_at_least_two_answers), Toast.LENGTH_SHORT).show();
             return;
         }
 
         // Kiểm tra đáp án đúng có nội dung không
         if (answerTexts[correctAnswerIndex].isEmpty()) {
-            Toast.makeText(requireContext(), "Đáp án đúng không được để trống", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.correct_answer_cannot_be_empty), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -529,7 +550,7 @@ public class AddQuestionFragment extends Fragment {
         currentQuestionNumber++;
         updateUI();
 
-        Toast.makeText(requireContext(), "Đã thêm câu hỏi thành công", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), getString(R.string.question_added_successfully), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -554,9 +575,8 @@ public class AddQuestionFragment extends Fragment {
         if (!currentQuestionText.isEmpty()) {
             saveCurrentAndAddNew();
         }
-
         if (questions.isEmpty()) {
-            Toast.makeText(requireContext(), "Tạo ít nhất một câu hỏi", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.create_at_least_one_question), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -565,7 +585,7 @@ public class AddQuestionFragment extends Fragment {
 
         // TODO: Lưu quiz vào database hoặc chuyển đến màn hình xem trước
 
-        Toast.makeText(requireContext(), "Đã lưu quiz thành công!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), getString(R.string.quiz_saved_successfully_full), Toast.LENGTH_SHORT).show();
 
         // Quay lại
         requireActivity().onBackPressed();
@@ -576,12 +596,12 @@ public class AddQuestionFragment extends Fragment {
      */
     private void previewQuiz() {
         if (questions.isEmpty() && currentQuestionText.isEmpty()) {
-            Toast.makeText(requireContext(), "Chưa có câu hỏi nào để xem trước", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), getString(R.string.no_questions_to_preview), Toast.LENGTH_SHORT).show();
             return;
         }
 
         // TODO: Mở màn hình xem trước quiz
-        Toast.makeText(requireContext(), "Tính năng xem trước sẽ sớm có", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), getString(R.string.preview_feature_coming_soon), Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -589,7 +609,7 @@ public class AddQuestionFragment extends Fragment {
      */
     private void showAdvancedSettings() {
         // TODO: Mở màn hình cài đặt nâng cao
-        Toast.makeText(requireContext(), "Cài đặt nâng cao sẽ sớm có", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), getString(R.string.advanced_settings_coming_soon), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -601,8 +621,8 @@ public class AddQuestionFragment extends Fragment {
             if (selectedImageUri != null) {
                 // Hiển thị ảnh đã chọn
                 ivCoverImage.setImageURI(selectedImageUri);
-                tvAddCoverImage.setText("Đã chọn ảnh");
-                tvAddCoverImage.setTextColor(getResources().getColor(android.R.color.holo_green_dark));
+                tvAddCoverImage.setText(getString(R.string.image_selected));
+                tvAddCoverImage.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_green_dark));
             }
         }
     }

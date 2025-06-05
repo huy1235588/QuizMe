@@ -121,11 +121,10 @@ public class CreateQuizFragment extends Fragment {
         // Show a bottom sheet or dialog with collections
         BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
         View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_selection, null);
-
         TextView tvTitle = bottomSheetView.findViewById(R.id.tvTitle);
         RecyclerView recyclerView = bottomSheetView.findViewById(R.id.recyclerView);
 
-        tvTitle.setText("Select Collection");
+        tvTitle.setText(getString(R.string.select_collection_title));
 
         // Convert categories to string names
         List<String> categoryNames = new ArrayList<>();
@@ -135,11 +134,11 @@ public class CreateQuizFragment extends Fragment {
 
         // If no categories loaded yet, add some defaults
         if (categoryNames.isEmpty()) {
-            categoryNames.add("Education");
-            categoryNames.add("Technology");
-            categoryNames.add("Entertainment");
-            categoryNames.add("Sports");
-            categoryNames.add("Science");
+            categoryNames.add(getString(R.string.education));
+            categoryNames.add(getString(R.string.technology));
+            categoryNames.add(getString(R.string.entertainment));
+            categoryNames.add(getString(R.string.sports));
+            categoryNames.add(getString(R.string.science));
         }
 
         SelectionAdapter adapter = new SelectionAdapter(categoryNames, (item, position) -> {
@@ -159,9 +158,9 @@ public class CreateQuizFragment extends Fragment {
     private void showVisibilityPicker() {
         // Show a bottom sheet or dialog with visibility options
         List<String> visibilityOptions = new ArrayList<>();
-        visibilityOptions.add("Only me");
-        visibilityOptions.add("Public");
-        visibilityOptions.add("Shared with friends");
+        visibilityOptions.add(getString(R.string.only_me));
+        visibilityOptions.add(getString(R.string.public_visibility));
+        visibilityOptions.add(getString(R.string.shared_with_friends));
 
         BottomSheetDialog dialog = new BottomSheetDialog(requireContext());
         View bottomSheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_selection, null);
@@ -169,11 +168,10 @@ public class CreateQuizFragment extends Fragment {
         TextView tvTitle = bottomSheetView.findViewById(R.id.tvTitle);
         RecyclerView recyclerView = bottomSheetView.findViewById(R.id.recyclerView);
 
-        tvTitle.setText("Select Visibility");
-
+        tvTitle.setText(getString(R.string.select_visibility_title));
         SelectionAdapter adapter = new SelectionAdapter(visibilityOptions, (item, position) -> {
             tvSelectedVisibility.setText(item);
-            newQuiz.setIsPublic(position == 1); // Only "Public" option is true
+            newQuiz.setIsPublic(position == 1); // Position 1 corresponds to public visibility
             dialog.dismiss();
         });
 
@@ -185,9 +183,8 @@ public class CreateQuizFragment extends Fragment {
     private void saveQuiz() {
         String title = etTitle.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
-
         if (title.isEmpty()) {
-            etTitle.setError("Title is required");
+            etTitle.setError(getString(R.string.title_is_required_error));
             return;
         }
 
@@ -206,10 +203,12 @@ public class CreateQuizFragment extends Fragment {
             // saveQuizToServer();
         }
 
-        Toast.makeText(requireContext(), "Quiz saved successfully", Toast.LENGTH_SHORT).show();
-    }    private void navigateToAddQuestion() {
+        Toast.makeText(requireContext(), getString(R.string.quiz_saved_successfully_message), Toast.LENGTH_SHORT).show();
+    }
+
+    private void navigateToAddQuestion() {
         if (etTitle.getText().toString().trim().isEmpty()) {
-            etTitle.setError("Title is required");
+            etTitle.setError(getString(R.string.title_is_required_error));
             return;
         }
 
@@ -237,14 +236,12 @@ public class CreateQuizFragment extends Fragment {
                         .load(coverImageUri)
                         .centerCrop()
                         .placeholder(R.drawable.ic_image)
-                        .into(imgCover);
-
-                // Update layout to show that an image is selected
-                tvAddCoverImage.setText("Change Cover Image");
+                        .into(imgCover);                // Update layout to show that an image is selected
+                tvAddCoverImage.setText(getString(R.string.change_cover_image));
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Toast.makeText(requireContext(), "Failed to load image", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.failed_to_load_image_message), Toast.LENGTH_SHORT).show();
             }
         }
     }
