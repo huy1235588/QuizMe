@@ -36,6 +36,7 @@ import com.huy.QuizMe.utils.SharedPreferencesManager;
 
 import android.content.Intent;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -65,10 +66,12 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
     private View timerContainer;
     private Room currentRoom;
     private int currentQuestionIndex = 0;
-    private int totalQuestions = 10;
-    private boolean isWaitingForFirstQuestion = true;
+    private int totalQuestions = 10;    private boolean isWaitingForFirstQuestion = true;
     private Long userSelectedOptionId = null; // Track user's selected answer
     private Long currentUserId; // ID của người dùng hiện tại
+    
+    // Shuffled options order for current question
+    private List<Integer> shuffledOptionsOrder = new ArrayList<>();
 
     // Timeout handling
     private Handler timeoutHandler = new Handler(Looper.getMainLooper());
@@ -287,9 +290,7 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
         btnAnswer2.setOnClickListener(v -> onAnswerSelected(1, btnAnswer2));
         btnAnswer3.setOnClickListener(v -> onAnswerSelected(2, btnAnswer3));
         btnAnswer4.setOnClickListener(v -> onAnswerSelected(3, btnAnswer4));
-    }
-
-    private void onAnswerSelected(int optionIndex, MaterialButton button) {
+    }    private void onAnswerSelected(int buttonIndex, MaterialButton button) {
         // Kiểm tra xem câu trả lời đã được gửi chưa
         if (viewModel.isAnswerSubmittedForCurrentQuestion()) {
             return;
@@ -298,12 +299,19 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
         // Lấy câu hỏi hiện tại để tìm ID lựa chọn được chọn
         QuestionGameDTO currentQuestion = viewModel.getCurrentQuestion().getValue();
         if (currentQuestion == null || currentQuestion.getOptions() == null ||
-                optionIndex >= currentQuestion.getOptions().size()) {
+                shuffledOptionsOrder.isEmpty() || buttonIndex >= shuffledOptionsOrder.size()) {
+            return;
+        }
+
+        // Lấy index thực tế của option từ shuffled order
+        int actualOptionIndex = shuffledOptionsOrder.get(buttonIndex);
+        
+        if (actualOptionIndex >= currentQuestion.getOptions().size()) {
             return;
         }
 
         // Lưu lại lựa chọn của người dùng
-        userSelectedOptionId = currentQuestion.getOptions().get(optionIndex).getId();
+        userSelectedOptionId = currentQuestion.getOptions().get(actualOptionIndex).getId();
 
         // Highlight the selected button
         resetAnswerButtonStyles();
@@ -311,7 +319,21 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
         button.setTextColor(ContextCompat.getColor(this, android.R.color.white));
 
         // Gửi câu trả lời thông qua ViewModel
-        viewModel.submitAnswer(Collections.singletonList(userSelectedOptionId));
+        viewModel.submitAnswer(Collections.singletonList(userSelectedOptionId));    }
+
+    /**
+     * Xáo trộn thứ tự các đáp án
+     */
+    private void shuffleAnswerOptions(int optionCount) {
+        shuffledOptionsOrder.clear();
+        
+        // Tạo danh sách index từ 0 đến optionCount-1
+        for (int i = 0; i < optionCount; i++) {
+            shuffledOptionsOrder.add(i);
+        }
+        
+        // Xáo trộn danh sách
+        Collections.shuffle(shuffledOptionsOrder);
     }
 
     private void updateProgress() {
@@ -362,14 +384,16 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
 
             // Đặt chiều cao của tvQuestionText bằng với ivQuestionImage
             setQuestionTextHeightToMatchImage();
-        }
-
-        // Hiển thị options
+        }        // Hiển thị options với thứ tự đã xáo trộn
         if (question.getOptions() != null && question.getOptions().size() >= 4) {
-            btnAnswer1.setText(question.getOptions().get(0).getContent());
-            btnAnswer2.setText(question.getOptions().get(1).getContent());
-            btnAnswer3.setText(question.getOptions().get(2).getContent());
-            btnAnswer4.setText(question.getOptions().get(3).getContent());
+            // Xáo trộn thứ tự các đáp án
+            shuffleAnswerOptions(question.getOptions().size());
+            
+            // Hiển thị đáp án theo thứ tự đã xáo trộn
+            btnAnswer1.setText(question.getOptions().get(shuffledOptionsOrder.get(0)).getContent());
+            btnAnswer2.setText(question.getOptions().get(shuffledOptionsOrder.get(1)).getContent());
+            btnAnswer3.setText(question.getOptions().get(shuffledOptionsOrder.get(2)).getContent());
+            btnAnswer4.setText(question.getOptions().get(shuffledOptionsOrder.get(3)).getContent());
         }
 
         // Enable answer buttons
@@ -564,17 +588,23 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
             Integer nextQuestionNumber = nextQuestionData.get("nextQuestionNumber");
 
         }
-    }
-
-    /**
+    }    /**
      * Highlight câu trả lời đúng và sai
      */
     private void highlightAnswerResults(QuestionResultDTO result, QuestionGameDTO currentQuestion) {
         MaterialButton[] buttons = {btnAnswer1, btnAnswer2, btnAnswer3, btnAnswer4};
 
-        for (int i = 0; i < buttons.length && i < currentQuestion.getOptions().size(); i++) {
-            MaterialButton button = buttons[i];
-            Long optionId = currentQuestion.getOptions().get(i).getId();
+        for (int buttonIndex = 0; buttonIndex < buttons.length && buttonIndex < shuffledOptionsOrder.size(); buttonIndex++) {
+            MaterialButton button = buttons[buttonIndex];
+            
+            // Lấy index thực tế của option từ shuffled order
+            int actualOptionIndex = shuffledOptionsOrder.get(buttonIndex);
+            
+            if (actualOptionIndex >= currentQuestion.getOptions().size()) {
+                continue;
+            }
+            
+            Long optionId = currentQuestion.getOptions().get(actualOptionIndex).getId();
 
             // Kiểm tra xem đây có phải là câu trả lời đúng không
             boolean isCorrect = result.getCorrectOptions() != null &&
@@ -711,7 +741,7 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
             Log.d("QuizGameActivity", "Updating existing leaderboard overlay");
             leaderboardFragment.updateLeaderboard(leaderboard);
             // Reset auto hide timer
-            scheduleAutoHideLeaderboard(8000);
+            scheduleAutoHideLeaderboard(6000);
             return;
         }
 
@@ -736,8 +766,8 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
             }
         }, 50);
 
-        // Auto hide sau 8 giây (sync với backend SHOWING_LEADERBOARD duration)
-        scheduleAutoHideLeaderboard(8000);
+        // Auto hide sau 5 giây (sync với backend SHOWING_LEADERBOARD duration)
+        scheduleAutoHideLeaderboard(5000);
     }
 
     /**
@@ -864,4 +894,6 @@ public class QuizGameActivity extends AppCompatActivity implements LeaderboardOv
             tvQuestionText.setPadding(padding, padding, padding, padding);
         }
     }
+
+    
 }
