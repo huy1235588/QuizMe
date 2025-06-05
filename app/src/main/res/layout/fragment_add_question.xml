@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"
+            android:contentDescription="@string/back"
             android:padding="8dp"
             android:src="@drawable/ic_back"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -31,7 +31,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Question"
+            android:text="@string/add_question"
             android:textColor="@android:color/black"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="More options"
+            android:contentDescription="@string/more_options"
             android:padding="8dp"
             android:src="@drawable/ic_more"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -85,7 +85,7 @@
                         android:id="@+id/ivCoverImage"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:contentDescription="Cover image"
+                        android:contentDescription="@string/cover_image"
                         android:src="@drawable/ic_image"
                         app:layout_constraintBottom_toTopOf="@+id/tvAddCoverImage"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -99,7 +99,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Add Cover Image"
+                        android:text="@string/add_cover_image"
                         android:textColor="#7C65F0"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -139,7 +139,7 @@
                             android:id="@+id/tvQuiz"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="Quiz"
+                            android:text="@string/quiz_label"
                             android:textColor="@android:color/black"
                             android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -179,7 +179,7 @@
                             android:id="@+id/tvPoints"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="100 points"
+                            android:text="@string/points_100"
                             android:textColor="@android:color/black"
                             android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -219,7 +219,7 @@
                             android:id="@+id/tvTime"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:text="10 seconds"
+                            android:text="@string/seconds_10"
                             android:textColor="@android:color/black"
                             android:textSize="16sp"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -266,7 +266,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="16dp"
-                    android:text="Tap to add question"
+                    android:text="@string/tap_to_add_question"
                     android:textColor="#757575" />
             </androidx.cardview.widget.CardView>
 
@@ -288,7 +288,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="16dp"
-                    android:text="Tap to add answer"
+                    android:text="@string/tap_to_add_answer"
                     android:textColor="#757575" />
             </androidx.cardview.widget.CardView>
 
@@ -309,7 +309,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="16dp"
-                    android:text="Tap to add answer"
+                    android:text="@string/tap_to_add_answer"
                     android:textColor="#757575" />
             </androidx.cardview.widget.CardView>
 
@@ -330,7 +330,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="16dp"
-                    android:text="Tap to add answer"
+                    android:text="@string/tap_to_add_answer"
                     android:textColor="#757575" />
             </androidx.cardview.widget.CardView>
 
@@ -351,7 +351,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="16dp"
-                    android:text="Tap to add answer"
+                    android:text="@string/tap_to_add_answer"
                     android:textColor="#757575" />
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -387,7 +387,7 @@
                     android:layout_height="24dp"
                     android:background="#7C65F0"
                     android:gravity="center"
-                    android:text="1"
+                    android:text="@string/question_number_1"
                     android:textColor="@android:color/white"
                     android:textSize="14sp" />
 
@@ -399,7 +399,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#7C65F0"
-            android:contentDescription="Add question"
+            android:contentDescription="@string/add_question"
             android:src="@drawable/ic_add"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -43,7 +43,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:text="QuizMe"
+                        android:text="@string/app_name_display"
                         android:textSize="20sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -115,7 +115,7 @@
                             android:shadowDx="1"
                             android:shadowDy="1"
                             android:shadowRadius="3"
-                            android:text="Play quiz together with\nyour friends now!"
+                            android:text="@string/play_quiz_together"
                             android:textColor="@android:color/white"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -129,7 +129,7 @@
                             android:backgroundTint="#9370DB"
                             android:paddingStart="16dp"
                             android:paddingEnd="16dp"
-                            android:text="Find Friends"
+                            android:text="@string/find_friends"
                             android:textColor="#FFFFFF" />
                     </RelativeLayout>
                 </FrameLayout>
@@ -154,7 +154,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:text="Discover"
+                        android:text="@string/discover"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -166,7 +166,7 @@
                         android:drawableEnd="@drawable/ic_arrow_right"
                         android:drawablePadding="4dp"
                         android:gravity="center_vertical"
-                        android:text="View all"
+                        android:text="@string/view_all"
                         android:textColor="#9370DB" />
                 </RelativeLayout>
 
@@ -201,7 +201,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:text="Top Authors"
+                        android:text="@string/top_authors"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -213,7 +213,7 @@
                         android:drawableEnd="@drawable/ic_arrow_right"
                         android:drawablePadding="4dp"
                         android:gravity="center_vertical"
-                        android:text="View all"
+                        android:text="@string/view_all"
                         android:textColor="#9370DB" />
                 </RelativeLayout>
 
@@ -248,7 +248,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:text="Top Category"
+                        android:text="@string/top_category"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -260,7 +260,7 @@
                         android:drawableEnd="@drawable/ic_arrow_right"
                         android:drawablePadding="4dp"
                         android:gravity="center_vertical"
-                        android:text="View all"
+                        android:text="@string/view_all"
                         android:textColor="#9370DB" />
                 </RelativeLayout>
 
@@ -296,7 +296,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:labelFor="@id/rv_trending_quiz"
-                        android:text="Trending Quiz"
+                        android:text="@string/trending_quiz"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -308,7 +308,7 @@
                         android:drawableEnd="@drawable/ic_arrow_right"
                         android:drawablePadding="4dp"
                         android:gravity="center_vertical"
-                        android:text="View all"
+                        android:text="@string/view_all"
                         android:textColor="#9370DB" />
                 </RelativeLayout>
 

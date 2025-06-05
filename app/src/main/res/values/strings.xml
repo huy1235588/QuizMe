@@ -22,7 +22,6 @@
     <string name="quizzes_played">Quizzes Played</string>
     <string name="quizzes_created">Quizzes Created</string>
     <string name="recent_activity">Recent Activity</string>
-    <string name="view_all">View All</string>
     <string name="logout">Logout</string>
     <string name="no_recent_activity">No recent activity</string>
     <string name="email">Email</string>
@@ -77,6 +76,23 @@
     <string name="final_score">Final Score</string>
     <string name="play_again">Play Again</string>
     <string name="next_question">Next Question</string>
+    <string name="connected_status">● Connected</string>
+    <string name="quiz_progress_format">1/10</string>
+    <string name="timer_default">30</string>
+    <string name="quiz_type">Quiz</string>
+    <string name="sample_question">quiz</string>
+    <string name="sample_answer_how">How</string>
+    <string name="sample_answer_what">What</string>
+    <string name="sample_answer_which">Which</string>
+    <string name="sample_answer_where">Where</string>
+    <string name="feedback_correct">Correct!</string>
+    <string name="points_earned">+945</string>
+
+    <!-- Final Scoreboard -->
+    <string name="final_scoreboard">Final Scoreboard</string>
+    <string name="rank_first">1</string>
+    <string name="rank_second">2</string>
+    <string name="rank_third">3</string>
 
     <!-- Room Creation -->
     <string name="create_room">Create Room</string>
@@ -113,4 +129,126 @@
     <string name="room_created_successfully">Room created successfully</string>
     <string name="joined_room_successfully">Joined room successfully</string>
     <string name="quiz_saved_successfully">Quiz saved successfully</string>
+
+    <!-- Quiz List -->
+    <string name="discover">Discover</string>
+
+    <!-- Quiz Detail -->
+    <string name="sample_quiz_title">Walk Around the World with Geography Quiz</string>
+    <string name="questions_label">Questions</string>
+    <string name="played_label">Played</string>
+    <string name="favorited_label">Favorited</string>
+    <string name="sample_question_count">7</string>
+    <string name="sample_played_count">1.2k</string>
+    <string name="sample_favorited_count">43</string>
+    <string name="sample_creator_name">Katie Madeline</string>
+    <string name="sample_creator_username">\@katiemadeline</string>
+    <string name="description_title">Description</string>
+    <string name="questions_title_format">7 Question</string>
+    <string name="play_solo">Play Solo</string>
+    <string name="play_with_friends">Play with Friends</string>
+
+    <!-- Waiting Room -->
+    <string name="waiting_for_host_start">Waiting for the room host to start the quiz…</string>
+    <string name="zero_participants">0 participants</string>
+    <string name="type_a_message">Type a message…</string>
+
+    <!-- Quiz Selection Dialog -->
+    <string name="no_quizzes_found">No quizzes found</string>
+    <string name="select">Select</string>
+    <string name="search_quizzes">Search quizzes…</string>
+
+    <!-- Add Question Fragment -->
+    <string name="add_cover_image">Add Cover Image</string>
+    <string name="cover_image">Cover image</string>
+    <string name="quiz_label">Quiz</string>
+    <string name="points_100">100 points</string>
+    <string name="seconds_10">10 seconds</string>
+    <string name="tap_to_add_question">Tap to add question</string>
+    <string name="tap_to_add_answer">Tap to add answer</string>
+    <string name="question_number_1">1</string>
+    <string name="more_options">More options</string>
+
+    <!-- Create Room Fragment -->
+    <string name="description">Description</string>
+    <string name="max_players_input">Max players</string>
+    <string name="password">Password</string>
+    <string name="password_protected">Password Protected</string>
+    <string name="create_room_title">Create room</string>
+
+    <!-- Create Quiz Fragment -->
+    <string name="title">Title</string>
+    <string name="enter_title">Enter Title</string>
+    <string name="enter_description">Enter Description</string>
+    <string name="select_collection">Select Collection</string>
+    <string name="visibility_of_quiz">Visibility of Quiz</string>
+    <string name="only_me">Only me</string>
+    <string name="shared_with_friends">Shared with friends</string>
+    <string name="education">Education</string>
+    <string name="technology">Technology</string>
+    <string name="entertainment">Entertainment</string>
+    <string name="sports">Sports</string>
+    <string name="science">Science</string>
+    <string name="select_visibility">Select Visibility</string>
+    <string name="change_cover_image">Change Cover Image</string>
+    <string name="failed_to_load_image">Failed to load image</string>
+    <string name="title_is_required">Title is required</string>
+    <string name="quiz_saved_success">Quiz saved successfully</string>
+    <string name="search_quiz">Search Quiz</string>
+
+    <!-- Content Descriptions -->
+    <string name="dropdown_icon">Dropdown icon</string>
+
+    <!-- Question Input -->
+    <string name="questions">questions</string>
+
+    <!-- Time and Points Format Strings -->
+    <string name="points_format">%d points</string>
+    <string name="seconds_format">%d seconds</string>
+
+    <!-- Validation Messages -->
+    <string name="room_name_cannot_be_empty">Room name cannot be empty</string>
+    <string name="max_participants_cannot_be_empty">Maximum participants cannot be empty</string>
+    <string name="enter_number_between">Please enter a number between 1 and %d</string>
+    <string name="enter_valid_number">Please enter a valid number</string>
+    <string name="password_cannot_be_empty">Password cannot be empty</string>
+    <string name="please_select_quiz">Please select a quiz</string>
+    <string name="room_created_success">Room created successfully</string>
+    <string name="failed_to_create_room">Failed to create room</string>
+
+    <!-- Common UI Elements -->
+    <string name="app_name_display">QuizMe</string>
+    <string name="select_an_option">Select an option</string>
+    <string name="find_friends">Find Friends</string>
+    <string name="view_all">View all</string>
+    <string name="top_authors">Top Authors</string>
+    <string name="top_category">Top Category</string>
+    <string name="trending_quiz">Trending Quiz</string>
+    <string name="play_quiz_together">Play quiz together with\nyour friends now!</string>
+
+    <!-- Authentication -->
+    <string name="welcome_to_quizme">Welcome to QuizMe</string>
+    <string name="create_your_account">Create your account</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="dont_have_account">Don\'t have an account?</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="user_or_email">User or Email</string>
+    <string name="username">Username</string>
+    <string name="name">Name</string>
+    <string name="confirm_password">Confirm Password</string>
+
+    <!-- Join Room -->
+    <string name="no_rooms_available">No Rooms Available</string>
+    <string name="no_rooms_message">No rooms available. Please create a new room or check back later.</string>
+
+    <!-- Profile Sample Data -->
+    <string name="sample_full_name">Le Huy</string>
+    <string name="sample_username">\@lehuy</string>
+    <string name="sample_email">lehuy@example.com</string>
+    <string name="sample_phone_number">+1 234 567 8900</string>
+    <string name="sample_birthday">January 1, 1990</string>
+    <string name="default_stat_value">0</string>
+
 </resources>

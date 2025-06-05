@@ -15,13 +15,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
-
-            <TextView
+            android:padding="16dp">            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="Create room"
+                android:text="@string/create_room_title"
                 android:textAppearance="?attr/textAppearanceHeadline5"
                 android:textStyle="bold" />
 
@@ -31,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Room Name">
+                android:hint="@string/room_name">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_room_name"
@@ -47,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Description">
+                android:hint="@string/description">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_room_description"
@@ -55,15 +53,13 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     android:minLines="2" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
+            </com.google.android.material.textfield.TextInputLayout>            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_max_participants"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Max players">
+                android:hint="@string/max_players_input">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_max_participants"
@@ -77,13 +73,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:orientation="horizontal">
-
-                <TextView
+                android:orientation="horizontal">                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Public Room"
+                    android:text="@string/public_room"
                     android:textAppearance="?attr/textAppearanceBody1" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
@@ -105,7 +99,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Password Protected"
+                    android:text="@string/password_protected"
                     android:textAppearance="?attr/textAppearanceBody1" />
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
@@ -113,15 +107,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="false" />
-            </LinearLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
+            </LinearLayout>            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_password"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:hint="Password"
+                android:hint="@string/password"
                 android:visibility="gone"
                 app:endIconMode="password_toggle">
 
@@ -137,7 +129,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="Select Quiz"
+                android:text="@string/select_quiz"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 android:textStyle="bold" />
 
@@ -174,13 +166,11 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
+                        android:orientation="vertical">                        <TextView
                             android:id="@+id/tv_selected_quiz_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Tap to select a quiz"
+                            android:text="@string/tap_to_select_quiz"
                             android:textAppearance="?attr/textAppearanceBody1"
                             android:textColor="@color/gray"
                             android:textStyle="bold" />
@@ -192,17 +182,15 @@
                             android:layout_marginTop="4dp"
                             android:ellipsize="end"
                             android:maxLines="2"
-                            android:text="Choose from available quizzes"
+                            android:text="@string/choose_from_available_quizzes"
                             android:textAppearance="?attr/textAppearanceBody2"
                             android:textColor="@color/gray" />
 
-                    </LinearLayout>
-
-                    <ImageView
+                    </LinearLayout>                    <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:contentDescription="Search quiz"
+                        android:contentDescription="@string/search_quiz"
                         android:src="@drawable/ic_search" />
 
                 </LinearLayout>
@@ -220,7 +208,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="10dp"
         android:backgroundTint="@color/colorAccent"
-        android:text="Create room"
+        android:text="@string/create_room"
         android:textColor="@color/white" />
 
     <ProgressBar

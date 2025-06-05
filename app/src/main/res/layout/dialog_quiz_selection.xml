@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:text="Select Quiz"
+        android:text="@string/select_quiz"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold" />
@@ -32,7 +32,7 @@
             android:id="@+id/et_search_quiz"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search quizzes..."
+            android:hint="@string/search_quizzes"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:maxLines="1" />
@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="32dp"
-        android:text="No quizzes found"
+        android:text="@string/no_quizzes_found"
         android:textColor="@color/gray"
         android:visibility="gone" />
 
@@ -80,14 +80,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="Cancel" />
+            android:text="@string/cancel" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_select"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:enabled="false"
-            android:text="Select" />
+            android:text="@string/select" />
 
     </LinearLayout>
 

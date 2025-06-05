@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="Create Quiz"
+        app:title="@string/create_quiz"
         app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium"
         app:titleTextColor="@color/black" />
 
@@ -60,7 +60,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Add Cover Image"
+                        android:text="@string/add_cover_image"
                         android:textColor="@color/purple_primary"
                         android:textSize="16sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Title"
+                android:text="@string/title"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@null"
-                android:hint="Enter Title"
+                android:hint="@string/enter_title"
                 android:inputType="text"
                 android:maxLines="1"
                 android:padding="8dp"
@@ -109,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Description"
+                android:text="@string/description"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -121,7 +121,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@null"
-                android:hint="Enter Description"
+                android:hint="@string/enter_description"
                 android:inputType="textMultiLine"
                 android:minLines="2"
                 android:padding="8dp"
@@ -142,7 +142,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Select Collection"
+                android:text="@string/select_collection"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -160,7 +160,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="Select Collection"
+                    android:text="@string/select_collection"
                     android:textColor="@color/text_secondary"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -185,14 +185,13 @@
                 android:background="@color/divider"
                 app:layout_constraintTop_toBottomOf="@id/collectionSelector" />
 
-
             <!-- Visibility Selection -->
             <TextView
                 android:id="@+id/labelVisibility"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Visibility of Quiz"
+                android:text="@string/visibility_of_quiz"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -210,7 +209,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="Only me"
+                    android:text="@string/only_me"
                     android:textColor="@color/text_secondary"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -251,7 +250,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_weight="1"
                     android:background="@drawable/rounded_button_outline"
-                    android:text="Save"
+                    android:text="@string/save"
                     android:textColor="@color/purple_primary"
                     android:textSize="16sp" />
 
@@ -262,7 +261,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:background="@drawable/rounded_button_filled"
-                    android:text="Add Question"
+                    android:text="@string/add_question"
                     android:textColor="@android:color/white"
                     android:textSize="16sp" />
             </LinearLayout>

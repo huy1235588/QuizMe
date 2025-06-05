@@ -28,14 +28,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <!-- Connection Status -->
+        app:layout_constraintTop_toTopOf="parent">        <!-- Connection Status -->
         <TextView
             android:id="@+id/tv_connection_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="● Đã kết nối"
+            android:text="@string/connected_status"
             android:textAppearance="?attr/textAppearanceCaption"
             android:textColor="@android:color/holo_green_dark"
             android:visibility="gone"
@@ -46,7 +44,7 @@
             android:id="@+id/tv_quiz_progress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1/10"
+            android:text="@string/quiz_progress_format"
             android:textAppearance="?attr/textAppearanceLabelMedium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -76,7 +74,7 @@
                 android:id="@+id/tv_timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="30"
+                android:text="@string/timer_default"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textColor="@color/colorPrimary"
                 android:textStyle="bold" />
@@ -87,7 +85,7 @@
             android:id="@+id/tv_quiz_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Quiz"
+            android:text="@string/quiz_type"
             android:textAppearance="?attr/textAppearanceTitleLarge"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -143,7 +141,7 @@
             android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
             android:lineSpacingExtra="4dp"
-            android:text="quiz"
+            android:text="@string/sample_question"
             android:textAppearance="?attr/textAppearanceTitleMedium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -174,7 +172,7 @@
                 android:layout_marginBottom="8dp"
                 android:backgroundTint="@color/white"
                 android:minHeight="80dp"
-                android:text="How"
+                android:text="@string/sample_answer_how"
                 android:textColor="@color/black"
                 app:cornerRadius="12dp"
                 app:strokeColor="@color/gray"
@@ -191,7 +189,7 @@
                 android:layout_marginBottom="8dp"
                 android:backgroundTint="@color/white"
                 android:minHeight="80dp"
-                android:text="What"
+                android:text="@string/sample_answer_what"
                 android:textColor="@color/black"
                 app:cornerRadius="12dp"
                 app:strokeColor="@color/gray"
@@ -208,7 +206,7 @@
                 android:layout_marginEnd="8dp"
                 android:backgroundTint="@color/white"
                 android:minHeight="80dp"
-                android:text="Which"
+                android:text="@string/sample_answer_which"
                 android:textColor="@color/black"
                 app:cornerRadius="12dp"
                 app:strokeColor="@color/gray"
@@ -225,7 +223,7 @@
                 android:layout_marginTop="8dp"
                 android:backgroundTint="@color/white"
                 android:minHeight="80dp"
-                android:text="Where"
+                android:text="@string/sample_answer_where"
                 android:textColor="@color/black"
                 app:cornerRadius="12dp"
                 app:strokeColor="@color/gray"
@@ -243,15 +241,13 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <!-- Feedback Text -->
+        app:layout_constraintTop_toTopOf="parent">        <!-- Feedback Text -->
         <TextView
             android:id="@+id/tv_feedback_result"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Correct!"
+            android:text="@string/feedback_correct"
             android:textAppearance="?attr/textAppearanceHeadlineLarge"
             android:textColor="@color/white"
             android:textSize="32sp"
@@ -281,7 +277,7 @@
                 android:paddingTop="8dp"
                 android:paddingEnd="24dp"
                 android:paddingBottom="8dp"
-                android:text="+945"
+                android:text="@string/points_earned"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:textColor="@color/answer_correct"
                 android:textSize="24sp"

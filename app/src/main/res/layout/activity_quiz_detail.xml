@@ -106,7 +106,7 @@
                         android:paddingTop="16dp"
                         android:paddingEnd="16dp"
                         android:paddingBottom="4dp"
-                        android:text="Walk Around the World with Geography Quiz"
+                        android:text="@string/sample_quiz_title"
                         android:textColor="@color/black"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -134,7 +134,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="7"
+                        android:text="@string/sample_question_count"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -143,7 +143,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Questions"
+                        android:text="@string/questions_label"
                         android:textColor="#666666"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -161,7 +161,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="1.2k"
+                        android:text="@string/sample_played_count"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -170,7 +170,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Played"
+                        android:text="@string/played_label"
                         android:textColor="#666666"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -188,7 +188,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="43"
+                        android:text="@string/sample_favorited_count"
                         android:textColor="@color/black"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -197,7 +197,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Favorited"
+                        android:text="@string/favorited_label"
                         android:textColor="#666666"
                         android:textSize="14sp" />
                 </LinearLayout>
@@ -229,7 +229,7 @@
                         android:id="@+id/tv_creator_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Katie Madeline"
+                        android:text="@string/sample_creator_name"
                         android:textColor="@color/black"
                         android:textSize="16sp" />
 
@@ -237,19 +237,17 @@
                         android:id="@+id/tv_creator_username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="\@katiemadeline"
+                        android:text="@string/sample_creator_username"
                         android:textColor="#666666"
                         android:textSize="14sp" />
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <!-- Description -->
+            </LinearLayout>            <!-- Description -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="Description"
+                android:text="@string/description_title"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -261,15 +259,13 @@
                 android:layout_marginTop="8dp"
                 android:textColor="#666666"
                 android:textSize="16sp"
-                tools:text="From the moment I could read, I found myself diving into books, magazines, and websites, absorbing fascinating facts about history, science, art, and everything in between. What started as a simple curiosity quickly transformed into a lifelong love affair with knowledge." />
-
-            <!-- Questions -->
+                tools:text="From the moment I could read, I found myself diving into books, magazines, and websites, absorbing fascinating facts about history, science, art, and everything in between. What started as a simple curiosity quickly transformed into a lifelong love affair with knowledge." />            <!-- Questions -->
             <TextView
                 android:id="@+id/tv_questions_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="7 Question"
+                android:text="@string/questions_title_format"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -287,8 +283,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
                 android:orientation="horizontal"
-                android:visibility="gone"
-                android:paddingBottom="16dp">
+                android:paddingBottom="16dp"
+                android:visibility="gone">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_play_solo"
@@ -299,7 +295,7 @@
                     android:layout_weight="1"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
-                    android:text="Play Solo"
+                    android:text="@string/play_solo"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimary"
                     android:textSize="16sp"
@@ -316,7 +312,7 @@
                     android:layout_weight="1"
                     android:paddingTop="12dp"
                     android:paddingBottom="12dp"
-                    android:text="Play with Friends"
+                    android:text="@string/play_with_friends"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="16sp"
