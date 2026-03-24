@@ -9,10 +9,10 @@
     <string name="profile">Hồ sơ</string>
 
     <string name="quiz_results">Kết quả Quiz</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Xin chào fragment trống</string>
 
-    <string name="player_count_format">%1$d/%2$d người chơi</string>    <!-- Profile Fragment -->
+    <string name="player_count_format">%1$d/%2$d người chơi</string>
+
+    <!-- Profile Fragment -->
     <string name="edit_profile">Chỉnh sửa hồ sơ</string>
     <string name="change_profile_picture">Thay đổi ảnh đại diện</string>
     <string name="personal_info">Thông tin cá nhân</string>
@@ -28,7 +28,9 @@
     <string name="city">Thành phố</string>
     <string name="change_language">Thay đổi ngôn ngữ</string>
     <string name="select_language">Chọn ngôn ngữ</string>
-    <string name="close">Đóng</string>    <!-- Waiting Room -->
+    <string name="close">Đóng</string>
+
+    <!-- Waiting Room -->
     <string name="back">Quay lại</string>
     <string name="users">Người dùng</string>
     <string name="settings">Cài đặt</string>
@@ -43,7 +45,9 @@
     <string name="start_quiz">Bắt đầu Quiz</string>
     <string name="room_settings">Cài đặt phòng</string>
     <string name="host_badge">Chủ phòng</string>
-    <string name="leaderboard">Bảng xếp hạng</string>    <!-- Language Settings -->
+    <string name="leaderboard">Bảng xếp hạng</string>
+
+    <!-- Language Settings -->
     <string name="language">Ngôn ngữ</string>
     <string name="english">Tiếng Anh</string>
     <string name="vietnamese">Tiếng Việt</string>
@@ -86,7 +90,9 @@
     <string name="final_scoreboard">Bảng điểm cuối cùng</string>
     <string name="rank_first">1</string>
     <string name="rank_second">2</string>
-    <string name="rank_third">3</string>    <!-- Room Creation -->
+    <string name="rank_third">3</string>
+
+    <!-- Room Creation -->
     <string name="create_room">Tạo phòng</string>
     <string name="room_name">Tên phòng</string>
     <string name="max_players">Số người chơi tối đa</string>
@@ -95,7 +101,9 @@
     <string name="private_room">Phòng riêng tư</string>
     <string name="select_quiz">Chọn Quiz</string>
     <string name="tap_to_select_quiz">Nhấn để chọn quiz</string>
-    <string name="choose_from_available_quizzes">Chọn từ các quiz có sẵn</string>    <!-- Quiz Creation -->
+    <string name="choose_from_available_quizzes">Chọn từ các quiz có sẵn</string>
+
+    <!-- Quiz Creation -->
     <string name="create_quiz">Tạo Quiz</string>
     <string name="quiz_title">Tiêu đề Quiz</string>
     <string name="quiz_description">Mô tả Quiz</string>
@@ -138,7 +146,7 @@
     <string name="play_solo">Chơi đơn</string>
     <string name="play_with_friends">Chơi với bạn bè</string>
 
-    <!-- Waiting Room -->
+    <!-- Waiting Room Details -->
     <string name="waiting_for_host_start">Đang chờ chủ phòng bắt đầu quiz…</string>
     <string name="zero_participants">0 người tham gia</string>
     <string name="type_a_message">Nhập tin nhắn…</string>
@@ -158,6 +166,47 @@
     <string name="tap_to_add_answer">Nhấn để thêm câu trả lời</string>
     <string name="question_number_1">1</string>
     <string name="more_options">Tùy chọn khác</string>
+    <string name="select_time">Chọn thời gian trả lời</string>
+    <string name="time_5_seconds">5 giây</string>
+    <string name="time_10_seconds">10 giây</string>
+    <string name="time_15_seconds">15 giây</string>
+    <string name="time_20_seconds">20 giây</string>
+    <string name="time_30_seconds">30 giây</string>
+    <string name="time_60_seconds">60 giây</string>
+    <string name="select_points">Chọn điểm số</string>
+    <string name="points_50">50 điểm</string>
+    <string name="points_200">200 điểm</string>
+    <string name="points_300">300 điểm</string>
+    <string name="points_400">400 điểm</string>
+    <string name="points_500">500 điểm</string>
+    <string name="select_question_type">Chọn loại câu hỏi</string>
+    <string name="quiz_type_true_false">Đúng/Sai</string>
+    <string name="quiz_type_poll">Bỏ phiếu</string>
+    <string name="answer_true">Đúng</string>
+    <string name="answer_false">Sai</string>
+    <string name="additional_options">Tùy chọn thêm</string>
+    <string name="save_and_finish">Lưu và kết thúc</string>
+    <string name="preview">Xem trước</string>
+    <string name="advanced_settings">Cài đặt nâng cao</string>
+    <string name="enter_question">Nhập câu hỏi</string>
+    <string name="question_hint">Nhập câu hỏi của bạn...</string>
+    <string name="enter_answer_number">Nhập đáp án %d</string>
+    <string name="answer_hint">Nhập đáp án…</string>
+    <string name="confirm_exit">Xác nhận thoát</string>
+    <string name="unsaved_changes_message">Bạn có thay đổi chưa lưu. Bạn có muốn thoát không?</string>
+    <string name="exit">Thoát</string>
+    <string name="please_enter_question">Vui lòng nhập câu hỏi</string>
+    <string name="need_at_least_two_answers">Cần ít nhất 2 đáp án</string>
+    <string name="correct_answer_cannot_be_empty">Đáp án đúng không được để trống</string>
+    <string name="question_added_successfully">Đã thêm câu hỏi thành công</string>
+    <string name="set_as_correct_answer">Đã đặt làm đáp án đúng</string>
+    <string name="please_enter_answer_content">Vui lòng nhập nội dung đáp án trước</string>
+    <string name="create_at_least_one_question">Tạo ít nhất một câu hỏi</string>
+    <string name="quiz_saved_successfully_full">Đã lưu quiz thành công!</string>
+    <string name="no_questions_to_preview">Chưa có câu hỏi nào để xem trước</string>
+    <string name="preview_feature_coming_soon">Tính năng xem trước sẽ sớm có</string>
+    <string name="advanced_settings_coming_soon">Cài đặt nâng cao sẽ sớm có</string>
+    <string name="image_selected">Đã chọn ảnh</string>
 
     <!-- Create Room Fragment -->
     <string name="description">Mô tả</string>
@@ -165,6 +214,21 @@
     <string name="password">Mật khẩu</string>
     <string name="password_protected">Bảo vệ bằng mật khẩu</string>
     <string name="create_room_title">Tạo phòng</string>
+
+    <!-- Create Room Fragment Strings -->
+    <string name="questions_format">%d câu hỏi</string>
+    <string name="tap_to_select_quiz_hint">Nhấn để chọn quiz</string>
+    <string name="choose_from_available_quizzes_hint">Chọn từ các quiz có sẵn</string>
+    <string name="search_quiz">Tìm kiếm quiz</string>
+    <string name="room_name_cannot_be_empty">Tên phòng không được để trống</string>
+    <string name="max_participants_cannot_be_empty">Số lượng người tham gia tối đa không được để trống</string>
+    <string name="enter_number_between_format">Vui lòng nhập số từ 1 đến %d</string>
+    <string name="enter_number_between">Vui lòng nhập số từ 1 đến %d</string>
+    <string name="enter_valid_number">Vui lòng nhập số hợp lệ</string>
+    <string name="password_cannot_be_empty">Mật khẩu không được để trống</string>
+    <string name="please_select_quiz">Vui lòng chọn một quiz</string>
+    <string name="failed_to_create_room">Không thể tạo phòng</string>
+    <string name="room_created_success">Tạo phòng thành công</string>
 
     <!-- Create Quiz Fragment -->
     <string name="title">Tiêu đề</string>
@@ -180,11 +244,15 @@
     <string name="sports">Thể thao</string>
     <string name="science">Khoa học</string>
     <string name="select_visibility">Chọn khả năng hiển thị</string>
+    <string name="public_visibility">Công khai</string>
     <string name="change_cover_image">Thay đổi ảnh bìa</string>
     <string name="failed_to_load_image">Không thể tải ảnh</string>
     <string name="title_is_required">Tiêu đề là bắt buộc</string>
-    <string name="quiz_saved_success">Đã lưu quiz thành công</string>
-    <string name="search_quiz">Tìm kiếm quiz</string>
+    <string name="select_collection_title">Chọn bộ sưu tập</string>
+    <string name="select_visibility_title">Chọn khả năng hiển thị</string>
+    <string name="failed_to_load_image_message">Không thể tải ảnh</string>
+    <string name="title_is_required_error">Tiêu đề là bắt buộc</string>
+    <string name="quiz_saved_successfully_message">Quiz đã được lưu thành công</string>
 
     <!-- Chat Messages -->
     <string name="user_avatar">Ảnh đại diện người dùng</string>
@@ -195,12 +263,20 @@
     <string name="sample_timestamp">12:34 PM</string>
 
     <!-- Content Descriptions -->
+    <string name="dropdown_icon">Biểu tượng thả xuống</string>
     <string name="category_image">Hình ảnh danh mục</string>
 
     <!-- Category -->
     <string name="category_name">Tên danh mục</string>
 
-    <!-- Common UI Elements -->
+    <!-- Question Input -->
+    <string name="questions">câu hỏi</string>
+
+    <!-- Time and Points Format Strings -->
+    <string name="points_format">%d điểm</string>
+    <string name="seconds_format">%d giây</string>
+
+    <!-- Home Fragment -->
     <string name="app_name_display">QuizMe</string>
     <string name="select_an_option">Chọn một tùy chọn</string>
     <string name="find_friends">Tìm bạn bè</string>
@@ -223,72 +299,41 @@
     <string name="name">Tên</string>
     <string name="confirm_password">Xác nhận mật khẩu</string>
 
-    <!-- Validation Messages -->
-    <string name="room_name_cannot_be_empty">Tên phòng không được để trống</string>
-    <string name="max_participants_cannot_be_empty">Số lượng người tham gia tối đa không được để trống</string>
-    <string name="enter_number_between">Vui lòng nhập số từ 1 đến %d</string>
-    <string name="enter_valid_number">Vui lòng nhập số hợp lệ</string>
-    <string name="password_cannot_be_empty">Mật khẩu không được để trống</string>
-    <string name="please_select_quiz">Vui lòng chọn một quiz</string>
-    <string name="room_created_success">Tạo phòng thành công</string>
-    <string name="failed_to_create_room">Không thể tạo phòng</string>
-
     <!-- Join Room -->
     <string name="no_rooms_available">Không có phòng nào</string>
     <string name="no_rooms_message">Không có phòng nào. Vui lòng tạo phòng mới hoặc kiểm tra lại sau.</string>
 
-    <!-- Content Descriptions -->
-    <string name="dropdown_icon">Biểu tượng thả xuống</string>
-
-    <!-- Question Input -->
-    <string name="questions">câu hỏi</string>
-
-    <!-- Time and Points Format Strings -->
-    <string name="points_format">%d điểm</string>
-    <string name="seconds_format">%d giây</string>
-
-    <!-- Profile Sample Data -->
-    <string name="sample_full_name">lehuy</string>
+    <!-- Sample Data -->
+    <string name="sample_full_name">Lê Huy</string>
     <string name="sample_username">\@lehuy</string>
     <string name="sample_email">lehuy@example.com</string>
     <string name="sample_phone_number">+84 234 567 8900</string>
     <string name="sample_birthday">ngày 1, tháng 1, 1990</string>
     <string name="default_stat_value">0</string>
 
-    <!-- Item Layout Strings -->
-    <!-- Quiz Selection -->
+    <!-- Leaderboard Messages -->
+    <string name="no_leaderboard_data">Chưa có dữ liệu xếp hạng</string>
+    <string name="cannot_load_leaderboard">Không thể tải bảng xếp hạng</string>
+
+    <!-- Sample Item Data -->
     <string name="quiz_title_placeholder">Tiêu đề Quiz</string>
     <string name="quiz_description_placeholder">Văn bản mô tả quiz ở đây</string>
     <string name="question_count_placeholder">10 câu hỏi</string>
-
-    <!-- Quiz Item -->
     <string name="sample_quiz_question_count">12 Câu hỏi</string>
     <string name="sample_quiz_title_flowers">Hãy nhớ tên các loài hoa</string>
     <string name="sample_author_cyndy">Cyndy Lillibridge</string>
-
-    <!-- Question Item -->
     <string name="sample_question_type_quiz">1 - Quiz</string>
     <string name="sample_question_preview">....... bạn đến trường bằng gì? bằng xe buýt?</string>
-
-    <!-- Participant Item -->
     <string name="user_name_placeholder">Tên người dùng</string>
-
-    <!-- Leaderboard -->
     <string name="rank_placeholder">1</string>
     <string name="player_name_placeholder">Tên người chơi</string>
     <string name="score_placeholder">1250</string>
-
-    <!-- Author Item -->
     <string name="sample_author_name_ha">Hà</string>
-
-    <!-- Room Item -->
     <string name="room_status_waiting">ĐANG CHỜ</string>
     <string name="sample_room_name">Phòng Thử Thách Vật Lý</string>
     <string name="sample_quiz_name_physics">Quiz Vật Lý Nâng Cao</string>
     <string name="sample_host_name">Nguyễn Văn A</string>
     <string name="sample_players_count">3/10</string>
-
-    <!-- Content Descriptions -->
     <string name="quiz_image_desc">Hình ảnh Quiz</string>
     <string name="password_icon_desc">Biểu tượng mật khẩu</string>
     <string name="host_avatar_desc">Ảnh đại diện chủ phòng</string>

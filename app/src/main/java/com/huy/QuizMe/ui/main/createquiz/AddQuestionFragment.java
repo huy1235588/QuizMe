@@ -321,7 +321,7 @@ public class AddQuestionFragment extends Fragment {
     private void showPointsOptions() {
         final String[] pointOptions = {
                 getString(R.string.points_50),
-                getString(R.string.points_100_vn),
+                getString(R.string.points_100),
                 getString(R.string.points_200),
                 getString(R.string.points_300),
                 getString(R.string.points_400),
@@ -343,7 +343,7 @@ public class AddQuestionFragment extends Fragment {
      */
     private void showQuizTypeOptions() {
         final String[] quizTypes = {
-                getString(R.string.quiz_type_quiz),
+                getString(R.string.select_question_type),
                 getString(R.string.quiz_type_true_false),
                 getString(R.string.quiz_type_poll)
         };
